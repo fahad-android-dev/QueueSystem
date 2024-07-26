@@ -1,11 +1,8 @@
-package com.orbits.queuesystem
+package com.orbits.queuesystem.mvvm.main.view
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
+import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.ActivityMainBinding
 import com.orbits.queuesystem.helper.AlertDialogInterface
 import com.orbits.queuesystem.helper.BaseActivity
@@ -18,7 +15,7 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         initializeToolbar()
         onClickListeners()
