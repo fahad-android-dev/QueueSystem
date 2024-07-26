@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">QueueSystem</string>
+    <string name="add_service">Add Service</string>
+    <string name="enter_service_name">Enter Service name</string>
+    <string name="enter_service_name_in_arabic">Enter service name in arabic</string>
+    <string name="enter_token_start">Enter token start</string>
+    <string name="enter_token_end">Enter token end</string>
+    <string name="confirm">Confirm</string>
+</resources>
