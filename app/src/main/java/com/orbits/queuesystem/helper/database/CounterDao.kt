@@ -36,6 +36,9 @@ interface CounterDao {
     @Query("SELECT entityID FROM CounterDataDbModel WHERE entityID=:counterEntityID")
     fun isCounterPresent(counterEntityID: String?): Boolean
 
+    @Query("SELECT COUNT(*) FROM CounterDataDbModel WHERE serviceAssign = :serviceAssign")
+    fun isCounterAssignedToService(serviceAssign: String): Int
+
     @Query("SELECT * FROM CounterDataDbModel")
     fun getAllCounter(): List<CounterDataDbModel?>
 

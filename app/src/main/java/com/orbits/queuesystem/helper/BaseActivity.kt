@@ -90,6 +90,8 @@ open class BaseActivity : AppCompatActivity() {
     ) {
         layoutToolbarBinding = binding
 
+        if (isBackArrow)  layoutToolbarBinding?.conIconOne?.isVisible = false
+
         /*if (isBackArrow) layoutToolbarBinding?.conIconOne?.visibility = isVisibleInvisible(iconOne != 0)
         else layoutToolbarBinding?.conIconOne?.isVisible = iconOne != 0*/
 

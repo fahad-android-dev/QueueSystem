@@ -77,7 +77,7 @@
                     android:id="@+id/ivIconOne"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
-                    android:src="@drawable/ic_setting"
+                    android:src="@drawable/ic_counter"
                     android:layout_marginEnd="@dimen/_12sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

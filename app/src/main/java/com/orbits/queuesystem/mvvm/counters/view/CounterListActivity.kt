@@ -34,7 +34,7 @@ class CounterListActivity : BaseActivity() {
         setUpToolbar(
             binding.layoutToolbar,
             title = getString(R.string.counter_list),
-            isBackArrow = false,
+            isBackArrow = true,
             toolbarClickListener = object : CommonInterfaceClickEvent {
                 override fun onToolBarListener(type: String) {
                     if (type == Constants.TOOLBAR_ICON_ONE) {

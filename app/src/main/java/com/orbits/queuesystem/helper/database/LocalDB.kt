@@ -85,6 +85,11 @@ object LocalDB {
         return db?.isCounterPresent(counterID) ?: false
     }
 
+    fun Context.isCounterAssigned(serviceId: String): Boolean {
+        val db = AppDatabase.getAppDatabase(this).counterDao()
+        return (db?.isCounterAssignedToService(serviceId) ?: 0) > 0
+    }
+
     fun Context.addCounterInDB(counters: CounterDataDbModel): ArrayList<CounterDataDbModel?> {
         val db = AppDatabase.getAppDatabase(this).counterDao()
         if (db?.isCounterPresent(counters.entityID) == true) {

@@ -32,6 +32,8 @@ import com.orbits.queuesystem.helper.database.LocalDB.addServiceInDB
 import com.orbits.queuesystem.helper.database.LocalDB.addServiceTokenToDB
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getStartServiceToken
+import com.orbits.queuesystem.helper.database.LocalDB.isCounterAssigned
+import com.orbits.queuesystem.helper.database.LocalDB.isCounterPresentInApp
 import com.orbits.queuesystem.helper.database.ServiceDataDbModel
 import com.orbits.queuesystem.mvvm.counters.view.CounterListActivity
 import com.orbits.queuesystem.mvvm.main.adapter.ServiceListAdapter
@@ -51,6 +53,7 @@ class MainActivity : BaseActivity() , MessageListener {
     private var arrListClients = ArrayList<String>()
     val gson = Gson()
     var serviceId = ""
+    var serviceType = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,6 +132,7 @@ class MainActivity : BaseActivity() , MessageListener {
                 println("Received json in activity: $json")
                 if (json.has("serviceType")){
                     serviceId = json.get("serviceId")?.asString ?: ""
+                    serviceType = json.get("serviceType")?.asString ?: ""
                     println("here is service id $serviceId")
                 }
 
@@ -187,7 +191,7 @@ class MainActivity : BaseActivity() , MessageListener {
                         arrListClients.addAll(clientList)
                         println("here is client list fahad 111 ${arrListClients}")
                         arrListClients.forEach {
-                            if (serviceId.isNotEmpty()){
+                            if (serviceId.isNotEmpty() && isCounterAssigned(serviceType)){
                                 sendMessageToWebSocketClient(it, createServiceJsonData())
                                 addServiceTokenToDB(serviceId,getStartServiceToken(serviceId).plus(1))
                                 serviceId = ""
