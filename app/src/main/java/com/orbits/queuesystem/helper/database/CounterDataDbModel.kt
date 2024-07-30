@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 
-@Entity
+@Entity(tableName = "CounterDataDbModel")
 data class CounterDataDbModel(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,

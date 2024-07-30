@@ -12,7 +12,7 @@
         android:id="@+id/rootLayout"
         android:layout_width="match_parent"
         android:background="@drawable/bg_rounded_corners"
-        android:backgroundTint="@color/color_white"
+        android:backgroundTint="#F8EDE3"
         android:elevation="@dimen/_2sdp"
         android:layout_marginVertical="@dimen/_8sdp"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
             android:paddingEnd="@dimen/_10sdp">
 
             <TextView
-                android:id="@+id/txtServiceId"
+                android:id="@+id/txtCounterId"
                 style="@style/TextStyleStartSemiBold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -50,11 +50,11 @@
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:textColor="@color/txt_color_primary"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/txtServiceId"
+                app:layout_constraintStart_toEndOf="@+id/txtCounterId"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/txtServiceName"
+                android:id="@+id/txtCounterName"
                 style="@style/TextStyleStartSemiBold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,10 +65,10 @@
                 android:textColor="@color/txt_color_primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtServiceId" />
+                app:layout_constraintTop_toBottomOf="@+id/txtCounterId" />
 
             <TextView
-                android:id="@+id/txtStartToken"
+                android:id="@+id/txtServiceType"
                 style="@style/TextStyleStartSemiBold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -79,31 +79,11 @@
                 android:textColor="@color/txt_color_primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtServiceName" />
+                app:layout_constraintTop_toBottomOf="@+id/txtCounterName" />
 
-            <TextView
-                android:id="@+id/txtEndToken"
-                style="@style/TextStyleStartSemiBold"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:text="afdshfshfv"
-                android:textColor="@color/txt_color_primary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtStartToken" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <View
-            android:id="@+id/viewDivLine"
-            style="@style/DividerLineStyle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtServiceId" />
     </LinearLayout>
 </layout>

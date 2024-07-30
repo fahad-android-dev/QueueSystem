@@ -21,6 +21,7 @@ import coil.request.ErrorResult
 import coil.request.ImageRequest
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.orbits.queuesystem.R
 import java.io.UnsupportedEncodingException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -64,6 +65,22 @@ object Global {
                 override fun onError(request: ImageRequest, result: ErrorResult) {
                 }
             })
+        }
+    }
+
+
+    fun setFontSize(activity: Activity, value: Float): Float {
+        return value / (activity.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+    }
+
+    @SuppressLint("NewApi")
+    fun getTypeFace(context: Context, fontStyle: String): Typeface {
+        return when (fontStyle) {
+            Constants.fontRegular -> context.resources.getFont(R.font.font_regular)
+            Constants.fontBold -> context.resources.getFont(R.font.font_bold)
+            Constants.fontMedium -> context.resources.getFont(R.font.font_medium)
+            Constants.fontRegularRev -> context.resources.getFont(R.font.font_regular_rev)
+            else -> context.resources.getFont(R.font.font_regular)
         }
     }
 

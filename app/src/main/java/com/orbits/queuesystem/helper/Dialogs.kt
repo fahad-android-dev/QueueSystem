@@ -9,14 +9,22 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.Window
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.orbits.queuesystem.R
+import com.orbits.queuesystem.databinding.LayoutAddCounterDialogBinding
 import com.orbits.queuesystem.databinding.LayoutAddServiceDialogBinding
 import com.orbits.queuesystem.helper.Global.getDimension
+import com.orbits.queuesystem.helper.Global.getTypeFace
+import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
+import com.orbits.queuesystem.mvvm.counters.model.CounterListDataModel
+import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
 
 object Dialogs {
 
     var addServiceDialog: Dialog? = null
+    var addCounterDialog: Dialog? = null
 
     fun showAddServiceDialog(
         activity: Context,
@@ -49,7 +57,17 @@ object Dialogs {
 
             binding.btnAlertPositive.setOnClickListener {
                 addServiceDialog?.dismiss()
-                alertDialogInterface.onYesClick()
+                alertDialogInterface.onAddService(
+                    model = ServiceListDataModel(
+                        serviceId = binding.edtServiceId.text.toString(),
+                        name = binding.edtServiceName.text.toString(),
+                        nameAr = binding.edtServiceNameAr.text.toString(),
+                        tokenStart = binding.edtTokenStart.text.toString(),
+                        tokenEnd = binding.edtTokenEnd.text.toString(),
+                        currentToken = binding.edtTokenStart.text.toString(),
+                    )
+
+                )
             }
             addServiceDialog?.show()
         } catch (e: Exception) {
@@ -57,6 +75,98 @@ object Dialogs {
         }
     }
 
+    fun showAddCounterDialog(
+        activity: Context,
+        isCancellable: Boolean? = true,
+        alertDialogInterface: AlertDialogInterface,
+    ) {
+        try {
+            addCounterDialog = Dialog(activity)
+            addCounterDialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            addCounterDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            val binding: LayoutAddCounterDialogBinding = DataBindingUtil.inflate(
+                LayoutInflater.from(activity),
+                R.layout.layout_add_counter_dialog, null, false
+            )
+            addCounterDialog?.setContentView(binding.root)
+            val lp: WindowManager.LayoutParams = WindowManager.LayoutParams()
+            lp.copyFrom(addCounterDialog?.window?.attributes)
+            lp.width = getDimension(activity as Activity, 300.00)
+            lp.height = WindowManager.LayoutParams.WRAP_CONTENT
+            lp.gravity = Gravity.CENTER
+            addCounterDialog?.window?.attributes = lp
+            addCounterDialog?.setCanceledOnTouchOutside(isCancellable ?: true)
+            addCounterDialog?.setCancelable(isCancellable ?: true)
+
+            binding.btnAlertPositive.text = activity.getString(R.string.confirm)
+
+            binding.ivCancel.setOnClickListener {
+                addCounterDialog?.dismiss()
+            }
+
+            binding.edtCounterType.setOnClickListener {
+                showWheelView(
+                    activity,
+                    arrayListData = activity.getAllServiceFromDB()?.map { it?.serviceName } as ArrayList<String>
+                ) { value ->
+                    activity.getAllServiceFromDB()?.forEach { it?.isSelected = false }
+                    activity.getAllServiceFromDB()?.get(value)?.isSelected = true
+                    binding.edtCounterType.setText(activity.getAllServiceFromDB()?.get(value)?.serviceName)
+                }
+            }
+
+            binding.btnAlertPositive.setOnClickListener {
+                addCounterDialog?.dismiss()
+                alertDialogInterface.onAddCounter(
+                    model = CounterListDataModel(
+                        id = binding.edtCounterId.text.toString(),
+                        counterId = binding.edtCounterId.text.toString(),
+                        name = binding.edtCounterName.text.toString(),
+                        nameAr = binding.edtCounterNameAr.text.toString(),
+                        counterType = binding.edtCounterType.text.toString()
+
+                    )
+
+                )
+            }
+            addCounterDialog?.show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
+    fun showWheelView(
+        activity: Activity,
+        arrayListData: ArrayList<String>,
+        listener: WheelViewEvent
+    ) {
+        val parentView = activity.layoutInflater.inflate(R.layout.layout_bottom_sheet_picker, null)
+        val bottomSheerDialog = BottomSheetDialog(activity)
+        bottomSheerDialog.setContentView(parentView)
+        bottomSheerDialog.setCanceledOnTouchOutside(false)
+        bottomSheerDialog.setCancelable(false)
+        val wheelView = parentView.findViewById(R.id.wheelView) as WheelView
+        val txtDone = parentView.findViewById(R.id.txtDone) as TextView
+        val txtCancel = parentView.findViewById(R.id.txtCancel) as TextView
+        txtCancel.typeface = getTypeFace(activity, Constants.fontMedium)
+        txtDone.typeface = getTypeFace(activity, Constants.fontMedium)
+
+        try {
+            if (arrayListData.isNotEmpty()) {
+                wheelView.setItems(arrayListData)
+                txtCancel.setOnClickListener {
+                    bottomSheerDialog.dismiss()
+                }
+                txtDone.setOnClickListener {
+                    bottomSheerDialog.dismiss()
+                    listener.onDoneClicked(wheelView.seletedIndex)
+                }
+                bottomSheerDialog.show()
+            }
+        } catch (e: Exception) {
+        }
+    }
 
     /*fun showCustomAlert(
         activity: Context,

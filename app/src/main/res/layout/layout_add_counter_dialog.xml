@@ -55,18 +55,18 @@
                         android:layout_marginTop="@dimen/_25sdp"
                         android:textSize="@dimen/biggest_text_size"
                         android:layout_marginHorizontal="@dimen/screen_margin"
-                        android:text="@string/add_service"
+                        android:text="@string/add_counter"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         android:layout_height="wrap_content" />
 
                     <EditText
-                        android:id="@+id/edtServiceId"
+                        android:id="@+id/edtCounterId"
                         style="@style/CommonInputEditTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/edt_height"
-                        android:hint="@string/enter_service_id"
+                        android:hint="@string/enter_counter_id"
                         android:layout_marginTop="@dimen/_20sdp"
                         android:imeOptions="actionDone"
                         android:layout_marginHorizontal="@dimen/_20sdp"
@@ -76,59 +76,46 @@
 
 
                     <EditText
-                        android:id="@+id/edtServiceName"
+                        android:id="@+id/edtCounterName"
                         style="@style/CommonInputEditTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/edt_height"
-                        android:hint="@string/enter_service_name"
+                        android:hint="@string/enter_counter_name"
                         android:layout_marginTop="@dimen/_20sdp"
                         android:imeOptions="actionDone"
                         android:layout_marginHorizontal="@dimen/_20sdp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/edtServiceId" />
+                        app:layout_constraintTop_toBottomOf="@+id/edtCounterId" />
 
                     <EditText
-                        android:id="@+id/edtServiceNameAr"
+                        android:id="@+id/edtCounterNameAr"
                         style="@style/CommonInputEditTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/edt_height"
-                        android:hint="@string/enter_service_name_in_arabic"
+                        android:hint="@string/enter_counter_name_in_arabic"
                         android:layout_marginTop="@dimen/_20sdp"
                         android:imeOptions="actionDone"
                         android:layout_marginHorizontal="@dimen/_20sdp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/edtServiceName" />
+                        app:layout_constraintTop_toBottomOf="@+id/edtCounterName" />
 
                     <EditText
-                        android:id="@+id/edtTokenStart"
+                        android:id="@+id/edtCounterType"
                         style="@style/CommonInputEditTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/edt_height"
-                        android:hint="@string/enter_token_start"
+                        android:hint="Select counter type"
                         android:layout_marginTop="@dimen/_20sdp"
                         android:imeOptions="actionDone"
+                        android:clickable="false"
+                        android:focusable="false"
                         android:layout_marginHorizontal="@dimen/_20sdp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/edtServiceNameAr"
+                        app:layout_constraintTop_toBottomOf="@+id/edtCounterNameAr"
                         tools:ignore="HardcodedText" />
-
-                    <EditText
-                        android:id="@+id/edtTokenEnd"
-                        style="@style/CommonInputEditTextStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/edt_height"
-                        android:hint="@string/enter_token_end"
-                        android:layout_marginTop="@dimen/_20sdp"
-                        android:imeOptions="actionDone"
-                        android:layout_marginHorizontal="@dimen/_20sdp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/edtTokenStart"
-                        tools:ignore="HardcodedText" />
-
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -137,7 +124,7 @@
                         android:gravity="center"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/edtTokenEnd"
+                        app:layout_constraintTop_toBottomOf="@+id/edtCounterType"
                         android:layout_marginHorizontal="@dimen/_10sdp"
                         android:layout_height="@dimen/btn_size"
                         android:orientation="horizontal">

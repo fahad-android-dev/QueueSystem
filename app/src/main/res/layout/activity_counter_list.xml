@@ -30,7 +30,7 @@
 
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvServiceList"
+                    android:id="@+id/rvCounterList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/screen_margin"
@@ -50,7 +50,7 @@
         </androidx.core.widget.NestedScrollView>
 
         <ImageView
-            android:id="@+id/btnAddService"
+            android:id="@+id/btnAddCounter"
             android:layout_width="@dimen/_50sdp"
             android:layout_height="@dimen/_50sdp"
             android:layout_marginEnd="@dimen/_20sdp"

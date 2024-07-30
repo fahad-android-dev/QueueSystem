@@ -5,11 +5,12 @@ import com.orbits.queuesystem.helper.Extensions.printLog
 
 object LocalDB {
 
+
     fun Context.getDao() : AppDatabase {
        return AppDatabase.getAppDatabase(this)
     }
 
-     /**/
+    /*-----------------------------------------------Service-------------------------------------------------------------*/
 
     fun Context.isServicePresentInApp(serviceID: String?) : Boolean {
         val db = AppDatabase.getAppDatabase(this).mainDao()
@@ -32,9 +33,20 @@ object LocalDB {
         val db = AppDatabase.getAppDatabase(this).mainDao()
         return db?.getAllService() as ArrayList<ServiceDataDbModel?>?
     }
+
+    fun Context.getServiceById(serviceId: Int): ServiceDataDbModel? {
+        val services = getAllServiceFromDB()
+        return services?.find { it?.id == serviceId }
+    }
+
     fun Context.deleteServerTableFromDB() {
         val db = AppDatabase.getAppDatabase(this).mainDao()
         return db?.deleteServiceTable() ?: Unit
+    }
+
+    fun Context.getStartServiceToken(entityId: String): Int {
+        val db = AppDatabase.getAppDatabase(this).mainDao()
+        return db?.getStartServiceTokenInDb(entityId) ?: 0
     }
 
     /*fun Context.updateServiceInDb(
@@ -54,4 +66,54 @@ object LocalDB {
         db?.deleteService(productEntityID)
         return db?.getAllService() as ArrayList<ServiceDataDbModel?>?
     }
+
+    fun Context.addServiceTokenToDB(serviceId: String, newToken: Int) {
+        val db = AppDatabase.getAppDatabase(this).mainDao()
+        // Update the token for the specific service
+        db?.updateServiceToken(serviceId, newToken)
+    }
+
+
+    /*-----------------------------------------------Service-------------------------------------------------------------*/
+
+
+    /*-----------------------------------------------Counter-------------------------------------------------------------*/
+
+
+    fun Context.isCounterPresentInApp(counterID: String?) : Boolean {
+        val db = AppDatabase.getAppDatabase(this).counterDao()
+        return db?.isCounterPresent(counterID) ?: false
+    }
+
+    fun Context.addCounterInDB(counters: CounterDataDbModel): ArrayList<CounterDataDbModel?> {
+        val db = AppDatabase.getAppDatabase(this).counterDao()
+        if (db?.isCounterPresent(counters.entityID) == true) {
+            val qty = db.getCounterInDb(counters.entityID)
+            db.updateCounterOffline(counters.counterId, counters.entityID)
+        } else {
+            db?.addCounter(counters)
+        }
+        ("${db?.getAllCounter()}").printLog()
+        return db?.getAllCounter() as ArrayList<CounterDataDbModel?>
+    }
+
+    fun Context.getAllCounterFromDB(): ArrayList<CounterDataDbModel?>? {
+        val db = AppDatabase.getAppDatabase(this).counterDao()
+        return db?.getAllCounter() as ArrayList<CounterDataDbModel?>?
+    }
+
+    fun Context.deleteCounterTableFromDB() {
+        val db = AppDatabase.getAppDatabase(this).counterDao()
+        return db?.deleteCounterTable() ?: Unit
+    }
+
+
+    fun Context.deleteCounterInDb(productEntityID: String? = "0"): ArrayList<CounterDataDbModel?>? {
+        ("Here i am delete counter id   $productEntityID").printLog()
+        val db = AppDatabase.getAppDatabase(this).counterDao()
+        db?.deleteCounter(productEntityID)
+        return db?.getAllCounter() as ArrayList<CounterDataDbModel?>?
+    }
+
+    /*-----------------------------------------------Counter-------------------------------------------------------------*/
 }

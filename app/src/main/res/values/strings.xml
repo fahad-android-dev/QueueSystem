@@ -6,4 +6,12 @@
     <string name="enter_token_start">Enter token start</string>
     <string name="enter_token_end">Enter token end</string>
     <string name="confirm">Confirm</string>
+    <string name="enter_service_id">Enter service id</string>
+    <string name="add_counter">Add Counter</string>
+    <string name="enter_counter_id">Enter counter id</string>
+    <string name="enter_counter_name">Enter counter name</string>
+    <string name="enter_counter_name_in_arabic">Enter counter name in arabic</string>
+    <string name="counter_list">Counter List</string>
+    <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
 </resources>

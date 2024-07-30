@@ -7,32 +7,43 @@ import com.google.gson.reflect.TypeToken
 
 class Converters {
     companion object {
+        /*-----------------------------------------------Service-------------------------------------------------------------*/
+
         @TypeConverter
         @JvmStatic
-        fun fromString(value: String): ArrayList<CounterDataDbModel> {
-            val listType = object : TypeToken<ArrayList<CounterDataDbModel>>() {}.type
+        fun fromString(value: String): ArrayList<ServiceDataDbModel> {
+            val listType = object : TypeToken<ArrayList<ServiceDataDbModel>>() {}.type
             return Gson().fromJson(value, listType)
         }
 
         @TypeConverter
         @JvmStatic
-        fun fromArrayList(list: ArrayList<CounterDataDbModel>): String {
+        fun fromArrayList(list: ArrayList<ServiceDataDbModel>): String {
             val gson = Gson()
             return gson.toJson(list)
         }
 
+        /*-----------------------------------------------Service-------------------------------------------------------------*/
+
+
+        /*-----------------------------------------------Counter-------------------------------------------------------------*/
+
         @TypeConverter
         @JvmStatic
-        fun fromStringAttribute(value: String): ArrayList<CounterDataDbModel> {
-            val listType = object : TypeToken<ArrayList<CounterDataDbModel>>() {}.type
+        fun fromCounterString(value: String): ArrayList<CounterDataDbModel> {
+            val listType = object : TypeToken<ArrayList<ServiceDataDbModel>>() {}.type
             return Gson().fromJson(value, listType)
         }
 
         @TypeConverter
         @JvmStatic
-        fun fromArrayListAttribute(list: ArrayList<CounterDataDbModel>): String {
+        fun fromCounterArrayList(list: ArrayList<CounterDataDbModel>): String {
             val gson = Gson()
             return gson.toJson(list)
         }
+
+
+        /*-----------------------------------------------Counter-------------------------------------------------------------*/
+
     }
 }

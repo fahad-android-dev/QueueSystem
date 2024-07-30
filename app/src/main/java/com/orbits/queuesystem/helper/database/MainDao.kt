@@ -6,6 +6,9 @@ import androidx.room.Query
 
 @Dao
 interface MainDao {
+
+    /*-----------------------------------------------Service-------------------------------------------------------------*/
+
     @Insert
     fun addService(vararg services: ServiceDataDbModel)
 
@@ -26,6 +29,9 @@ interface MainDao {
     @Query("SELECT DISTINCT serviceId FROM ServiceDataDbModel WHERE entityId IN (:productEntityID)")
     fun getServiceInDb(productEntityID: String?): Int
 
+    @Query("SELECT DISTINCT tokenStart FROM ServiceDataDbModel WHERE entityId IN (:serviceEntityID)")
+    fun getStartServiceTokenInDb(serviceEntityID: String?): Int
+
 
     @Query("SELECT * FROM ServiceDataDbModel")
     fun getServiceCount(): List<ServiceDataDbModel>
@@ -38,4 +44,13 @@ interface MainDao {
 
     @Query("DELETE FROM ServiceDataDbModel")
     fun deleteServiceTable()
+
+    @Query("UPDATE ServiceDataDbModel SET tokenStart = :tokenStart WHERE entityID = :entityID")
+    fun updateServiceToken(entityID: String, tokenStart: Int)
+
+
+
+    /*-----------------------------------------------Service-------------------------------------------------------------*/
+
+
 }

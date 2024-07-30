@@ -8,13 +8,14 @@ import androidx.room.TypeConverters
 
 
 @Database(
-    entities = [ServiceDataDbModel::class],[ServiceDataDbModel::class],
-    version = 1,
+    entities = [ServiceDataDbModel::class,CounterDataDbModel::class],
+    version = 2,
     exportSchema = false
 )
-@TypeConverters(Converters::class)
+@TypeConverters(Converters::class,)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun mainDao(): MainDao?
+    abstract fun counterDao(): CounterDao?
 
     companion object {
         private const val DATABASE_NAME = "queuesystem.db"
