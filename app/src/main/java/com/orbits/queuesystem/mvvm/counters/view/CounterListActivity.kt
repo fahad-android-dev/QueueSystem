@@ -12,6 +12,8 @@ import com.orbits.queuesystem.helper.CounterConfig.parseInCounterDbModel
 import com.orbits.queuesystem.helper.CounterConfig.parseInCounterModelArraylist
 import com.orbits.queuesystem.helper.Dialogs
 import com.orbits.queuesystem.helper.database.LocalDB.addCounterInDB
+import com.orbits.queuesystem.helper.database.LocalDB.deleteCounterInDb
+import com.orbits.queuesystem.helper.database.LocalDB.deleteServiceInDb
 import com.orbits.queuesystem.helper.database.LocalDB.getAllCounterFromDB
 import com.orbits.queuesystem.mvvm.counters.adapter.CounterListAdapter
 import com.orbits.queuesystem.mvvm.counters.model.CounterListDataModel
@@ -55,7 +57,22 @@ class CounterListActivity : BaseActivity() {
         arrListCounter.addAll(data)
         adapter.onClickEvent = object : CommonInterfaceClickEvent {
             override fun onItemClick(type: String, position: Int) {
+                if(type == "deleteCounter"){
+                    Dialogs.showCustomAlert(
+                        activity = this@CounterListActivity,
+                        msg = getString(R.string.are_you_sure_you_want_to_delete_this_counter),
+                        yesBtn = getString(R.string.yes),
+                        noBtn = getString(R.string.no),
+                        alertDialogInterface = object : AlertDialogInterface {
+                            override fun onYesClick() {
+                                deleteCounterInDb(arrListCounter[position]?.id)
+                                arrListCounter.removeAt(position)
+                                adapter.setData(arrListCounter)
+                            }
+                        }
+                    )
 
+                }
             }
         }
         adapter.setData(arrListCounter)

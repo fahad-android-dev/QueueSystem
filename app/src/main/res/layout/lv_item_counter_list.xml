@@ -8,15 +8,39 @@
         <import type="android.view.View" />
     </data>
 
+    <me.thanel.swipeactionview.SwipeActionView
+        android:id="@+id/swipeLayout"
+        android:layout_width="match_parent"
+        android:layout_marginVertical="@dimen/_8sdp"
+        android:layout_marginHorizontal="@dimen/_5sdp"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/linDelete"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_right_curve"
+            android:backgroundTint="@color/red_color"
+            android:layout_gravity="end"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_gravity="center|center_horizontal"
+                android:src="@drawable/ic_delete"
+                app:tint="@color/color_white" />
+
+        </LinearLayout>
+
     <LinearLayout
         android:id="@+id/rootLayout"
         android:layout_width="match_parent"
         android:background="@drawable/bg_rounded_corners"
         android:backgroundTint="#F8EDE3"
-        android:elevation="@dimen/_2sdp"
-        android:layout_marginVertical="@dimen/_8sdp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_5sdp"
         android:animateLayoutChanges="true"
         android:orientation="vertical">
 
@@ -86,4 +110,6 @@
 
 
     </LinearLayout>
+
+    </me.thanel.swipeactionview.SwipeActionView>
 </layout>

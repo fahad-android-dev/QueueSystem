@@ -14,4 +14,8 @@
     <string name="counter_list">Counter List</string>
     <string name="cancel">Cancel</string>
     <string name="done">Done</string>
+    <string name="are_you_sure_you_want_to_delete_this_counter">Are you sure you want to delete this counter</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="are_you_sure_you_want_to_delete_this_service">Are you sure you want to delete this service</string>
 </resources>

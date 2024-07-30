@@ -9,6 +9,8 @@ import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.LvItemCounterListBinding
 import com.orbits.queuesystem.helper.CommonInterfaceClickEvent
 import com.orbits.queuesystem.mvvm.counters.model.CounterListDataModel
+import me.thanel.swipeactionview.SwipeActionView
+import me.thanel.swipeactionview.SwipeGestureListener
 
 class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.MyViewHolder>() {
     var arrListData : ArrayList<CounterListDataModel?> = ArrayList()
@@ -34,9 +36,23 @@ class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.MyViewHolder>
         holder.binding.txtCounterName.text = "Counter Name : ${a?.name}"
         holder.binding.txtServiceType.text = "Counter Type : ${a?.counterType}"
 
+        holder.binding.swipeLayout.swipeGestureListener = object : SwipeGestureListener {
+            override fun onSwipedLeft(swipeActionView: SwipeActionView): Boolean {
+                return false
+            }
+
+            override fun onSwipedRight(swipeActionView: SwipeActionView): Boolean {
+                return false
+            }
+        }
+
 
         holder.binding.rootLayout.setOnClickListener {
-            onClickEvent?.onItemClick("occasionClicked",position)
+            onClickEvent?.onItemClick("counterClicked",position)
+        }
+
+        holder.binding.linDelete.setOnClickListener {
+            onClickEvent?.onItemClick("deleteCounter", position)
         }
     }
 

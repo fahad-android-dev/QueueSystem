@@ -18,22 +18,19 @@ import com.orbits.queuesystem.helper.ClientDataModel
 import com.orbits.queuesystem.helper.CommonInterfaceClickEvent
 import com.orbits.queuesystem.helper.Constants
 import com.orbits.queuesystem.helper.Dialogs
-import com.orbits.queuesystem.helper.Extensions.asInt
 import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.MessageListener
-import com.orbits.queuesystem.helper.PrefUtils.getUserDataResponse
-import com.orbits.queuesystem.helper.PrefUtils.setUserDataResponse
 import com.orbits.queuesystem.helper.ServiceConfig.parseInServiceModelArraylist
 import com.orbits.queuesystem.helper.ServiceConfig.parseInServiceDbModel
 import com.orbits.queuesystem.helper.TCPServer
-import com.orbits.queuesystem.helper.UserResponseModel
 import com.orbits.queuesystem.helper.WebSocketClient
 import com.orbits.queuesystem.helper.database.LocalDB.addServiceInDB
 import com.orbits.queuesystem.helper.database.LocalDB.addServiceTokenToDB
+import com.orbits.queuesystem.helper.database.LocalDB.deleteCounterInDb
+import com.orbits.queuesystem.helper.database.LocalDB.deleteServiceInDb
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getStartServiceToken
 import com.orbits.queuesystem.helper.database.LocalDB.isCounterAssigned
-import com.orbits.queuesystem.helper.database.LocalDB.isCounterPresentInApp
 import com.orbits.queuesystem.helper.database.ServiceDataDbModel
 import com.orbits.queuesystem.mvvm.counters.view.CounterListActivity
 import com.orbits.queuesystem.mvvm.main.adapter.ServiceListAdapter
@@ -103,7 +100,21 @@ class MainActivity : BaseActivity() , MessageListener {
         arrListService.addAll(data)
         adapter.onClickEvent = object : CommonInterfaceClickEvent {
             override fun onItemClick(type: String, position: Int) {
-
+                if(type == "deleteService"){
+                    Dialogs.showCustomAlert(
+                        activity = this@MainActivity,
+                        msg = getString(R.string.are_you_sure_you_want_to_delete_this_service),
+                        yesBtn = getString(R.string.yes),
+                        noBtn = getString(R.string.no),
+                        alertDialogInterface = object : AlertDialogInterface {
+                            override fun onYesClick() {
+                                deleteServiceInDb(arrListService[position]?.id)
+                                arrListService.removeAt(position)
+                                adapter.setData(arrListService)
+                            }
+                        }
+                    )
+                }
             }
         }
         adapter.setData(arrListService)
@@ -186,10 +197,8 @@ class MainActivity : BaseActivity() , MessageListener {
                     socket = clientSocket
                     runOnUiThread {
                         Toast.makeText(this@MainActivity,"Client Connected", Toast.LENGTH_SHORT).show()
-                        println("here is client list fahad ${clientList}")
                         arrListClients.clear()
                         arrListClients.addAll(clientList)
-                        println("here is client list fahad 111 ${arrListClients}")
                         arrListClients.forEach {
                             if (serviceId.isNotEmpty() && isCounterAssigned(serviceType)){
                                 sendMessageToWebSocketClient(it, createServiceJsonData())

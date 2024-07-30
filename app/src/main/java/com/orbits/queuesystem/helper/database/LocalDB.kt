@@ -39,7 +39,7 @@ object LocalDB {
         return services?.find { it?.id == serviceId }
     }
 
-    fun Context.deleteServerTableFromDB() {
+    fun Context.deleteServiceTableFromDB() {
         val db = AppDatabase.getAppDatabase(this).mainDao()
         return db?.deleteServiceTable() ?: Unit
     }
@@ -60,7 +60,7 @@ object LocalDB {
         return db?.getAllService() as ArrayList<ServiceDataDbModel?>
     }*/
 
-    fun Context.deleteServerInDb(productEntityID: String? = "0"): ArrayList<ServiceDataDbModel?>? {
+    fun Context.deleteServiceInDb(productEntityID: String? = "0"): ArrayList<ServiceDataDbModel?>? {
         ("Here i am delete cart id   $productEntityID").printLog()
         val db = AppDatabase.getAppDatabase(this).mainDao()
         db?.deleteService(productEntityID)

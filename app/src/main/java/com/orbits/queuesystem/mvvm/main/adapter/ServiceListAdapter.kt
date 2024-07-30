@@ -9,6 +9,8 @@ import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.LvItemServiceListBinding
 import com.orbits.queuesystem.helper.CommonInterfaceClickEvent
 import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
+import me.thanel.swipeactionview.SwipeActionView
+import me.thanel.swipeactionview.SwipeGestureListener
 
 class ServiceListAdapter : RecyclerView.Adapter<ServiceListAdapter.MyViewHolder>() {
     var arrListData : ArrayList<ServiceListDataModel?> = ArrayList()
@@ -36,8 +38,23 @@ class ServiceListAdapter : RecyclerView.Adapter<ServiceListAdapter.MyViewHolder>
         holder.binding.txtEndToken.text = "End Token : ${a?.tokenEnd}"
 
 
+        holder.binding.swipeLayout.swipeGestureListener = object : SwipeGestureListener {
+            override fun onSwipedLeft(swipeActionView: SwipeActionView): Boolean {
+                return false
+            }
+
+            override fun onSwipedRight(swipeActionView: SwipeActionView): Boolean {
+                return false
+            }
+        }
+
+
         holder.binding.rootLayout.setOnClickListener {
-            onClickEvent?.onItemClick("occasionClicked",position)
+            onClickEvent?.onItemClick("serviceClicked",position)
+        }
+
+        holder.binding.linDelete.setOnClickListener {
+            onClickEvent?.onItemClick("deleteService", position)
         }
     }
 

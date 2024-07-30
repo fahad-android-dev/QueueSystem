@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
@@ -15,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.LayoutAddCounterDialogBinding
 import com.orbits.queuesystem.databinding.LayoutAddServiceDialogBinding
+import com.orbits.queuesystem.databinding.LayoutCustomAlertBinding
 import com.orbits.queuesystem.helper.Global.getDimension
 import com.orbits.queuesystem.helper.Global.getTypeFace
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
@@ -25,6 +27,7 @@ object Dialogs {
 
     var addServiceDialog: Dialog? = null
     var addCounterDialog: Dialog? = null
+    var customDialog: Dialog? = null
 
     fun showAddServiceDialog(
         activity: Context,
@@ -168,7 +171,7 @@ object Dialogs {
         }
     }
 
-    /*fun showCustomAlert(
+    fun showCustomAlert(
         activity: Context,
         title: String = "",
         msg: String = "",
@@ -215,7 +218,7 @@ object Dialogs {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }*/
+    }
 
     fun addSpacesBetweenLetters(input: String): String {
         // Convert the string to a list of characters, join them with spaces, and convert back to string
