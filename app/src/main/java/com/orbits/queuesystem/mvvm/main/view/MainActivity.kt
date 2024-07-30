@@ -109,7 +109,7 @@ class MainActivity : BaseActivity() , MessageListener {
                         alertDialogInterface = object : AlertDialogInterface {
                             override fun onYesClick() {
                                 deleteServiceInDb(arrListService[position]?.id)
-                                arrListService.removeAt(position)
+                                arrListService.remove(arrListService[position])
                                 adapter.setData(arrListService)
                             }
                         }
@@ -168,8 +168,10 @@ class MainActivity : BaseActivity() , MessageListener {
     }
 
     private fun Context.createServiceJsonData(): JsonObject {
-        val model = getAllServiceFromDB()?.find { it?.id.asString() == serviceId }
-        println("here is start token ${getStartServiceToken(model?.entityID ?: "")}")
+        println("here is all services ${getAllServiceFromDB()}")
+        val model = getAllServiceFromDB()?.find { it?.entityID == serviceId }
+        println("here is service id start  ${model?.id.asString()}")
+        println("here is start token ${getStartServiceToken(model?.id.asString())}")
         return JsonObject().apply {
             addProperty("startToken", model?.tokenStart)
             addProperty("endToken", model?.tokenEnd)
