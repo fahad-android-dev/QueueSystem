@@ -38,5 +38,6 @@ object Constants {
     const val KEYPAD_CONNECTION_TYPE = "keypadConnectionType"
     const val TICKET_TYPE = "ticketType"
     const val SERVICE_TYPE = "serviceType"
+    const val CONNECTION = "connection"
 
 }

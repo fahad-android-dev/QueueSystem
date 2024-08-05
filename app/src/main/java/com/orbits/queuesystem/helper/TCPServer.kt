@@ -191,7 +191,14 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                     messageListener.onMessageJsonReceived(jsonObject)
                                 }
                             }
+                            else if (jsonObject.has(Constants.CONNECTION)){
+                                clients[clientId ?: ""] = this
+                                addToConnectedClients(clientId ?: "")
+                                messageListener.onClientConnected(clientSocket,arrListClients)
+                                messageListener.onMessageJsonReceived(jsonObject)
+                            }
                             else {
+                                addToConnectedClients(clientId ?: "")
                                 messageListener.onClientConnected(clientSocket,arrListClients)
                                 messageListener.onMessageJsonReceived(jsonObject)
                             }

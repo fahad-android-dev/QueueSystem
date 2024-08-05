@@ -51,13 +51,11 @@ class MainActivity : BaseActivity(), MessageListener {
     private lateinit var tcpServer: TCPServer
     private lateinit var socket: Socket
     private lateinit var webSocketClient: WebSocketClient
-    private var clientModel = ClientDataModel()
     private var outStream: OutputStream? = null
     private var arrListClients = ArrayList<String?>()
     val gson = Gson()
     var serviceId = ""
     var serviceType = ""
-    var isAuthorised = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,12 +150,16 @@ class MainActivity : BaseActivity(), MessageListener {
                 println("Received all Clients: $arrListClients")
                 arrListClients.forEach {
                     if (it == "101") {
+                        println("here is 111")
                         if (json.has(Constants.TICKET_TYPE)) {
                             manageTicketData(json)
                         }
                     } else {
                         if (json.has(Constants.KEYPAD_SERVICE_TYPE)) {
                             manageKeypadData(json)
+                        }else if (json.has(Constants.CONNECTION)){
+                            println("here is 2222")
+                            sendMessageToWebSocketClient(it ?: "", createJsonData())
                         }
                     }
                 }
