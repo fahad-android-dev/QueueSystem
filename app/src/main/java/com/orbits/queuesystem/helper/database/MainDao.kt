@@ -32,6 +32,12 @@ interface MainDao {
     @Query("SELECT DISTINCT tokenStart FROM ServiceDataDbModel WHERE entityId IN (:serviceEntityID)")
     fun getStartServiceTokenInDb(serviceEntityID: String?): Int
 
+    @Query("SELECT DISTINCT tokenNo FROM ServiceDataDbModel WHERE entityId IN (:serviceEntityID)")
+    fun getCurrentServiceTokenInDb(serviceEntityID: String?): Int
+
+    @Query("SELECT DISTINCT keypadToken FROM ServiceDataDbModel WHERE entityId IN (:serviceEntityID)")
+    fun getKeypadServiceTokenInDb(serviceEntityID: String?): Int
+
 
     @Query("SELECT * FROM ServiceDataDbModel")
     fun getServiceCount(): List<ServiceDataDbModel>
@@ -45,8 +51,11 @@ interface MainDao {
     @Query("DELETE FROM ServiceDataDbModel")
     fun deleteServiceTable()
 
-    @Query("UPDATE ServiceDataDbModel SET tokenStart = :tokenStart WHERE entityID = :entityID")
-    fun updateServiceToken(entityID: String, tokenStart: Int)
+    @Query("UPDATE ServiceDataDbModel SET tokenNo = :tokenNo WHERE entityID = :entityID")
+    fun updateServiceToken(entityID: String, tokenNo: Int)
+
+    @Query("UPDATE ServiceDataDbModel SET keypadToken = :keypadToken WHERE entityID = :entityID")
+    fun updateKeypadServiceToken(entityID: String, keypadToken: Int)
 
 
 

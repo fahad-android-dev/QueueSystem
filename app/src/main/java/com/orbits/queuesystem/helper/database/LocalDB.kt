@@ -1,6 +1,7 @@
 package com.orbits.queuesystem.helper.database
 
 import android.content.Context
+import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.Extensions.printLog
 
 object LocalDB {
@@ -48,6 +49,16 @@ object LocalDB {
         val db = AppDatabase.getAppDatabase(this).mainDao()
         return db?.getStartServiceTokenInDb(entityId) ?: 0
     }
+    fun Context.getCurrentServiceToken(entityId: String): Int {
+        val db = AppDatabase.getAppDatabase(this).mainDao()
+        return db?.getCurrentServiceTokenInDb(entityId) ?: 0
+    }
+
+    fun Context.getKeypadServiceToken(entityId: String): Int {
+        val db = AppDatabase.getAppDatabase(this).mainDao()
+        return db?.getKeypadServiceTokenInDb(entityId) ?: 0
+    }
+
 
     /*fun Context.updateServiceInDb(
         serviceId: String? = "0",
@@ -69,8 +80,11 @@ object LocalDB {
 
     fun Context.addServiceTokenToDB(serviceId: String, newToken: Int) {
         val db = AppDatabase.getAppDatabase(this).mainDao()
-        // Update the token for the specific service
         db?.updateServiceToken(serviceId, newToken)
+    }
+    fun Context.addKeypadServiceTokenToDB(serviceId: String, newToken: Int) {
+        val db = AppDatabase.getAppDatabase(this).mainDao()
+        db?.updateKeypadServiceToken(serviceId, newToken)
     }
 
 
@@ -102,6 +116,13 @@ object LocalDB {
         return db?.getAllCounter() as ArrayList<CounterDataDbModel?>
     }
 
+    fun Context.getCounterIdForService(serviceAssign: String): String {
+        val db = AppDatabase.getAppDatabase(this).counterDao()
+        // Query your database to find the counter ID associated with the service ID
+        // Return the counter ID or null if not found
+        return db?.getCounterIdByServiceId(serviceAssign) ?: ""
+    }
+
     fun Context.getAllCounterFromDB(): ArrayList<CounterDataDbModel?>? {
         val db = AppDatabase.getAppDatabase(this).counterDao()
         return db?.getAllCounter() as ArrayList<CounterDataDbModel?>?
@@ -121,4 +142,49 @@ object LocalDB {
     }
 
     /*-----------------------------------------------Counter-------------------------------------------------------------*/
+
+
+
+    /*-----------------------------------------------Transaction-------------------------------------------------------------*/
+
+
+    fun Context.isTransactionPresentInApp(entityId: String?) : Boolean {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        return db?.isTransactionPresent(entityId) ?: false
+    }
+
+    fun Context.addTransactionInDB(data: TransactionDataDbModel): ArrayList<TransactionDataDbModel?> {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        if (db?.isTransactionPresent(data.token) == true) {
+            db.updateTransactionOffline(data.token, data.status,data.id.asString())
+        } else {
+            db?.addTransaction(data)
+        }
+        return db?.getAllTransaction() as ArrayList<TransactionDataDbModel?>
+    }
+
+
+    fun Context.getAllTransactionFromDB(): ArrayList<TransactionDataDbModel?>? {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        return db?.getAllTransaction() as ArrayList<TransactionDataDbModel?>?
+    }
+
+    fun Context.getTransactionFromDbWithStatus(): TransactionDataDbModel? {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        return db?.getTransactionByIssuedStatus()
+    }
+
+    fun Context.getTransactionByToken(token: String): TransactionDataDbModel? {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        return db?.getTransactionByToken(token)
+    }
+
+    fun Context.getAllTransactionsWithToken(ticketToken: String): ArrayList<TransactionDataDbModel?> {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        return db?.getAllTransactionsByToken(ticketToken) as ArrayList<TransactionDataDbModel?>
+    }
+
+
+
+    /*-----------------------------------------------Transaction-------------------------------------------------------------*/
 }

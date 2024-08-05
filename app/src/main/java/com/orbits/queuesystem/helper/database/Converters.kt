@@ -31,7 +31,7 @@ class Converters {
         @TypeConverter
         @JvmStatic
         fun fromCounterString(value: String): ArrayList<CounterDataDbModel> {
-            val listType = object : TypeToken<ArrayList<ServiceDataDbModel>>() {}.type
+            val listType = object : TypeToken<ArrayList<CounterDataDbModel>>() {}.type
             return Gson().fromJson(value, listType)
         }
 
@@ -44,6 +44,27 @@ class Converters {
 
 
         /*-----------------------------------------------Counter-------------------------------------------------------------*/
+
+
+
+        /*-----------------------------------------------Transaction-------------------------------------------------------------*/
+
+        @TypeConverter
+        @JvmStatic
+        fun fromTransactionString(value: String): ArrayList<TransactionDataDbModel> {
+            val listType = object : TypeToken<ArrayList<TransactionDataDbModel>>() {}.type
+            return Gson().fromJson(value, listType)
+        }
+
+        @TypeConverter
+        @JvmStatic
+        fun fromTransactionArrayList(list: ArrayList<TransactionDataDbModel>): String {
+            val gson = Gson()
+            return gson.toJson(list)
+        }
+
+
+        /*-----------------------------------------------Transaction-------------------------------------------------------------*/
 
     }
 }

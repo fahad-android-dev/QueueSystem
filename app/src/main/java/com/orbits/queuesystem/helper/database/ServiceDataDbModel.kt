@@ -20,5 +20,6 @@ data class ServiceDataDbModel(
     @ColumnInfo(name = "displayNameAr") var displayNameAr: Int?,
     @ColumnInfo(name = "serviceActive") val serviceActive: String?,
     @ColumnInfo(name = "tokenNo") val tokenNo: String?,
+    @ColumnInfo(name = "keypadToken") val keypadToken: String?,
     @ColumnInfo(name = "currentToken") var currentToken: String?,
 )

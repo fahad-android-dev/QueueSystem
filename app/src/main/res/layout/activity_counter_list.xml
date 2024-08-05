@@ -33,7 +33,7 @@
                     android:id="@+id/rvCounterList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/screen_margin"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
                     android:clipToPadding="false"
                     android:nestedScrollingEnabled="false"
                     android:orientation="vertical"
@@ -41,7 +41,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:ignore="RtlSymmetry"
                     tools:itemCount="5"
-                    tools:listitem="@layout/lv_item_service_list" />
+                    tools:listitem="@layout/lv_item_counter_list" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

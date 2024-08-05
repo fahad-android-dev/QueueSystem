@@ -21,9 +21,10 @@ object ServiceConfig {
             displayName = null,
             displayNameAr = null,
             serviceActive = null,
-            tokenNo = null,
-            currentToken = model?.currentToken,
-            isSelected = false
+            tokenNo = model?.tokenStart,
+            currentToken = model?.tokenStart,
+            isSelected = false,
+            keypadToken = null
         )
     }
 
@@ -44,7 +45,7 @@ object ServiceConfig {
                     nameAr =  a?.serviceNameAr,
                     tokenStart =  a?.tokenStart,
                     tokenEnd = a?.tokenEnd,
-                    currentToken = a?.currentToken
+                    tokenNo = a?.tokenStart
                 )
 
 

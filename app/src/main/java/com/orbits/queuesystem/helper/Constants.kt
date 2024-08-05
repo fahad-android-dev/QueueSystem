@@ -31,4 +31,12 @@ object Constants {
     const val TOOLBAR_ICON_ONE = "iconOne"
     const val TOOLBAR_ICON_TWO = "iconTwo"
 
+    const val TRANSACTION = "transaction"
+
+
+    const val KEYPAD_SERVICE_TYPE = "keypadServiceType"
+    const val KEYPAD_CONNECTION_TYPE = "keypadConnectionType"
+    const val TICKET_TYPE = "ticketType"
+    const val SERVICE_TYPE = "serviceType"
+
 }

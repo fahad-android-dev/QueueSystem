@@ -6,7 +6,8 @@ data class ServiceListDataModel(
     val name: String? = null,
     val nameAr: String? = null,
     val tokenStart: String? = null,
-    val currentToken: String? = null,
+    val tokenNo: String? = null,
+    val keypadToken: String? = null,
     val tokenEnd: String? = null,
     val image: String? = null,
 

@@ -45,6 +45,9 @@ interface CounterDao {
     @Query("DELETE FROM CounterDataDbModel")
     fun deleteCounterTable()
 
+    @Query("SELECT counterId FROM CounterDataDbModel WHERE serviceAssign = :serviceAssign")
+    fun getCounterIdByServiceId(serviceAssign: String): String?
+
 
     /*-----------------------------------------------Counter-------------------------------------------------------------*/
 }

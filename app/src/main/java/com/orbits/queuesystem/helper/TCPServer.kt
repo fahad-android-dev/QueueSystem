@@ -1,5 +1,6 @@
 package com.orbits.queuesystem.helper
 
+import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -9,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
+import com.orbits.queuesystem.helper.database.LocalDB.getCounterIdForService
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -21,7 +23,7 @@ import java.security.MessageDigest
 import java.util.Base64
 import kotlin.experimental.xor
 
-class TCPServer(private val port: Int, private val messageListener: MessageListener) {
+class TCPServer(private val port: Int, private val messageListener: MessageListener,private val context: Context) {
 
     private var serverSocket: ServerSocket? = null
     private val clients = HashMap<String, ClientHandler>()
@@ -47,10 +49,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                 println("Client connected: ${clientSocket?.inetAddress}")
                 // Handle client connection on a new thread
                 if (!clients.containsKey(clientHandler.clientId)) {
-                    clients[clientHandler.clientId] = clientHandler
                     Thread(clientHandler).start()
-                    addToConnectedClients(clientHandler.clientId)
-
                     // Add client to connectedClientsList
 
                 } else {
@@ -123,11 +122,13 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
         private var inStream: BufferedReader? = null
         var outStream: OutputStream? = null
         var isWebSocket = false
-        val clientId = generateCustomId() // Generate a unique client identifier
+        var clientId = clientSocket?.inetAddress?.hostAddress
+        private var counterId : String? = null
+        private var ticketId : String? = null
 
         init {
             try {
-                WebSocketManager.addClientHandler(clientId, this)
+                WebSocketManager.addClientHandler(clientId ?: "", this)
                 inStream = BufferedReader(InputStreamReader(clientSocket?.getInputStream()))
                 outStream = clientSocket?.getOutputStream()
             } catch (e: Exception) {
@@ -152,14 +153,49 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                         try {
                             println("Received WebSocket jsonObject from client $clientId: $message")
                             val jsonObject = Gson().fromJson(message, JsonObject::class.java)
-                            messageListener.onMessageJsonReceived(jsonObject)
-                            messageListener.onClientConnected(clientSocket,arrListClients)
-
-                            /*if (!jsonObject.isJsonNull){
-                                if (jsonObject.get("amount").asString.isNotEmpty()){
-                                    handleMessage(clientId,"Payment Initiated")
+                            println("here is counter id 111 $counterId")
+                            if (jsonObject.has(Constants.KEYPAD_SERVICE_TYPE)){
+                                if (counterId == null){
+                                    val serviceId = jsonObject.get(Constants.KEYPAD_SERVICE_TYPE).asString
+                                    counterId = context.getCounterIdForService(serviceId) // Fetch from database
+                                    println("here is counter id $counterId")
+                                    if (!counterId.isNullOrEmpty()) {
+                                        // Update client ID in WebSocketManager
+                                        WebSocketManager.updateClientId(clientId ?: "", counterId ?: "")
+                                        clientId = counterId
+                                        clients[clientId ?: ""] = this
+                                        addToConnectedClients(clientId ?: "")
+                                        messageListener.onClientConnected(clientSocket,arrListClients)
+                                        messageListener.onMessageJsonReceived(jsonObject)
+                                    }
                                 }
-                            }*/
+                                else {
+                                    messageListener.onClientConnected(clientSocket,arrListClients)
+                                    messageListener.onMessageJsonReceived(jsonObject)
+                                }
+                            }else if (jsonObject.has(Constants.TICKET_TYPE)){
+                                if (ticketId == null){
+                                    ticketId = jsonObject.get("ticketId").asString
+                                    println("here is ticketId id $ticketId")
+                                    if (!ticketId.isNullOrEmpty()) {
+                                        // Update client ID in WebSocketManager
+                                        WebSocketManager.updateClientId(clientId ?: "", ticketId ?: "")
+                                        clientId = ticketId
+                                        clients[clientId ?: ""] = this
+                                        addToConnectedClients(clientId ?: "")
+                                        messageListener.onClientConnected(clientSocket,arrListClients)
+                                        messageListener.onMessageJsonReceived(jsonObject)
+                                    }
+                                }else {
+                                    messageListener.onClientConnected(clientSocket,arrListClients)
+                                    messageListener.onMessageJsonReceived(jsonObject)
+                                }
+                            }
+                            else {
+                                messageListener.onClientConnected(clientSocket,arrListClients)
+                                messageListener.onMessageJsonReceived(jsonObject)
+                            }
+
 
                         } catch (e: JsonSyntaxException) {
                             println("Invalid JSON format received from client $clientId: $message")
@@ -198,7 +234,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                     outStream?.close()
                     clientSocket?.close()
                     clients.remove(clientId)
-                    removeFromConnectedClients(clientId)
+                    removeFromConnectedClients(clientId ?: "")
                     println("Client disconnected: $clientId")
                     messageListener.onClientDisconnected()
                 } catch (e: Exception) {
@@ -380,6 +416,13 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
 
         fun getClientHandler(clientId: String): ClientHandler? {
             return clientHandlers[clientId]
+        }
+
+        fun updateClientId(oldClientId: String, newClientId: String) {
+            val handler = clientHandlers.remove(oldClientId)
+            if (handler != null) {
+                clientHandlers[newClientId] = handler
+            }
         }
 
         fun removeClientHandler(clientId: String) {

@@ -67,9 +67,8 @@ object Dialogs {
                         nameAr = binding.edtServiceNameAr.text.toString(),
                         tokenStart = binding.edtTokenStart.text.toString(),
                         tokenEnd = binding.edtTokenEnd.text.toString(),
-                        currentToken = binding.edtTokenStart.text.toString(),
+                        tokenNo = binding.edtTokenStart.text.toString(),
                     )
-
                 )
             }
             addServiceDialog?.show()
