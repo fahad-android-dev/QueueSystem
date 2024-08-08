@@ -17,9 +17,12 @@ import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.LayoutAddCounterDialogBinding
 import com.orbits.queuesystem.databinding.LayoutAddServiceDialogBinding
 import com.orbits.queuesystem.databinding.LayoutCustomAlertBinding
+import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.Global.getDimension
 import com.orbits.queuesystem.helper.Global.getTypeFace
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
+import com.orbits.queuesystem.helper.database.LocalDB.getCounterIdForService
+import com.orbits.queuesystem.helper.database.LocalDB.getServiceIdFromType
 import com.orbits.queuesystem.mvvm.counters.model.CounterListDataModel
 import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
 
@@ -83,6 +86,7 @@ object Dialogs {
         alertDialogInterface: AlertDialogInterface,
     ) {
         try {
+            var serviceId = ""
             addCounterDialog = Dialog(activity)
             addCounterDialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
             addCounterDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -114,6 +118,7 @@ object Dialogs {
                     activity.getAllServiceFromDB()?.forEach { it?.isSelected = false }
                     activity.getAllServiceFromDB()?.get(value)?.isSelected = true
                     binding.edtCounterType.setText(activity.getAllServiceFromDB()?.get(value)?.serviceName)
+                    serviceId = activity.getAllServiceFromDB()?.get(value)?.id.asString()
                 }
             }
 
@@ -125,10 +130,9 @@ object Dialogs {
                         counterId = binding.edtCounterId.text.toString(),
                         name = binding.edtCounterName.text.toString(),
                         nameAr = binding.edtCounterNameAr.text.toString(),
-                        counterType = binding.edtCounterType.text.toString()
-
+                        counterType = binding.edtCounterType.text.toString(),
+                        serviceId = serviceId
                     )
-
                 )
             }
             addCounterDialog?.show()

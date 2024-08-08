@@ -59,18 +59,6 @@ object LocalDB {
         return db?.getKeypadServiceTokenInDb(entityId) ?: 0
     }
 
-
-    /*fun Context.updateServiceInDb(
-        serviceId: String? = "0",
-    ): ArrayList<ServiceDataDbModel?> {
-        ("Here i am update cart qty   $serviceId").printLog()
-        val db = AppDatabase.getAppDatabase(this).cartDao()
-        if (db?.isServicePresent(serviceId) == true) {
-            db.updateServiceOffline(serviceId, services.entityID)
-        }
-        return db?.getAllService() as ArrayList<ServiceDataDbModel?>
-    }*/
-
     fun Context.deleteServiceInDb(productEntityID: String? = "0"): ArrayList<ServiceDataDbModel?>? {
         ("Here i am delete cart id   $productEntityID").printLog()
         val db = AppDatabase.getAppDatabase(this).mainDao()
@@ -82,10 +70,12 @@ object LocalDB {
         val db = AppDatabase.getAppDatabase(this).mainDao()
         db?.updateServiceToken(serviceId, newToken)
     }
-    fun Context.addKeypadServiceTokenToDB(serviceId: String, newToken: Int) {
+
+    fun Context.getServiceIdFromType(serviceName: String): String {
         val db = AppDatabase.getAppDatabase(this).mainDao()
-        db?.updateKeypadServiceToken(serviceId, newToken)
+        return db?.getServiceIdByServiceAssign(serviceName) ?: ""
     }
+
 
 
     /*-----------------------------------------------Service-------------------------------------------------------------*/

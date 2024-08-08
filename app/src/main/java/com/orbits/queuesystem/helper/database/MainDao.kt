@@ -57,6 +57,9 @@ interface MainDao {
     @Query("UPDATE ServiceDataDbModel SET keypadToken = :keypadToken WHERE entityID = :entityID")
     fun updateKeypadServiceToken(entityID: String, keypadToken: Int)
 
+    @Query("SELECT serviceId FROM ServiceDataDbModel WHERE serviceName = :serviceAssign LIMIT 1 ")
+    fun getServiceIdByServiceAssign(serviceAssign: String): String?
+
 
 
     /*-----------------------------------------------Service-------------------------------------------------------------*/

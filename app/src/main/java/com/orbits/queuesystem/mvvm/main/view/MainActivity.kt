@@ -36,6 +36,7 @@ import com.orbits.queuesystem.helper.database.LocalDB.getAllTransactionFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithStatus
 import com.orbits.queuesystem.helper.database.LocalDB.getCounterIdForService
 import com.orbits.queuesystem.helper.database.LocalDB.getCurrentServiceToken
+import com.orbits.queuesystem.helper.database.LocalDB.getServiceIdFromType
 import com.orbits.queuesystem.helper.database.LocalDB.isCounterAssigned
 import com.orbits.queuesystem.mvvm.counters.view.CounterListActivity
 import com.orbits.queuesystem.mvvm.main.adapter.ServiceListAdapter
@@ -149,18 +150,18 @@ class MainActivity : BaseActivity(), MessageListener {
                 println("Received json in activity: $json")
                 println("Received all Clients: $arrListClients")
                 arrListClients.forEach {
-                    if (it == "101") {
+                    if (it == Constants.DISPENSER_CLIENT_ID) {
                         println("here is 111")
                         if (json.has(Constants.TICKET_TYPE)) {
                             manageTicketData(json)
                         }
                     } else {
-                        if (json.has(Constants.KEYPAD_SERVICE_TYPE)) {
-                            manageKeypadData(json)
-                        }else if (json.has(Constants.CONNECTION)){
+                         if (json.has(Constants.CONNECTION)){
                             println("here is 2222")
                             sendMessageToWebSocketClient(it ?: "", createJsonData())
-                        }
+                        }else {
+                             manageKeypadData(json)
+                         }
                     }
                 }
 
@@ -169,6 +170,10 @@ class MainActivity : BaseActivity(), MessageListener {
             }
 
         }
+    }
+
+    private fun manageCounterDisplayData(){
+        println("THIS IS COUNTER DISPLAY MODULE ::")
     }
 
     private fun manageKeypadData(json: JsonObject){
@@ -245,7 +250,7 @@ class MainActivity : BaseActivity(), MessageListener {
                 addTransactionInDB(dbModel)
                 println("here is transaction id ${getAllTransactionFromDB()}")
                 sendMessageToWebSocketClient(
-                    "101",
+                    Constants.DISPENSER_CLIENT_ID,
                     createServiceJsonDataWithModel(serviceId, dbModel)
                 )
                 addServiceTokenToDB(

@@ -154,53 +154,55 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                             println("Received WebSocket jsonObject from client $clientId: $message")
                             val jsonObject = Gson().fromJson(message, JsonObject::class.java)
                             println("here is counter id 111 $counterId")
-                            if (jsonObject.has(Constants.KEYPAD_SERVICE_TYPE)){
-                                if (counterId == null){
-                                    val serviceId = jsonObject.get(Constants.KEYPAD_SERVICE_TYPE).asString
-                                    counterId = context.getCounterIdForService(serviceId) // Fetch from database
-                                    println("here is counter id $counterId")
-                                    if (!counterId.isNullOrEmpty()) {
-                                        // Update client ID in WebSocketManager
-                                        WebSocketManager.updateClientId(clientId ?: "", counterId ?: "")
-                                        clientId = counterId
-                                        clients[clientId ?: ""] = this
-                                        addToConnectedClients(clientId ?: "")
+                            when {
+                                jsonObject.has(Constants.KEYPAD_COUNTER_TYPE) -> {
+                                    if (counterId == null){
+                                        val counterType = jsonObject.get(Constants.KEYPAD_COUNTER_TYPE).asString
+                                        counterId = context.getCounterIdForService(counterType) // Fetch from database
+                                        println("here is counter id $counterId")
+                                        if (!counterId.isNullOrEmpty()) {
+                                            // Update client ID in WebSocketManager
+                                            WebSocketManager.updateClientId(clientId ?: "", counterId ?: "")
+                                            clientId = counterId
+                                            clients[clientId ?: ""] = this
+                                            addToConnectedClients(clientId ?: "")
+                                            messageListener.onClientConnected(clientSocket,arrListClients)
+                                            messageListener.onMessageJsonReceived(jsonObject)
+                                        }
+                                    } else {
                                         messageListener.onClientConnected(clientSocket,arrListClients)
                                         messageListener.onMessageJsonReceived(jsonObject)
                                     }
                                 }
-                                else {
-                                    messageListener.onClientConnected(clientSocket,arrListClients)
-                                    messageListener.onMessageJsonReceived(jsonObject)
-                                }
-                            }else if (jsonObject.has(Constants.TICKET_TYPE)){
-                                if (ticketId == null){
-                                    ticketId = jsonObject.get("ticketId").asString
-                                    println("here is ticketId id $ticketId")
-                                    if (!ticketId.isNullOrEmpty()) {
-                                        // Update client ID in WebSocketManager
-                                        WebSocketManager.updateClientId(clientId ?: "", ticketId ?: "")
-                                        clientId = ticketId
-                                        clients[clientId ?: ""] = this
-                                        addToConnectedClients(clientId ?: "")
+                                jsonObject.has(Constants.TICKET_TYPE) -> {
+                                    if (ticketId == null){
+                                        ticketId = jsonObject.get("ticketId").asString
+                                        println("here is ticketId id $ticketId")
+                                        if (!ticketId.isNullOrEmpty()) {
+                                            // Update client ID in WebSocketManager
+                                            WebSocketManager.updateClientId(clientId ?: "", ticketId ?: "")
+                                            clientId = ticketId
+                                            clients[clientId ?: ""] = this
+                                            addToConnectedClients(clientId ?: "")
+                                            messageListener.onClientConnected(clientSocket,arrListClients)
+                                            messageListener.onMessageJsonReceived(jsonObject)
+                                        }
+                                    }else {
                                         messageListener.onClientConnected(clientSocket,arrListClients)
                                         messageListener.onMessageJsonReceived(jsonObject)
                                     }
-                                }else {
+                                }
+                                jsonObject.has(Constants.CONNECTION) -> {
+                                    clients[clientId ?: ""] = this
+                                    addToConnectedClients(clientId ?: "")
                                     messageListener.onClientConnected(clientSocket,arrListClients)
                                     messageListener.onMessageJsonReceived(jsonObject)
                                 }
-                            }
-                            else if (jsonObject.has(Constants.CONNECTION)){
-                                clients[clientId ?: ""] = this
-                                addToConnectedClients(clientId ?: "")
-                                messageListener.onClientConnected(clientSocket,arrListClients)
-                                messageListener.onMessageJsonReceived(jsonObject)
-                            }
-                            else {
-                                addToConnectedClients(clientId ?: "")
-                                messageListener.onClientConnected(clientSocket,arrListClients)
-                                messageListener.onMessageJsonReceived(jsonObject)
+                                else -> {
+                                    clients[clientId ?: ""] = this
+                                    messageListener.onClientConnected(clientSocket,arrListClients)
+                                    messageListener.onMessageJsonReceived(jsonObject)
+                                }
                             }
 
 

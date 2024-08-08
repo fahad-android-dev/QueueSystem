@@ -23,6 +23,7 @@ object CounterConfig {
             serviceAssignAr = model?.counterType,
             counterDisplayName = null,
             counterActive = null,
+            serviceId = model?.serviceId
 
 
         )
@@ -44,6 +45,7 @@ object CounterConfig {
                     name = a?.counterName,
                     nameAr = a?.counterNameAr,
                     counterType = a?.counterType,
+                    serviceId = a?.serviceId
 
                 )
 

@@ -41,6 +41,35 @@ object JsonConfig {
     }
 
 
+    fun Context.createAllJsonData(): JsonObject {
+        val itemsArray = JsonArray().apply {
+            val services = getAllServiceFromDB()
+            services?.forEach { service ->
+                add(service?.toJsonObject())
+            }
+        }
+
+        val counterArray = JsonArray().apply {
+            val counters = getAllCounterFromDB()
+            counters?.forEach { counter ->
+                add(counter?.toCounterJsonObject())
+            }
+        }
+
+        val combinedArray = JsonArray()
+
+        itemsArray.forEach { combinedArray.add(it) }
+
+        // Add all elements from counterArray to combinedArray
+        counterArray.forEach { combinedArray.add(it) }
+
+
+        return JsonObject().apply {
+            add("items", combinedArray)
+        }
+    }
+
+
      fun Context.createServiceJsonData(serviceId : String): JsonObject {
         println("here is all services ${getAllServiceFromDB()}")
         val model = getAllServiceFromDB()?.find { it?.entityID == serviceId }
@@ -116,6 +145,7 @@ object JsonConfig {
             addProperty("name", counterName)
             addProperty("counterType", counterType)
             addProperty("counterId", counterId)
+            addProperty("serviceId", serviceId)
         }
     }
 

@@ -33,8 +33,11 @@ object Constants {
 
     const val TRANSACTION = "transaction"
 
+    const val DISPENSER_CLIENT_ID = "007"
 
-    const val KEYPAD_SERVICE_TYPE = "keypadServiceType"
+
+    const val KEYPAD_COUNTER_TYPE = "keypadCounterType"
+    const val COUNTER_DISPLAY_TYPE = "counterDisplayType"
     const val KEYPAD_CONNECTION_TYPE = "keypadConnectionType"
     const val TICKET_TYPE = "ticketType"
     const val SERVICE_TYPE = "serviceType"

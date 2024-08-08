@@ -105,6 +105,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtCounterName" />
 
+            <TextView
+                android:id="@+id/txtServiceId"
+                style="@style/TextStyleStartSemiBold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:text="afdshfshfv"
+                android:textColor="@color/txt_color_primary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtServiceType" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

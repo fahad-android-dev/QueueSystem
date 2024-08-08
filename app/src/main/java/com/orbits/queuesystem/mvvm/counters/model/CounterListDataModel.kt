@@ -6,4 +6,5 @@ data class CounterListDataModel(
     val name: String? = null,
     val nameAr: String? = null,
     val counterType: String? = null,
+    val serviceId: String? = null,
 )

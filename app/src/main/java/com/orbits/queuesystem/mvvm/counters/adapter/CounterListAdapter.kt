@@ -35,6 +35,7 @@ class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.MyViewHolder>
         holder.binding.txtCounterId.text = "Counter Id : ${a?.id}"
         holder.binding.txtCounterName.text = "Counter Name : ${a?.name}"
         holder.binding.txtServiceType.text = "Counter Type : ${a?.counterType}"
+        holder.binding.txtServiceId.text = "Service Id : ${a?.serviceId}"
 
         holder.binding.swipeLayout.swipeGestureListener = object : SwipeGestureListener {
             override fun onSwipedLeft(swipeActionView: SwipeActionView): Boolean {
