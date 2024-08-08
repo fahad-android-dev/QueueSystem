@@ -42,5 +42,6 @@ object Constants {
     const val TICKET_TYPE = "ticketType"
     const val SERVICE_TYPE = "serviceType"
     const val CONNECTION = "connection"
+    const val DISPLAY_ID = "displayId"
 
 }

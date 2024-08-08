@@ -21,6 +21,7 @@ import java.net.ServerSocket
 import java.net.Socket
 import java.security.MessageDigest
 import java.util.Base64
+import java.util.UUID
 import kotlin.experimental.xor
 
 class TCPServer(private val port: Int, private val messageListener: MessageListener,private val context: Context) {
@@ -122,7 +123,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
         private var inStream: BufferedReader? = null
         var outStream: OutputStream? = null
         var isWebSocket = false
-        var clientId = clientSocket?.inetAddress?.hostAddress
+        var clientId = UUID.randomUUID().toString()
         private var counterId : String? = null
         private var ticketId : String? = null
 
@@ -156,22 +157,32 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                             println("here is counter id 111 $counterId")
                             when {
                                 jsonObject.has(Constants.KEYPAD_COUNTER_TYPE) -> {
-                                    if (counterId == null){
-                                        val counterType = jsonObject.get(Constants.KEYPAD_COUNTER_TYPE).asString
-                                        counterId = context.getCounterIdForService(counterType) // Fetch from database
-                                        println("here is counter id $counterId")
-                                        if (!counterId.isNullOrEmpty()) {
-                                            // Update client ID in WebSocketManager
-                                            WebSocketManager.updateClientId(clientId ?: "", counterId ?: "")
-                                            clientId = counterId
-                                            clients[clientId ?: ""] = this
-                                            addToConnectedClients(clientId ?: "")
+                                    if (jsonObject.has("displayId")){
+                                        val displayId = jsonObject.get("displayId").asString
+                                        println("here is display id $displayId")
+                                        if (!displayId.isNullOrEmpty()) {
+                                            WebSocketManager.updateClientId(clientId, displayId)
+                                            clientId = displayId
+                                            clients[clientId] = this
+                                            addToConnectedClients(clientId)
                                             messageListener.onClientConnected(clientSocket,arrListClients)
                                             messageListener.onMessageJsonReceived(jsonObject)
                                         }
-                                    } else {
-                                        messageListener.onClientConnected(clientSocket,arrListClients)
-                                        messageListener.onMessageJsonReceived(jsonObject)
+                                    }else {
+                                        if (counterId == null){
+                                            val counterType = jsonObject.get(Constants.KEYPAD_COUNTER_TYPE).asString
+                                            counterId = context.getCounterIdForService(counterType) // Fetch from database
+                                            println("here is counter id $counterId")
+                                            if (!counterId.isNullOrEmpty()) {
+                                                // Update client ID in WebSocketManager
+                                                WebSocketManager.updateClientId(clientId ?: "", counterId ?: "")
+                                                clientId = counterId ?: ""
+                                                clients[clientId ?: ""] = this
+                                                addToConnectedClients(clientId ?: "")
+                                                messageListener.onClientConnected(clientSocket,arrListClients)
+                                                messageListener.onMessageJsonReceived(jsonObject)
+                                            }
+                                        }
                                     }
                                 }
                                 jsonObject.has(Constants.TICKET_TYPE) -> {
@@ -181,7 +192,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         if (!ticketId.isNullOrEmpty()) {
                                             // Update client ID in WebSocketManager
                                             WebSocketManager.updateClientId(clientId ?: "", ticketId ?: "")
-                                            clientId = ticketId
+                                            clientId = ticketId ?: ""
                                             clients[clientId ?: ""] = this
                                             addToConnectedClients(clientId ?: "")
                                             messageListener.onClientConnected(clientSocket,arrListClients)
@@ -193,6 +204,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                     }
                                 }
                                 jsonObject.has(Constants.CONNECTION) -> {
+                                    println("here is connection received")
                                     clients[clientId ?: ""] = this
                                     addToConnectedClients(clientId ?: "")
                                     messageListener.onClientConnected(clientSocket,arrListClients)

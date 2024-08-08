@@ -29,8 +29,8 @@ interface TransactionDao {
     @Query("SELECT * FROM TransactionDataDbModel")
     fun getAllTransaction(): List<TransactionDataDbModel?>
 
-    @Query("SELECT * FROM TransactionDataDbModel WHERE status = 0 ORDER BY token LIMIT 1")
-    fun getTransactionByIssuedStatus(): TransactionDataDbModel?
+    @Query("SELECT * FROM TransactionDataDbModel WHERE status = 0 AND serviceId = :serviceId ORDER BY token LIMIT 1")
+    fun getTransactionByIssuedStatus(serviceId:String): TransactionDataDbModel?
 
 
     @Query("UPDATE TransactionDataDbModel SET token = :tokenNo WHERE entityID = :entityID")

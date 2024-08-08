@@ -13,10 +13,7 @@ object LocalDB {
 
     /*-----------------------------------------------Service-------------------------------------------------------------*/
 
-    fun Context.isServicePresentInApp(serviceID: String?) : Boolean {
-        val db = AppDatabase.getAppDatabase(this).mainDao()
-        return db?.isServicePresent(serviceID) ?: false
-    }
+
 
     fun Context.addServiceInDB(services: ServiceDataDbModel): ArrayList<ServiceDataDbModel?> {
         val db = AppDatabase.getAppDatabase(this).mainDao()
@@ -40,15 +37,15 @@ object LocalDB {
         return services?.find { it?.id == serviceId }
     }
 
-    fun Context.deleteServiceTableFromDB() {
-        val db = AppDatabase.getAppDatabase(this).mainDao()
-        return db?.deleteServiceTable() ?: Unit
-    }
-
     fun Context.getStartServiceToken(entityId: String): Int {
         val db = AppDatabase.getAppDatabase(this).mainDao()
         return db?.getStartServiceTokenInDb(entityId) ?: 0
     }
+    fun Context.getLastTokenInService(serviceID: String?) : Int {
+        val db = AppDatabase.getAppDatabase(this).mainDao()
+        return db?.getTokenEnd(serviceID ?: "") ?: 0
+    }
+
     fun Context.getCurrentServiceToken(entityId: String): Int {
         val db = AppDatabase.getAppDatabase(this).mainDao()
         return db?.getCurrentServiceTokenInDb(entityId) ?: 0
@@ -71,10 +68,6 @@ object LocalDB {
         db?.updateServiceToken(serviceId, newToken)
     }
 
-    fun Context.getServiceIdFromType(serviceName: String): String {
-        val db = AppDatabase.getAppDatabase(this).mainDao()
-        return db?.getServiceIdByServiceAssign(serviceName) ?: ""
-    }
 
 
 
@@ -159,9 +152,9 @@ object LocalDB {
         return db?.getAllTransaction() as ArrayList<TransactionDataDbModel?>?
     }
 
-    fun Context.getTransactionFromDbWithStatus(): TransactionDataDbModel? {
+    fun Context.getTransactionFromDbWithStatus(serviceId: String?): TransactionDataDbModel? {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
-        return db?.getTransactionByIssuedStatus()
+        return db?.getTransactionByIssuedStatus(serviceId ?: "")
     }
 
     fun Context.getTransactionByToken(token: String): TransactionDataDbModel? {

@@ -12,9 +12,6 @@ interface MainDao {
     @Insert
     fun addService(vararg services: ServiceDataDbModel)
 
-    /*@Query("UPDATE ServiceDataDbModel SET quantity =:strQty WHERE entityID = :productEntityID")
-    fun updateProductsInCart(strQty: Int?, productEntityID: String?)
-*/
     @Query(
         "UPDATE ServiceDataDbModel SET serviceId =:serviceId,entityId =:serviceEntityID"
     )
@@ -59,6 +56,9 @@ interface MainDao {
 
     @Query("SELECT serviceId FROM ServiceDataDbModel WHERE serviceName = :serviceAssign LIMIT 1 ")
     fun getServiceIdByServiceAssign(serviceAssign: String): String?
+
+    @Query("SELECT DISTINCT tokenEnd FROM ServiceDataDbModel WHERE serviceId IN (:serviceEntityID)")
+    fun getTokenEnd(serviceEntityID: String?): Int
 
 
 
