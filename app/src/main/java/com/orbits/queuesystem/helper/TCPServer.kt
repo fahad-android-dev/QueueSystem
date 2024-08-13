@@ -169,17 +169,23 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                             messageListener.onMessageJsonReceived(jsonObject)
                                         }
                                     }else {
-                                        val counterType = jsonObject.get(Constants.KEYPAD_COUNTER_TYPE).asString
-                                        counterId = context.getCounterIdForService(counterType) // Fetch from database
-                                        println("here is counter id $counterId")
-                                        if (!counterId.isNullOrEmpty()) {
-                                            // Update client ID in WebSocketManager
-                                            WebSocketManager.updateClientId(clientId ?: "", counterId ?: "")
-                                            clientId = counterId ?: ""
-                                            clients[clientId ?: ""] = this
-                                            addToConnectedClients(clientId ?: "")
+                                        if (jsonObject.has("transaction")){
+                                            println("here is msg with status")
                                             messageListener.onClientConnected(clientSocket,arrListClients)
                                             messageListener.onMessageJsonReceived(jsonObject)
+                                        }else {
+                                            println("here is msg without status")
+                                            counterId = jsonObject.get("counterId").asString // Fetch from database
+                                            println("here is counter id $counterId")
+                                            if (!counterId.isNullOrEmpty()) {
+                                                // Update client ID in WebSocketManager
+                                                WebSocketManager.updateClientId(clientId ?: "", counterId ?: "")
+                                                clientId = counterId ?: ""
+                                                clients[clientId ?: ""] = this
+                                                addToConnectedClients(clientId ?: "")
+                                                messageListener.onClientConnected(clientSocket,arrListClients)
+                                                messageListener.onMessageJsonReceived(jsonObject)
+                                            }
                                         }
                                     }
                                 }

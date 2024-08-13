@@ -12,14 +12,12 @@ import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.ActivityMainBinding
 import com.orbits.queuesystem.helper.AlertDialogInterface
 import com.orbits.queuesystem.helper.BaseActivity
-import com.orbits.queuesystem.helper.ClientDataModel
 import com.orbits.queuesystem.helper.CommonInterfaceClickEvent
 import com.orbits.queuesystem.helper.Constants
 import com.orbits.queuesystem.helper.Dialogs
 import com.orbits.queuesystem.helper.Extensions.asInt
 import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.JsonConfig.createJsonData
-import com.orbits.queuesystem.helper.JsonConfig.createServiceJsonData
 import com.orbits.queuesystem.helper.JsonConfig.createServiceJsonDataWithModel
 import com.orbits.queuesystem.helper.JsonConfig.createServiceJsonDataWithTransaction
 import com.orbits.queuesystem.helper.MessageListener
@@ -37,7 +35,6 @@ import com.orbits.queuesystem.helper.database.LocalDB.getAllTransactionFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithStatus
 import com.orbits.queuesystem.helper.database.LocalDB.getCounterIdForService
 import com.orbits.queuesystem.helper.database.LocalDB.getCurrentServiceToken
-import com.orbits.queuesystem.helper.database.LocalDB.getLastTokenInService
 import com.orbits.queuesystem.helper.database.LocalDB.getServiceById
 import com.orbits.queuesystem.helper.database.LocalDB.isCounterAssigned
 import com.orbits.queuesystem.mvvm.counters.view.CounterListActivity
@@ -47,6 +44,9 @@ import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
 import com.orbits.queuesystem.mvvm.main.model.TransactionListDataModel
 import java.io.OutputStream
 import java.net.Socket
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : BaseActivity(), MessageListener {
     private lateinit var binding: ActivityMainBinding
@@ -152,25 +152,40 @@ class MainActivity : BaseActivity(), MessageListener {
             if (!json.isJsonNull) {
 
                 println("Received json in activity: $json")
-                println("Received all Clients: $arrListClients")
-                arrListClients.forEach {
+                if (json.has(Constants.TICKET_TYPE)){
+                    arrListClients.forEach {
+                        if (it == Constants.DISPENSER_CLIENT_ID){
+                            manageTicketData(json)
+                        }
+                    }
+                }else if(json.has(Constants.CONNECTION)){
+                    arrListClients.forEach {
+                        sendMessageToWebSocketClient(it ?: "", createJsonData())
+                    }
+                }else if (json.has(Constants.DISPLAY_ID)){
+                    manageCounterDisplayData(json)
+                }else {
+                    manageKeypadData(json)
+                }
+
+                /*arrListClients.forEach {
                     if (it == Constants.DISPENSER_CLIENT_ID) {
                         println("here is 111")
                         if (json.has(Constants.TICKET_TYPE)) {
-                            manageTicketData(json)
+
                         }
                     } else {
                          if (json.has(Constants.CONNECTION)){
                             println("here is 2222")
-                            sendMessageToWebSocketClient(it ?: "", createJsonData())
+
                         }else if (json.has(Constants.DISPLAY_ID)){
-                             manageCounterDisplayData(json)
+
                          }
                          else {
-                             manageKeypadData(json)
+
                          }
                     }
-                }
+                }*/
 
             } else {
                 socket.close()
@@ -197,8 +212,8 @@ class MainActivity : BaseActivity(), MessageListener {
                     ticketToken = model?.get("ticketToken")?.asString ?: "",
                     keypadToken = model?.get("keypadToken")?.asString ?: "",
                     issueTime = null,
-                    startTime = null,
-                    endTime = null,
+                    startKeypadTime = null,
+                    endKeypadTime = null,
                     status = "1"
 
                 )
@@ -241,6 +256,7 @@ class MainActivity : BaseActivity(), MessageListener {
             serviceId = model?.get("serviceId")?.asString ?: ""
             serviceType = model?.get("serviceType")?.asString ?: ""
             println("here is service id $serviceId")
+            println("here is startKeypadTime ${ model?.get("startKeypadTime")?.asString ?: ""}")
             if (serviceId.isNotEmpty() && isCounterAssigned(serviceType)) {
                 val updateModel = TransactionListDataModel(
                     id = model?.get("id")?.asString ?: "",
@@ -251,21 +267,21 @@ class MainActivity : BaseActivity(), MessageListener {
                     token = model?.get("token")?.asString ?: "",
                     ticketToken = model?.get("ticketToken")?.asString ?: "",
                     keypadToken = model?.get("keypadToken")?.asString ?: "",
-                    issueTime = null,
-                    startTime = null,
-                    endTime = null,
-                    status = "1"
+                    issueTime = model?.get("issueTime")?.asString ?: "",
+                    startKeypadTime = model?.get("startKeypadTime")?.asString ?: "",
+                    endKeypadTime = model?.get("endKeypadTime")?.asString ?: "",
+                    status = model?.get("status")?.asString ?: ""
 
                 )
-                val dbModel =
-                    parseInTransactionDbModel(updateModel, updateModel.id ?: "")
+                val dbModel = parseInTransactionDbModel(updateModel, updateModel.id ?: "")
+                println("here is dbmodel with time $dbModel")
                 addTransactionInDB(dbModel)
 
                 println("here is transactions 0000 ${getAllTransactionFromDB()}")
                 println("here is transactions with status ${ getTransactionFromDbWithStatus(serviceId)}")
 
                 sendMessageToWebSocketClient(
-                    model?.get("serviceId")?.asString ?: "",
+                    json.get("counterId")?.asString ?: "",
                     createServiceJsonDataWithTransaction(
                         getTransactionFromDbWithStatus(serviceId)
                     )
@@ -287,9 +303,11 @@ class MainActivity : BaseActivity(), MessageListener {
                 }
             }
 
-        } else {
+        }
+        else {
+            println("here is to check for counter 2")
             sendMessageToWebSocketClient(
-                json.get("serviceId")?.asString ?: "",
+                json.get("counterId")?.asString ?: "",
                 createServiceJsonDataWithTransaction(
                     getTransactionFromDbWithStatus(json.get("serviceId")?.asString ?: "")
                 )
@@ -316,9 +334,9 @@ class MainActivity : BaseActivity(), MessageListener {
                     token = getCurrentServiceToken(serviceId).asString(),
                     ticketToken = getCurrentServiceToken(serviceId).asString(),
                     keypadToken = getCurrentServiceToken(serviceId).asString(),
-                    issueTime = null,
-                    startTime = null,
-                    endTime = null,
+                    issueTime = getCurrentTimeFormatted(),
+                    startKeypadTime = null,
+                    endKeypadTime = null,
                     status = "0"
 
                 )
@@ -369,7 +387,6 @@ class MainActivity : BaseActivity(), MessageListener {
                 }
                 println("Connected to server")
             } catch (e: Exception) {
-
                 e.printStackTrace()
             }
         }.start()
@@ -380,16 +397,28 @@ class MainActivity : BaseActivity(), MessageListener {
     }
 
     private fun sendMessageToWebSocketClient(clientId: String, jsonObject: JsonObject) {
-        val clientHandler = TCPServer.WebSocketManager.getClientHandler(clientId)
-        if (clientHandler != null && clientHandler.isWebSocket) {
-            Thread {
-                val jsonMessage = gson.toJson(jsonObject)
-                println("here is new 222 $clientId")
-                clientHandler.sendMessageToClient(clientId, jsonMessage)
-            }.start()
-            // Optionally handle success or error
-        } else {
-            // Handle case where clientHandler is not found or not a WebSocket client
+        try {
+            val clientHandler = TCPServer.WebSocketManager.getClientHandler(clientId)
+            if (clientHandler != null && clientHandler.isWebSocket) {
+                Thread {
+                    val jsonMessage = gson.toJson(jsonObject)
+                    println("here is new 222 $clientId")
+                    clientHandler.sendMessageToClient(clientId, jsonMessage)
+                }.start()
+                // Optionally handle success or error
+            } else {
+                // Handle case where clientHandler is not found or not a WebSocket client
+            }
+        } catch (e: Exception) {
+           e.printStackTrace()
         }
+    }
+
+    fun getCurrentTimeFormatted(): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+
+        val currentTime = Date()
+
+        return dateFormat.format(currentTime)
     }
 }

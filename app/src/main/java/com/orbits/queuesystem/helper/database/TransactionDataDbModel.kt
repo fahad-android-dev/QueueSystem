@@ -19,7 +19,7 @@ data class TransactionDataDbModel(
     @ColumnInfo(name = "ticketToken") val ticketToken: String?,
     @ColumnInfo(name = "keypadToken") val keypadToken: String?,
     @ColumnInfo(name = "issueTime") val issueTime: String?,
-    @ColumnInfo(name = "startTime") val startTime: String?,
-    @ColumnInfo(name = "endTime") val endTime: String?,
+    @ColumnInfo(name = "startKeypadTime") val startKeypadTime: String?,
+    @ColumnInfo(name = "endKeypadTime") val endKeypadTime: String?,
     @ColumnInfo(name = "status") val status: String?,
 )

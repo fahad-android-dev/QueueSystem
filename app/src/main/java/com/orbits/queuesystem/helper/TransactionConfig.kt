@@ -3,9 +3,7 @@ package com.orbits.queuesystem.helper
 import android.content.Context
 import com.orbits.queuesystem.helper.Extensions.asInt
 import com.orbits.queuesystem.helper.Extensions.asString
-import com.orbits.queuesystem.helper.database.ServiceDataDbModel
 import com.orbits.queuesystem.helper.database.TransactionDataDbModel
-import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
 import com.orbits.queuesystem.mvvm.main.model.TransactionListDataModel
 
 object TransactionConfig {
@@ -25,8 +23,8 @@ object TransactionConfig {
             token = model?.token,
             ticketToken = model?.ticketToken,
             issueTime = model?.issueTime,
-            startTime = model?.startTime,
-            endTime = model?.endTime,
+            startKeypadTime = model?.startKeypadTime,
+            endKeypadTime = model?.endKeypadTime,
             status = model?.status
         )
     }
@@ -48,8 +46,8 @@ object TransactionConfig {
                     ticketToken = a?.ticketToken ?: "",
                     keypadToken = a?.keypadToken ?: "",
                     issueTime = a?.issueTime ?: "",
-                    startTime = a?.startTime ?: "",
-                    endTime = a?.endTime ?: "",
+                    startKeypadTime = a?.startKeypadTime ?: "",
+                    endKeypadTime = a?.endKeypadTime ?: "",
                     status = a?.status ?: "",
 
                 )

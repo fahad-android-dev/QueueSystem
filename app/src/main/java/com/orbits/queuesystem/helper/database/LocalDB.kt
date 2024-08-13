@@ -139,7 +139,13 @@ object LocalDB {
     fun Context.addTransactionInDB(data: TransactionDataDbModel): ArrayList<TransactionDataDbModel?> {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
         if (db?.isTransactionPresent(data.token) == true) {
-            db.updateTransactionOffline(data.token, data.status,data.id.asString())
+            db.updateTransactionOffline(
+                data.token,
+                data.status,
+                data.id.asString(),
+                data.startKeypadTime,
+                data.endKeypadTime,
+            )
         } else {
             db?.addTransaction(data)
         }

@@ -36,6 +36,7 @@ object Constants {
     const val DISPENSER_CLIENT_ID = "007"
 
 
+
     const val KEYPAD_COUNTER_TYPE = "keypadCounterType"
     const val COUNTER_DISPLAY_TYPE = "counterDisplayType"
     const val KEYPAD_CONNECTION_TYPE = "keypadConnectionType"

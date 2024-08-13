@@ -12,12 +12,14 @@ interface TransactionDao {
     fun addTransaction(vararg services: TransactionDataDbModel)
 
     @Query(
-        "UPDATE TransactionDataDbModel SET token =:token, status=:status WHERE id =:id"
+        "UPDATE TransactionDataDbModel SET token =:token, status=:status ,startKeypadTime=:startKeypadTime,endKeypadTime=:endKeypadTime WHERE id =:id"
     )
     fun updateTransactionOffline(
         token: String?,
         status:String?,
         id: String?,
+        startKeypadTime: String?,
+        endKeypadTime: String?,
     )
 
     @Query("SELECT * FROM TransactionDataDbModel WHERE token = :token LIMIT 1")

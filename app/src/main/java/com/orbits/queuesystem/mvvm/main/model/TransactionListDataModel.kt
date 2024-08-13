@@ -10,8 +10,8 @@ data class TransactionListDataModel(
     val ticketToken: String? = null,
     val keypadToken: String? = null,
     val issueTime: String? = null,
-    val startTime: String? = null,
-    val endTime: String? = null,
+    val startKeypadTime: String? = null,
+    val endKeypadTime: String? = null,
     val status: String? = null,
 
     )
