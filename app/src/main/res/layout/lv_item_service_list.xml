@@ -122,14 +122,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-        <View
-            android:id="@+id/viewDivLine"
-            style="@style/DividerLineStyle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtServiceId" />
     </LinearLayout>
 
     </me.thanel.swipeactionview.SwipeActionView>
