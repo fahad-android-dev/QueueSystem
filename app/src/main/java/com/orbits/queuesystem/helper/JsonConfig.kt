@@ -124,7 +124,8 @@ object JsonConfig {
         println("here is transaction model ${transactionModel}")
         val jsonModel = gson.toJson(transactionModel)
         return JsonObject().apply {
-            add(Constants.TRANSACTION,  gson.fromJson(jsonModel, JsonObject::class.java))
+            if (transactionModel != null) add(Constants.TRANSACTION,  gson.fromJson(jsonModel, JsonObject::class.java))
+
         }
     }
 

@@ -13,5 +13,4 @@ data class TransactionListDataModel(
     val startKeypadTime: String? = null,
     val endKeypadTime: String? = null,
     val status: String? = null,
-
     )

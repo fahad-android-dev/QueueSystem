@@ -32,10 +32,11 @@ import com.orbits.queuesystem.helper.database.LocalDB.addTransactionInDB
 import com.orbits.queuesystem.helper.database.LocalDB.deleteServiceInDb
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getAllTransactionFromDB
-import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithStatus
+import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithIssuedStatus
 import com.orbits.queuesystem.helper.database.LocalDB.getCounterIdForService
 import com.orbits.queuesystem.helper.database.LocalDB.getCurrentServiceToken
 import com.orbits.queuesystem.helper.database.LocalDB.getServiceById
+import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithCalledStatus
 import com.orbits.queuesystem.helper.database.LocalDB.isCounterAssigned
 import com.orbits.queuesystem.mvvm.counters.view.CounterListActivity
 import com.orbits.queuesystem.mvvm.main.adapter.ServiceListAdapter
@@ -47,6 +48,7 @@ import java.net.Socket
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.CopyOnWriteArrayList
 
 class MainActivity : BaseActivity(), MessageListener {
     private lateinit var binding: ActivityMainBinding
@@ -56,7 +58,7 @@ class MainActivity : BaseActivity(), MessageListener {
     private lateinit var socket: Socket
     private lateinit var webSocketClient: WebSocketClient
     private var outStream: OutputStream? = null
-    private var arrListClients = ArrayList<String?>()
+    private val arrListClients = CopyOnWriteArrayList<String>()
     private var arrListDisplays = ArrayList<DisplayListDataModel?>()
     val gson = Gson()
     var serviceId = ""
@@ -149,48 +151,31 @@ class MainActivity : BaseActivity(), MessageListener {
 
     override fun onMessageJsonReceived(json: JsonObject) {
         runOnUiThread {
-            if (!json.isJsonNull) {
+            synchronized(arrListClients) {
+                if (!json.isJsonNull) {
 
-                println("Received json in activity: $json")
-                if (json.has(Constants.TICKET_TYPE)){
-                    arrListClients.forEach {
-                        if (it == Constants.DISPENSER_CLIENT_ID){
-                            manageTicketData(json)
+                    println("Received json in activity: $json")
+
+                    if (json.has(Constants.TICKET_TYPE)){
+                        arrListClients.forEach {
+                            if (it == Constants.DISPENSER_CLIENT_ID){
+                                manageTicketData(json)
+                            }
                         }
+                    }else if(json.has(Constants.CONNECTION)){
+                        arrListClients.forEach {
+                            sendMessageToWebSocketClient(it ?: "", createJsonData())
+                        }
+                    }else if (json.has(Constants.DISPLAY_ID)){
+                        manageCounterDisplayData(json)
+                    }else {
+                        manageKeypadData(json)
                     }
-                }else if(json.has(Constants.CONNECTION)){
-                    arrListClients.forEach {
-                        sendMessageToWebSocketClient(it ?: "", createJsonData())
-                    }
-                }else if (json.has(Constants.DISPLAY_ID)){
-                    manageCounterDisplayData(json)
-                }else {
-                    manageKeypadData(json)
+
+                } else {
+                    socket.close()
                 }
-
-                /*arrListClients.forEach {
-                    if (it == Constants.DISPENSER_CLIENT_ID) {
-                        println("here is 111")
-                        if (json.has(Constants.TICKET_TYPE)) {
-
-                        }
-                    } else {
-                         if (json.has(Constants.CONNECTION)){
-                            println("here is 2222")
-
-                        }else if (json.has(Constants.DISPLAY_ID)){
-
-                         }
-                         else {
-
-                         }
-                    }
-                }*/
-
-            } else {
-                socket.close()
             }
-
         }
     }
 
@@ -214,20 +199,20 @@ class MainActivity : BaseActivity(), MessageListener {
                     issueTime = null,
                     startKeypadTime = null,
                     endKeypadTime = null,
-                    status = "1"
+                    status = model?.get("status")?.asString ?: ""
 
                 )
                 val dbModel =
                     parseInTransactionDbModel(updateModel, updateModel.id ?: "")
                 addTransactionInDB(dbModel)
 
-                println("here is transactions 0000 ${getAllTransactionFromDB()}")
-                println("here is transactions with status ${ getTransactionFromDbWithStatus(serviceId)}")
+                println("here is transactions 111 ${getAllTransactionFromDB()}")
+                println("here is transactions with status fahad ${ getTransactionFromDbWithIssuedStatus(serviceId)}")
 
                 sendMessageToWebSocketClient(
                     model?.get("displayId")?.asString ?: "",
                     createServiceJsonDataWithTransaction(
-                        getTransactionFromDbWithStatus(serviceId)
+                        getTransactionFromDbWithIssuedStatus(serviceId)
                     )
                 )
             }
@@ -236,7 +221,7 @@ class MainActivity : BaseActivity(), MessageListener {
             sendMessageToWebSocketClient(
                 json.get("displayId")?.asString ?: "",
                 createServiceJsonDataWithTransaction(
-                    getTransactionFromDbWithStatus(json.get("serviceId")?.asString ?: "")
+                    getTransactionFromDbWithIssuedStatus(json.get("serviceId")?.asString ?: "")
                 )
             )
             val model = DisplayListDataModel(
@@ -255,9 +240,9 @@ class MainActivity : BaseActivity(), MessageListener {
             val model =  json.getAsJsonObject("transaction")
             serviceId = model?.get("serviceId")?.asString ?: ""
             serviceType = model?.get("serviceType")?.asString ?: ""
+            val service = getServiceById(serviceId.asInt())
             println("here is service id $serviceId")
-            println("here is startKeypadTime ${ model?.get("startKeypadTime")?.asString ?: ""}")
-            if (serviceId.isNotEmpty() && isCounterAssigned(serviceType)) {
+            if ((serviceId.isNotEmpty() && isCounterAssigned(serviceType)) && (getCurrentServiceToken(serviceId) <= service?.tokenEnd.asInt())) {
                 val updateModel = TransactionListDataModel(
                     id = model?.get("id")?.asString ?: "",
                     counterId = model?.get("counterId")?.asString ?: "",
@@ -274,18 +259,34 @@ class MainActivity : BaseActivity(), MessageListener {
 
                 )
                 val dbModel = parseInTransactionDbModel(updateModel, updateModel.id ?: "")
-                println("here is dbmodel with time $dbModel")
                 addTransactionInDB(dbModel)
 
                 println("here is transactions 0000 ${getAllTransactionFromDB()}")
-                println("here is transactions with status ${ getTransactionFromDbWithStatus(serviceId)}")
+                println("here is transactions with status ${ getTransactionFromDbWithIssuedStatus(serviceId)}")
 
-                sendMessageToWebSocketClient(
-                    json.get("counterId")?.asString ?: "",
-                    createServiceJsonDataWithTransaction(
-                        getTransactionFromDbWithStatus(serviceId)
-                    )
-                )
+                if (model.get("status")?.asString == "1"){
+                    if ((getTransactionFromDbWithCalledStatus(serviceId) != null)){
+                        println("here is status of transaction ${model.get("status")?.asString}")
+                        sendMessageToWebSocketClient(
+                            json.get("counterId")?.asString ?: "",
+                            createServiceJsonDataWithTransaction(
+                                getTransactionFromDbWithCalledStatus(serviceId)
+                            )
+                        )
+                    }
+                }else {
+                    if ((getTransactionFromDbWithIssuedStatus(serviceId) != null)){
+                        println("here is status of transaction ${model.get("status")?.asString}")
+                        sendMessageToWebSocketClient(
+                            json.get("counterId")?.asString ?: "",
+                            createServiceJsonDataWithTransaction(
+                                getTransactionFromDbWithIssuedStatus(serviceId)
+                            )
+                        )
+                    }
+                }
+
+
 
                 if (arrListDisplays.isNotEmpty()){
                     println("here is display list  $arrListDisplays")
@@ -295,7 +296,7 @@ class MainActivity : BaseActivity(), MessageListener {
                             sendMessageToWebSocketClient(
                                 it.id ?: "",
                                 createServiceJsonDataWithTransaction(
-                                    getTransactionFromDbWithStatus(model?.get("serviceId")?.asString ?: "")
+                                    getTransactionFromDbWithIssuedStatus(model?.get("serviceId")?.asString ?: "")
                                 )
                             )
                         }
@@ -309,7 +310,7 @@ class MainActivity : BaseActivity(), MessageListener {
             sendMessageToWebSocketClient(
                 json.get("counterId")?.asString ?: "",
                 createServiceJsonDataWithTransaction(
-                    getTransactionFromDbWithStatus(json.get("serviceId")?.asString ?: "")
+                    getTransactionFromDbWithIssuedStatus(json.get("serviceId")?.asString ?: "")
                 )
             )
         }
@@ -325,7 +326,8 @@ class MainActivity : BaseActivity(), MessageListener {
             println("here is is the last token :::: ${service?.tokenEnd}")
             println("here is is the service :::: $service")
             println("here is is the current token :::: ${getCurrentServiceToken(serviceId)}")
-            if ((serviceId.isNotEmpty() && isCounterAssigned(serviceType)) && (getCurrentServiceToken(serviceId) <= service?.tokenEnd.asInt())) {
+           // (serviceId.isNotEmpty() && isCounterAssigned(serviceType)) && (getCurrentServiceToken(serviceId) <= service?.tokenEnd.asInt())
+            if (serviceId.isNotEmpty() && isCounterAssigned(serviceType)) {
                 val model = TransactionListDataModel(
                     counterId = getCounterIdForService(serviceType),
                     serviceId = serviceId,
@@ -348,10 +350,22 @@ class MainActivity : BaseActivity(), MessageListener {
                     Constants.DISPENSER_CLIENT_ID,
                     createServiceJsonDataWithModel(serviceId, dbModel)
                 )
-                addServiceTokenToDB(
-                    serviceId,
-                    getCurrentServiceToken(serviceId).plus(1)
-                )
+                println("here is current token for service ${getCurrentServiceToken(serviceId)}")
+                println("here is end token for service ${service?.tokenEnd.asInt()}")
+                if (getCurrentServiceToken(serviceId) == service?.tokenEnd.asInt()){
+                    println("here is manage for tokens 111")
+                    addServiceTokenToDB(
+                        serviceId,
+                        service?.tokenStart.asInt()
+                    )
+
+                }else {
+                    println("here is manage for tokens 222")
+                    addServiceTokenToDB(
+                        serviceId,
+                        getCurrentServiceToken(serviceId).plus(1)
+                    )
+                }
                 println(
                     "here is current token 111 ${
                         getCurrentServiceToken(

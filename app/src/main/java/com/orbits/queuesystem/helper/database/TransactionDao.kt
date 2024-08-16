@@ -12,27 +12,33 @@ interface TransactionDao {
     fun addTransaction(vararg services: TransactionDataDbModel)
 
     @Query(
-        "UPDATE TransactionDataDbModel SET token =:token, status=:status ,startKeypadTime=:startKeypadTime,endKeypadTime=:endKeypadTime WHERE id =:id"
+        "UPDATE TransactionDataDbModel" +
+                " SET token =:token, status=:status ,startKeypadTime=:startKeypadTime,endKeypadTime=:endKeypadTime ,issueTime =:issueTime" +
+                " WHERE id =:id"
     )
     fun updateTransactionOffline(
         token: String?,
         status:String?,
         id: String?,
         startKeypadTime: String?,
+        issueTime: String?,
         endKeypadTime: String?,
     )
 
     @Query("SELECT * FROM TransactionDataDbModel WHERE token = :token LIMIT 1")
     fun getTransactionByToken(token: String): TransactionDataDbModel?
 
-    @Query("SELECT token FROM TransactionDataDbModel WHERE token=:token")
-    fun isTransactionPresent(token: String?): Boolean
+    @Query("SELECT token FROM TransactionDataDbModel WHERE issueTime=:issueTime")
+    fun isTransactionPresent(issueTime: String?): Boolean
 
     @Query("SELECT * FROM TransactionDataDbModel")
     fun getAllTransaction(): List<TransactionDataDbModel?>
 
-    @Query("SELECT * FROM TransactionDataDbModel WHERE status = 0 AND serviceId = :serviceId ORDER BY token LIMIT 1")
+    @Query("SELECT * FROM TransactionDataDbModel WHERE status = 0 AND serviceId = :serviceId ORDER BY issueTime LIMIT 1")
     fun getTransactionByIssuedStatus(serviceId:String): TransactionDataDbModel?
+
+    @Query("SELECT * FROM TransactionDataDbModel WHERE status = 1 AND serviceId = :serviceId ORDER BY issueTime LIMIT 1")
+    fun getTransactionByCalledStatus(serviceId:String): TransactionDataDbModel?
 
 
     @Query("UPDATE TransactionDataDbModel SET token = :tokenNo WHERE entityID = :entityID")

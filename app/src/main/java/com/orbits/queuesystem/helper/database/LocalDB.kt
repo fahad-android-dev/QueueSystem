@@ -138,12 +138,13 @@ object LocalDB {
 
     fun Context.addTransactionInDB(data: TransactionDataDbModel): ArrayList<TransactionDataDbModel?> {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
-        if (db?.isTransactionPresent(data.token) == true) {
+        if (db?.isTransactionPresent(data.issueTime) == true) {
             db.updateTransactionOffline(
                 data.token,
                 data.status,
                 data.id.asString(),
                 data.startKeypadTime,
+                data.issueTime,
                 data.endKeypadTime,
             )
         } else {
@@ -158,9 +159,14 @@ object LocalDB {
         return db?.getAllTransaction() as ArrayList<TransactionDataDbModel?>?
     }
 
-    fun Context.getTransactionFromDbWithStatus(serviceId: String?): TransactionDataDbModel? {
+    fun Context.getTransactionFromDbWithIssuedStatus(serviceId: String?): TransactionDataDbModel? {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
         return db?.getTransactionByIssuedStatus(serviceId ?: "")
+    }
+
+    fun Context.getTransactionFromDbWithCalledStatus(serviceId: String?): TransactionDataDbModel? {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        return db?.getTransactionByCalledStatus(serviceId ?: "")
     }
 
     fun Context.getTransactionByToken(token: String): TransactionDataDbModel? {
