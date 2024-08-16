@@ -158,9 +158,7 @@ class MainActivity : BaseActivity(), MessageListener {
 
                     if (json.has(Constants.TICKET_TYPE)){
                         arrListClients.forEach {
-                            if (it == Constants.DISPENSER_CLIENT_ID){
-                                manageTicketData(json)
-                            }
+                            manageTicketData(it,json)
                         }
                     }else if(json.has(Constants.CONNECTION)){
                         arrListClients.forEach {
@@ -316,7 +314,7 @@ class MainActivity : BaseActivity(), MessageListener {
         }
     }
 
-    private fun manageTicketData(json: JsonObject){
+    private fun manageTicketData(clientId: String, json: JsonObject){
         println("THIS IS TICKET TYPE MODULE :: ")
         if (json.has(Constants.SERVICE_TYPE)) {
             serviceId = json.get("serviceId")?.asString ?: ""
@@ -347,7 +345,7 @@ class MainActivity : BaseActivity(), MessageListener {
                 addTransactionInDB(dbModel)
                 println("here is transaction id ${getAllTransactionFromDB()}")
                 sendMessageToWebSocketClient(
-                    Constants.DISPENSER_CLIENT_ID,
+                    clientId,
                     createServiceJsonDataWithModel(serviceId, dbModel)
                 )
                 println("here is current token for service ${getCurrentServiceToken(serviceId)}")
