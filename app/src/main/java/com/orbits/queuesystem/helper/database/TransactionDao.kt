@@ -37,6 +37,7 @@ interface TransactionDao {
     @Query("SELECT * FROM TransactionDataDbModel WHERE status = 0 AND serviceId = :serviceId ORDER BY issueTime LIMIT 1")
     fun getTransactionByIssuedStatus(serviceId:String): TransactionDataDbModel?
 
+
     @Query("SELECT * FROM TransactionDataDbModel WHERE status = 1 AND serviceId = :serviceId ORDER BY issueTime LIMIT 1")
     fun getTransactionByCalledStatus(serviceId:String): TransactionDataDbModel?
 

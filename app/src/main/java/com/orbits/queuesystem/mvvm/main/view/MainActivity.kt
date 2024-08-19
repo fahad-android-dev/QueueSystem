@@ -36,6 +36,7 @@ import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithIs
 import com.orbits.queuesystem.helper.database.LocalDB.getCounterIdForService
 import com.orbits.queuesystem.helper.database.LocalDB.getCurrentServiceToken
 import com.orbits.queuesystem.helper.database.LocalDB.getServiceById
+import com.orbits.queuesystem.helper.database.LocalDB.getTransactionByToken
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithCalledStatus
 import com.orbits.queuesystem.helper.database.LocalDB.isCounterAssigned
 import com.orbits.queuesystem.mvvm.counters.view.CounterListActivity
@@ -157,9 +158,7 @@ class MainActivity : BaseActivity(), MessageListener {
                     println("Received json in activity: $json")
 
                     if (json.has(Constants.TICKET_TYPE)){
-                        arrListClients.forEach {
-                            manageTicketData(it,json)
-                        }
+                        manageTicketData(json)
                     }else if(json.has(Constants.CONNECTION)){
                         arrListClients.forEach {
                             sendMessageToWebSocketClient(it ?: "", createJsonData())
@@ -304,17 +303,30 @@ class MainActivity : BaseActivity(), MessageListener {
 
         }
         else {
-            println("here is to check for counter 2")
-            sendMessageToWebSocketClient(
-                json.get("counterId")?.asString ?: "",
-                createServiceJsonDataWithTransaction(
-                    getTransactionFromDbWithIssuedStatus(json.get("serviceId")?.asString ?: "")
+            if (json.has("tokenNo")){
+                if ((getTransactionByToken(json.get("tokenNo")?.asString ?: "") != null)){
+                    println("here is transaction with token ::: ${getTransactionByToken(json.get("tokenNo")?.asString ?: "")}")
+                    sendMessageToWebSocketClient(
+                        json.get("counterId")?.asString ?: "",
+                        createServiceJsonDataWithTransaction(
+                            getTransactionByToken(json.get("tokenNo")?.asString ?: "")
+                        )
+                    )
+                }
+
+            }else {
+                println("here is to check for counter 2")
+                sendMessageToWebSocketClient(
+                    json.get("counterId")?.asString ?: "",
+                    createServiceJsonDataWithTransaction(
+                        getTransactionFromDbWithIssuedStatus(json.get("serviceId")?.asString ?: "")
+                    )
                 )
-            )
+            }
         }
     }
 
-    private fun manageTicketData(clientId: String, json: JsonObject){
+    private fun manageTicketData(json: JsonObject){
         println("THIS IS TICKET TYPE MODULE :: ")
         if (json.has(Constants.SERVICE_TYPE)) {
             serviceId = json.get("serviceId")?.asString ?: ""
@@ -345,7 +357,7 @@ class MainActivity : BaseActivity(), MessageListener {
                 addTransactionInDB(dbModel)
                 println("here is transaction id ${getAllTransactionFromDB()}")
                 sendMessageToWebSocketClient(
-                    clientId,
+                    json.get("ticketId")?.asString ?: "",
                     createServiceJsonDataWithModel(serviceId, dbModel)
                 )
                 println("here is current token for service ${getCurrentServiceToken(serviceId)}")
