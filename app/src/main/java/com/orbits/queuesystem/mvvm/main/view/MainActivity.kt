@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -21,6 +22,7 @@ import com.orbits.queuesystem.helper.JsonConfig.createJsonData
 import com.orbits.queuesystem.helper.JsonConfig.createServiceJsonDataWithModel
 import com.orbits.queuesystem.helper.JsonConfig.createServiceJsonDataWithTransaction
 import com.orbits.queuesystem.helper.MessageListener
+import com.orbits.queuesystem.helper.ServerService
 import com.orbits.queuesystem.helper.ServiceConfig.parseInServiceDbModel
 import com.orbits.queuesystem.helper.ServiceConfig.parseInServiceModelArraylist
 import com.orbits.queuesystem.helper.TCPServer
@@ -69,6 +71,7 @@ class MainActivity : BaseActivity(), MessageListener {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
+        startServerService()
         initializeToolbar()
         initializeSocket()
         initializeFields()
@@ -100,6 +103,22 @@ class MainActivity : BaseActivity(), MessageListener {
 
         webSocketClient = WebSocketClient(8085)
         webSocketClient.start()
+
+    }
+
+    private fun startServerService(){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                0
+            )
+        }
+        val intent = Intent(this@MainActivity, ServerService::class.java)
+        intent.action = ServerService.Actions.START.toString()
+        startService(intent)
+        println("Service started")
 
     }
 
