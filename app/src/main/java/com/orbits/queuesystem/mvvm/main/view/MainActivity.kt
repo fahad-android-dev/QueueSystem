@@ -170,27 +170,25 @@ class MainActivity : BaseActivity(), MessageListener {
     }
 
     override fun onMessageJsonReceived(json: JsonObject) {
-        runOnUiThread {
-            synchronized(arrListClients) {
-                if (!json.isJsonNull) {
+        synchronized(arrListClients) {
+            if (!json.isJsonNull) {
 
-                    println("Received json in activity: $json")
+                println("Received json in activity: $json")
 
-                    if (json.has(Constants.TICKET_TYPE)){
-                        manageTicketData(json)
-                    }else if(json.has(Constants.CONNECTION)){
-                        arrListClients.forEach {
-                            sendMessageToWebSocketClient(it ?: "", createJsonData())
-                        }
-                    }else if (json.has(Constants.DISPLAY_ID)){
-                        manageCounterDisplayData(json)
-                    }else {
-                        manageKeypadData(json)
+                if (json.has(Constants.TICKET_TYPE)){
+                    manageTicketData(json)
+                }else if(json.has(Constants.CONNECTION)){
+                    arrListClients.forEach {
+                        sendMessageToWebSocketClient(it ?: "", createJsonData())
                     }
-
-                } else {
-                    socket.close()
+                }else if (json.has(Constants.DISPLAY_ID)){
+                    manageCounterDisplayData(json)
+                }else {
+                    manageKeypadData(json)
                 }
+
+            } else {
+                socket.close()
             }
         }
     }
@@ -223,21 +221,22 @@ class MainActivity : BaseActivity(), MessageListener {
                 addTransactionInDB(dbModel)
 
                 println("here is transactions 111 ${getAllTransactionFromDB()}")
-                println("here is transactions with status fahad ${ getTransactionFromDbWithIssuedStatus(serviceId)}")
+                println("here is transactions with status 1 ::  ${ getTransactionFromDbWithCalledStatus(serviceId)}")
 
                 sendMessageToWebSocketClient(
                     model?.get("displayId")?.asString ?: "",
                     createServiceJsonDataWithTransaction(
-                        getTransactionFromDbWithIssuedStatus(serviceId)
+                        getTransactionFromDbWithCalledStatus(serviceId)
                     )
                 )
             }
 
         } else {
+            println("here is transaction with status 1 in dislpay  ${getTransactionFromDbWithCalledStatus(json.get("serviceId")?.asString ?: "")}")
             sendMessageToWebSocketClient(
                 json.get("displayId")?.asString ?: "",
                 createServiceJsonDataWithTransaction(
-                    getTransactionFromDbWithIssuedStatus(json.get("serviceId")?.asString ?: "")
+                    getTransactionFromDbWithCalledStatus(json.get("serviceId")?.asString ?: "")
                 )
             )
             val model = DisplayListDataModel(
@@ -312,7 +311,7 @@ class MainActivity : BaseActivity(), MessageListener {
                             sendMessageToWebSocketClient(
                                 it.id ?: "",
                                 createServiceJsonDataWithTransaction(
-                                    getTransactionFromDbWithIssuedStatus(model?.get("serviceId")?.asString ?: "")
+                                    getTransactionFromDbWithCalledStatus(model?.get("serviceId")?.asString ?: "")
                                 )
                             )
                         }
@@ -423,10 +422,10 @@ class MainActivity : BaseActivity(), MessageListener {
                     arrListClients.clear()
                     arrListClients.addAll(clientList)
                     println("here is all list after client added $arrListClients")
-                    runOnUiThread {
+                    /*runOnUiThread {
                         Toast.makeText(this@MainActivity, "Client Connected", Toast.LENGTH_SHORT)
                             .show()
-                    }
+                    }*/
                 }
                 println("Connected to server")
             } catch (e: Exception) {

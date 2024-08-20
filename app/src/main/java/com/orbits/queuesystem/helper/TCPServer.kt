@@ -23,6 +23,7 @@ import java.security.MessageDigest
 import java.util.Base64
 import java.util.UUID
 import kotlin.experimental.xor
+import kotlin.random.Random
 
 class TCPServer(private val port: Int, private val messageListener: MessageListener,private val context: Context) {
 
@@ -195,10 +196,10 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         println("here is ticketId id $ticketId")
                                         if (!ticketId.isNullOrEmpty()) {
                                             // Update client ID in WebSocketManager
-                                            WebSocketManager.updateClientId(clientId ?: "", ticketId ?: "")
+                                            WebSocketManager.updateClientId(clientId, ticketId ?: "")
                                             clientId = ticketId ?: ""
-                                            clients[clientId ?: ""] = this
-                                            addToConnectedClients(clientId ?: "")
+                                            clients[clientId] = this
+                                            addToConnectedClients(clientId)
                                             messageListener.onClientConnected(clientSocket,arrListClients)
                                             messageListener.onMessageJsonReceived(jsonObject)
                                         }
@@ -209,13 +210,15 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                 }
                                 jsonObject.has(Constants.CONNECTION) -> {
                                     println("here is connection received")
-                                    clients[clientId ?: ""] = this
-                                    addToConnectedClients(clientId ?: "")
+                                    clients[clientId] = this
+                                    addToConnectedClients(clientId)
                                     messageListener.onClientConnected(clientSocket,arrListClients)
-                                    messageListener.onMessageJsonReceived(jsonObject)
+                                    Extensions.handler(500){
+                                        messageListener.onMessageJsonReceived(jsonObject)
+                                    }
                                 }
                                 else -> {
-                                    clients[clientId ?: ""] = this
+                                    clients[clientId] = this
                                     messageListener.onClientConnected(clientSocket,arrListClients)
                                     messageListener.onMessageJsonReceived(jsonObject)
                                 }
@@ -266,6 +269,23 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                     e.printStackTrace()
                 }
             }
+        }
+
+        fun generateRandomAlphanumericCode(length: Int = 3): String {
+            // Define the character set: uppercase, lowercase, and digits
+            val charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+            // Create a StringBuilder to build the result
+            val result = StringBuilder(length)
+
+            // Generate random characters from the charset
+            val random = Random(System.currentTimeMillis())
+            repeat(length) {
+                val randomIndex = random.nextInt(charset.length)
+                result.append(charset[randomIndex])
+            }
+
+            return result.toString()
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
