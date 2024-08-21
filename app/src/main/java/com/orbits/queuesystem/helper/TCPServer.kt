@@ -167,13 +167,17 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                             clients[clientId] = this
                                             addToConnectedClients(clientId)
                                             messageListener.onClientConnected(clientSocket,arrListClients)
-                                            messageListener.onMessageJsonReceived(jsonObject)
+                                            Extensions.handler(400){
+                                                messageListener.onMessageJsonReceived(jsonObject)
+                                            }
                                         }
                                     }else {
                                         if (jsonObject.has("transaction")){
                                             println("here is msg with status")
                                             messageListener.onClientConnected(clientSocket,arrListClients)
-                                            messageListener.onMessageJsonReceived(jsonObject)
+                                            Extensions.handler(400){
+                                                messageListener.onMessageJsonReceived(jsonObject)
+                                            }
                                         }else {
                                             println("here is msg without status")
                                             counterId = jsonObject.get("counterId").asString // Fetch from database
@@ -185,7 +189,9 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                                 clients[clientId ?: ""] = this
                                                 addToConnectedClients(clientId ?: "")
                                                 messageListener.onClientConnected(clientSocket,arrListClients)
-                                                messageListener.onMessageJsonReceived(jsonObject)
+                                                Extensions.handler(400){
+                                                    messageListener.onMessageJsonReceived(jsonObject)
+                                                }
                                             }
                                         }
                                     }
@@ -201,11 +207,15 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                             clients[clientId] = this
                                             addToConnectedClients(clientId)
                                             messageListener.onClientConnected(clientSocket,arrListClients)
-                                            messageListener.onMessageJsonReceived(jsonObject)
+                                            Extensions.handler(400){
+                                                messageListener.onMessageJsonReceived(jsonObject)
+                                            }
                                         }
                                     }else {
                                         messageListener.onClientConnected(clientSocket,arrListClients)
-                                        messageListener.onMessageJsonReceived(jsonObject)
+                                        Extensions.handler(400){
+                                            messageListener.onMessageJsonReceived(jsonObject)
+                                        }
                                     }
                                 }
                                 jsonObject.has(Constants.CONNECTION) -> {
@@ -213,14 +223,16 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                     clients[clientId] = this
                                     addToConnectedClients(clientId)
                                     messageListener.onClientConnected(clientSocket,arrListClients)
-                                    Extensions.handler(500){
+                                    Extensions.handler(400){
                                         messageListener.onMessageJsonReceived(jsonObject)
                                     }
                                 }
                                 else -> {
                                     clients[clientId] = this
                                     messageListener.onClientConnected(clientSocket,arrListClients)
-                                    messageListener.onMessageJsonReceived(jsonObject)
+                                    Extensions.handler(400){
+                                        messageListener.onMessageJsonReceived(jsonObject)
+                                    }
                                 }
                             }
 

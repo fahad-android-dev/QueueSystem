@@ -16,6 +16,7 @@ import com.orbits.queuesystem.helper.BaseActivity
 import com.orbits.queuesystem.helper.CommonInterfaceClickEvent
 import com.orbits.queuesystem.helper.Constants
 import com.orbits.queuesystem.helper.Dialogs
+import com.orbits.queuesystem.helper.Extensions
 import com.orbits.queuesystem.helper.Extensions.asInt
 import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.JsonConfig.createJsonData
@@ -289,6 +290,24 @@ class MainActivity : BaseActivity(), MessageListener {
                             )
                         )
                     }
+
+                    Extensions.handler(500){
+                        if (arrListDisplays.isNotEmpty()){
+                            println("here is display list  $arrListDisplays")
+                            arrListDisplays.forEach {
+                                println("here is display ids  ${it?.id}")
+                                if (it?.counterId == (model?.get("counterId")?.asString ?: "")){
+                                    sendMessageToWebSocketClient(
+                                        it.id ?: "",
+                                        createServiceJsonDataWithTransaction(
+                                            getTransactionFromDbWithCalledStatus(model?.get("serviceId")?.asString ?: "")
+                                        )
+                                    )
+
+                                }
+                            }
+                        }
+                    }
                 }else {
                     if ((getTransactionFromDbWithIssuedStatus(serviceId) != null)){
                         println("here is status of transaction ${model.get("status")?.asString}")
@@ -303,20 +322,6 @@ class MainActivity : BaseActivity(), MessageListener {
 
 
 
-                if (arrListDisplays.isNotEmpty()){
-                    println("here is display list  $arrListDisplays")
-                    arrListDisplays.forEach {
-                        println("here is display ids  ${it?.id}")
-                        if (it?.counterId == (model?.get("counterId")?.asString ?: "")){
-                            sendMessageToWebSocketClient(
-                                it.id ?: "",
-                                createServiceJsonDataWithTransaction(
-                                    getTransactionFromDbWithCalledStatus(model?.get("serviceId")?.asString ?: "")
-                                )
-                            )
-                        }
-                    }
-                }
             }
 
         }
