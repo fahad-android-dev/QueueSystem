@@ -322,6 +322,30 @@ class MainActivity : BaseActivity(), MessageListener {
                                 getTransactionFromDbWithIssuedStatus(serviceId)
                             )
                         )
+
+                        val issueModel = getTransactionFromDbWithIssuedStatus(serviceId)
+                        val changedModel = TransactionListDataModel(
+                            id = issueModel?.id.asString(),
+                            counterId = issueModel?.counterId,
+                            serviceId = issueModel?.serviceId,
+                            entityID = issueModel?.entityID,
+                            serviceAssign = issueModel?.serviceAssign,
+                            token = issueModel?.token,
+                            ticketToken = issueModel?.ticketToken,
+                            keypadToken = issueModel?.keypadToken,
+                            issueTime = issueModel?.issueTime,
+                            startKeypadTime = getStartTimeForKeypad(),
+                            endKeypadTime = issueModel?.endKeypadTime,
+                            status = "1"
+
+                        )
+                        val changedDbModel = parseInTransactionDbModel(changedModel, changedModel.id ?: "")
+                        addTransactionInDB(changedDbModel)
+
+                        println("here is changed transactions 1111 ${getAllTransactionFromDB()}")
+
+
+
                     }
                 }
 
@@ -350,6 +374,32 @@ class MainActivity : BaseActivity(), MessageListener {
                         getTransactionFromDbWithIssuedStatus(json.get("serviceId")?.asString ?: "")
                     )
                 )
+
+                println("here is changed transactions issue model 2222 ${getTransactionFromDbWithIssuedStatus(json.get("serviceId")?.asString ?: "")}")
+
+
+                val issueModel = getTransactionFromDbWithIssuedStatus(json.get("serviceId")?.asString ?: "")
+                val changedModel = TransactionListDataModel(
+                    id = issueModel?.id.asString(),
+                    counterId = issueModel?.counterId,
+                    serviceId = issueModel?.serviceId,
+                    entityID = issueModel?.entityID,
+                    serviceAssign = issueModel?.serviceAssign,
+                    token = issueModel?.token,
+                    ticketToken = issueModel?.ticketToken,
+                    keypadToken = issueModel?.keypadToken,
+                    issueTime = issueModel?.issueTime,
+                    startKeypadTime = getStartTimeForKeypad(),
+                    endKeypadTime = issueModel?.endKeypadTime,
+                    status = "1"
+
+                )
+                val changedDbModel = parseInTransactionDbModel(changedModel, changedModel.id ?: "")
+                println("here is changed transactions model 2222 $changedDbModel")
+                addTransactionInDB(changedDbModel)
+
+
+                println("here is changed transactions 2222 ${getAllTransactionFromDB()}")
             }
         }
     }
@@ -467,6 +517,14 @@ class MainActivity : BaseActivity(), MessageListener {
     }
 
     fun getCurrentTimeFormatted(): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+
+        val currentTime = Date()
+
+        return dateFormat.format(currentTime)
+    }
+
+    fun getStartTimeForKeypad(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
 
         val currentTime = Date()
