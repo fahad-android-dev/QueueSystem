@@ -41,6 +41,9 @@ interface TransactionDao {
     @Query("SELECT * FROM TransactionDataDbModel WHERE status = 1 AND serviceId = :serviceId ORDER BY issueTime LIMIT 1")
     fun getTransactionByCalledStatus(serviceId:String): TransactionDataDbModel?
 
+    @Query("SELECT * FROM TransactionDataDbModel WHERE status = 4 AND serviceId = :serviceId ORDER BY issueTime LIMIT 1")
+    fun getTransactionByDisplayStatus(serviceId:String): TransactionDataDbModel?
+
 
     @Query("UPDATE TransactionDataDbModel SET token = :tokenNo WHERE entityID = :entityID")
     fun updateTransactionToken(entityID: String, tokenNo: Int)

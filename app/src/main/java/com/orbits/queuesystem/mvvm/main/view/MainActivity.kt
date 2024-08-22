@@ -41,6 +41,7 @@ import com.orbits.queuesystem.helper.database.LocalDB.getCurrentServiceToken
 import com.orbits.queuesystem.helper.database.LocalDB.getServiceById
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionByToken
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithCalledStatus
+import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithDisplayStatus
 import com.orbits.queuesystem.helper.database.LocalDB.isCounterAssigned
 import com.orbits.queuesystem.mvvm.counters.view.CounterListActivity
 import com.orbits.queuesystem.mvvm.main.adapter.ServiceListAdapter
@@ -211,23 +212,25 @@ class MainActivity : BaseActivity(), MessageListener {
                     token = model?.get("token")?.asString ?: "",
                     ticketToken = model?.get("ticketToken")?.asString ?: "",
                     keypadToken = model?.get("keypadToken")?.asString ?: "",
-                    issueTime = null,
+                    issueTime = model?.get("issueTime")?.asString ?: "",
                     startKeypadTime = null,
                     endKeypadTime = null,
                     status = model?.get("status")?.asString ?: ""
 
                 )
+                println("here is transactions for display ${getAllTransactionFromDB()}")
                 val dbModel =
                     parseInTransactionDbModel(updateModel, updateModel.id ?: "")
+                println("here is dbModel 111 ${dbModel}")
                 addTransactionInDB(dbModel)
 
                 println("here is transactions 111 ${getAllTransactionFromDB()}")
-                println("here is transactions with status 1 ::  ${ getTransactionFromDbWithCalledStatus(serviceId)}")
+                println("here is transactions with status 4 ::  ${ getTransactionFromDbWithDisplayStatus(serviceId)}")
 
                 sendMessageToWebSocketClient(
                     model?.get("displayId")?.asString ?: "",
                     createServiceJsonDataWithTransaction(
-                        getTransactionFromDbWithCalledStatus(serviceId)
+                        getTransactionFromDbWithDisplayStatus(serviceId)
                     )
                 )
             }
@@ -296,7 +299,9 @@ class MainActivity : BaseActivity(), MessageListener {
                             println("here is display list  $arrListDisplays")
                             arrListDisplays.forEach {
                                 println("here is display ids  ${it?.id}")
-                                if (it?.counterId == (model?.get("counterId")?.asString ?: "")){
+                                println("here is counter ids for display  ${it?.counterId}")
+                                println("here is counter ids for counter  ${json.get("counterId")?.asString ?: ""}")
+                                if (it?.counterId == (json.get("counterId")?.asString ?: "")){
                                     sendMessageToWebSocketClient(
                                         it.id ?: "",
                                         createServiceJsonDataWithTransaction(

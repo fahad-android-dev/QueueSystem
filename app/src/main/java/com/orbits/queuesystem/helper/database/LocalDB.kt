@@ -164,6 +164,11 @@ object LocalDB {
         return db?.getTransactionByIssuedStatus(serviceId ?: "")
     }
 
+    fun Context.getTransactionFromDbWithDisplayStatus(serviceId: String?): TransactionDataDbModel? {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        return db?.getTransactionByDisplayStatus(serviceId ?: "")
+    }
+
     fun Context.getTransactionFromDbWithCalledStatus(serviceId: String?): TransactionDataDbModel? {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
         return db?.getTransactionByCalledStatus(serviceId ?: "")
