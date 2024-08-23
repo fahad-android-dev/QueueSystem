@@ -9,11 +9,13 @@ import com.orbits.queuesystem.helper.database.CounterDataDbModel
 import com.orbits.queuesystem.helper.database.LocalDB.getAllCounterFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getAllTransactionFromDB
+import com.orbits.queuesystem.helper.database.LocalDB.getAllUserFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getCurrentServiceToken
 import com.orbits.queuesystem.helper.database.LocalDB.getKeypadServiceToken
 import com.orbits.queuesystem.helper.database.LocalDB.getStartServiceToken
 import com.orbits.queuesystem.helper.database.ServiceDataDbModel
 import com.orbits.queuesystem.helper.database.TransactionDataDbModel
+import com.orbits.queuesystem.helper.database.UserDataDbModel
 
 object JsonConfig {
 
@@ -70,22 +72,6 @@ object JsonConfig {
     }
 
 
-     fun Context.createServiceJsonData(serviceId : String): JsonObject {
-        println("here is all services ${getAllServiceFromDB()}")
-        val model = getAllServiceFromDB()?.find { it?.entityID == serviceId }
-        println("here is service id start  ${model?.id.asString()}")
-        println("here is all service   ${model}")
-        println("here is start token ${getCurrentServiceToken(model?.id.asString())}")
-        println("here is tokens ${saveCalledTokens(model?.id.asString())}")
-         return JsonObject().apply {
-            addProperty("startToken", model?.tokenStart)
-            addProperty("endToken", model?.tokenEnd)
-            addProperty("serviceId", model?.id)
-            addProperty("serviceName", model?.serviceName)
-            addProperty("serviceName", model?.serviceName)
-            addProperty("tokenNo", getCurrentServiceToken(model?.entityID ?: ""))
-        }
-    }
 
     fun Context.createServiceJsonDataWithModel(serviceId : String,transactionModel: TransactionDataDbModel): JsonObject {
         val model = getAllServiceFromDB()?.find { it?.entityID == serviceId }
@@ -101,31 +87,23 @@ object JsonConfig {
     }
 
 
-    fun Context.createServiceJsonDataWithKeypadTokens(serviceId : String): JsonObject {
-        val model = getAllServiceFromDB()?.find { it?.entityID == serviceId }
-        return JsonObject().apply {
-            addProperty("startToken", model?.tokenStart)
-            addProperty("endToken", model?.tokenEnd)
-            addProperty("serviceName", model?.serviceName)
-            addProperty("tokenNo", getKeypadServiceToken(model?.entityID ?: ""))
-           // add("tokens", toKeypadJsonArray(saveCalledTokens(serviceId)))
-        }
-    }
-
-
-    fun Context.createServiceJsonDataWithTransactions(transactions : ArrayList<TransactionDataDbModel?>): JsonObject {
-        println("here is transactions 0000 ${transactions}")
-        return JsonObject().apply {
-            add(Constants.TRANSACTION,transactions.toKeypadJsonArray())
-        }
-    }
-
     fun Context.createServiceJsonDataWithTransaction(transactionModel: TransactionDataDbModel?): JsonObject {
         println("here is transaction model ${transactionModel}")
         val jsonModel = gson.toJson(transactionModel)
         return JsonObject().apply {
             if (transactionModel != null) add(Constants.TRANSACTION,  gson.fromJson(jsonModel, JsonObject::class.java))
 
+        }
+    }
+
+
+    fun Context.createUserJsonData(userName:String): JsonObject {
+        val model = getAllUserFromDB()?.find { it?.userName == userName }
+        println("here is recorded user $model")
+        return JsonObject().apply {
+            addProperty("userName", model?.userName)
+            addProperty("userId", model?.userId)
+            addProperty("password", model?.password)
         }
     }
 
@@ -157,18 +135,6 @@ object JsonConfig {
                 transaction?.let { add(gson.toJsonTree(it)) }
             }
         }
-    }
-
-
-    fun Context.saveCalledTokens(serviceEntityID: String?) : List<Int> {
-        val startToken = getStartServiceToken(serviceEntityID ?: "")
-        val currentToken = getCurrentServiceToken(serviceEntityID ?: "")
-
-        // Generate the list of tokens
-        val tokens = (startToken..currentToken).toList()
-
-        return tokens
-
     }
 
 }

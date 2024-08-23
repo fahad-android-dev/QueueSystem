@@ -22,6 +22,7 @@ import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.JsonConfig.createJsonData
 import com.orbits.queuesystem.helper.JsonConfig.createServiceJsonDataWithModel
 import com.orbits.queuesystem.helper.JsonConfig.createServiceJsonDataWithTransaction
+import com.orbits.queuesystem.helper.JsonConfig.createUserJsonData
 import com.orbits.queuesystem.helper.MessageListener
 import com.orbits.queuesystem.helper.ServerService
 import com.orbits.queuesystem.helper.ServiceConfig.parseInServiceDbModel
@@ -185,11 +186,19 @@ class MainActivity : BaseActivity(), MessageListener {
 
                 if (json.has(Constants.TICKET_TYPE)){
                     manageTicketData(json)
-                }else if(json.has(Constants.CONNECTION)){
+                }
+                else if(json.has(Constants.CONNECTION)){
                     arrListClients.forEach {
                         sendMessageToWebSocketClient(it ?: "", createJsonData())
                     }
-                }else if (json.has(Constants.DISPLAY_ID)){
+                }
+                else if(json.has(Constants.USERNAME)){
+                    arrListClients.forEach {
+                        sendMessageToWebSocketClient(it ?: "", createUserJsonData(json.get("userName").asString))
+                    }
+                }
+
+                else if (json.has(Constants.DISPLAY_ID)){
                     manageCounterDisplayData(json)
                 }else {
                     manageKeypadData(json)

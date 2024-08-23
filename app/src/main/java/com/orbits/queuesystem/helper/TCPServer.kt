@@ -227,6 +227,17 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         messageListener.onMessageJsonReceived(jsonObject)
                                     }
                                 }
+                                jsonObject.has(Constants.USERNAME) -> {
+                                    var userClientId = UUID.randomUUID().toString()
+                                    WebSocketManager.updateClientId(clientId, userClientId)
+                                    clientId = userClientId
+                                    clients[clientId] = this
+                                    addToConnectedClients(clientId)
+                                    messageListener.onClientConnected(clientSocket,arrListClients)
+                                    Extensions.handler(400){
+                                        messageListener.onMessageJsonReceived(jsonObject)
+                                    }
+                                }
                                 else -> {
                                     clients[clientId] = this
                                     messageListener.onClientConnected(clientSocket,arrListClients)
