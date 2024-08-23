@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.text.method.PasswordTransformationMethod
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.orbits.queuesystem.R
@@ -187,6 +189,30 @@ object Dialogs {
 
             binding.ivCancel.setOnClickListener {
                 addUserDialog?.dismiss()
+            }
+
+            binding.ivPasswordEye.setOnClickListener {
+                if (binding.edtPassword.transformationMethod == null) {
+                    binding.edtPassword.transformationMethod = PasswordTransformationMethod()
+                    binding.edtPassword.setSelection(binding.edtPassword.text?.length ?: 0)
+                    binding.ivPasswordEye.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_eye))
+                } else {
+                    binding.edtPassword.transformationMethod = null
+                    binding.edtPassword.setSelection(binding.edtPassword.text?.length ?: 0)
+                    binding.ivPasswordEye.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_eye_closed))
+                }
+            }
+
+            binding.ivConfirmPasswordEye.setOnClickListener {
+                if (binding.edtConfirmPassword.transformationMethod == null) {
+                    binding.edtConfirmPassword.transformationMethod = PasswordTransformationMethod()
+                    binding.edtConfirmPassword.setSelection(binding.edtConfirmPassword.text?.length ?: 0)
+                    binding.ivConfirmPasswordEye.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_eye))
+                } else {
+                    binding.edtConfirmPassword.transformationMethod = null
+                    binding.edtConfirmPassword.setSelection(binding.edtConfirmPassword.text?.length ?: 0)
+                    binding.ivConfirmPasswordEye.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_eye_closed))
+                }
             }
 
             binding.btnAlertPositive.setOnClickListener {

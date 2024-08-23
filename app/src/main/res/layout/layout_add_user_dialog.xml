@@ -103,6 +103,16 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/edtUserName" />
 
+                    <ImageView
+                        android:id="@+id/ivPasswordEye"
+                        android:layout_width="@dimen/edt_end_icon_width"
+                        android:layout_height="@dimen/edt_end_icon_height"
+                        android:src="@drawable/ic_eye"
+                        android:layout_marginEnd="@dimen/icon_end_margin"
+                        app:layout_constraintBottom_toBottomOf="@+id/edtPassword"
+                        app:layout_constraintEnd_toEndOf="@+id/edtPassword"
+                        app:layout_constraintTop_toTopOf="@+id/edtPassword" />
+
                     <EditText
                         android:id="@+id/edtConfirmPassword"
                         style="@style/CommonInputEditTextStyle"
@@ -116,6 +126,16 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/edtPassword" />
+
+                    <ImageView
+                        android:id="@+id/ivConfirmPasswordEye"
+                        android:layout_width="@dimen/edt_end_icon_width"
+                        android:layout_height="@dimen/edt_end_icon_height"
+                        android:src="@drawable/ic_eye"
+                        android:layout_marginEnd="@dimen/icon_end_margin"
+                        app:layout_constraintBottom_toBottomOf="@+id/edtConfirmPassword"
+                        app:layout_constraintEnd_toEndOf="@+id/edtConfirmPassword"
+                        app:layout_constraintTop_toTopOf="@+id/edtConfirmPassword" />
 
 
                     <LinearLayout
