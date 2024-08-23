@@ -28,6 +28,9 @@
         android:theme="@style/AppTheme.QueueSystem"
         tools:targetApi="31">
         <activity
+            android:name=".mvvm.users.view.UserListActivity"
+            android:exported="false" />
+        <activity
             android:name=".mvvm.counters.view.CounterListActivity"
             android:exported="false" />
         <activity
@@ -39,10 +42,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".helper.ServerService"
-            android:foregroundServiceType="dataSync"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
     </application>
 
 </manifest>

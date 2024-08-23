@@ -3,6 +3,7 @@ package com.orbits.queuesystem.helper.database
 import android.content.Context
 import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.Extensions.printLog
+import com.orbits.queuesystem.helper.database.LocalDB.getAllUserFromDB
 
 object LocalDB {
 
@@ -187,4 +188,34 @@ object LocalDB {
 
 
     /*-----------------------------------------------Transaction-------------------------------------------------------------*/
+
+
+
+
+
+    /*-----------------------------------------------Users-------------------------------------------------------------*/
+
+
+    fun Context.addUserInDB(data: UserDataDbModel): ArrayList<UserDataDbModel?> {
+        val db = AppDatabase.getAppDatabase(this).userDao()
+        if (db?.isUserPresent(data.userId) == true) {
+            db?.updateUserOffline(
+                data.userId,
+                data.id.asString(),
+            )
+        } else {
+            db?.addUser(data)
+        }
+        return db?.getAllUsers() as ArrayList<UserDataDbModel?>
+    }
+
+
+    fun Context.getAllUserFromDB(): ArrayList<UserDataDbModel?>? {
+        val db = AppDatabase.getAppDatabase(this).userDao()
+        return db?.getAllUsers() as ArrayList<UserDataDbModel?>?
+    }
+
+
+
+    /*-----------------------------------------------Users-------------------------------------------------------------*/
 }

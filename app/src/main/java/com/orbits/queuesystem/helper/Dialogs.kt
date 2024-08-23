@@ -11,11 +11,13 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.LayoutAddCounterDialogBinding
 import com.orbits.queuesystem.databinding.LayoutAddServiceDialogBinding
+import com.orbits.queuesystem.databinding.LayoutAddUserDialogBinding
 import com.orbits.queuesystem.databinding.LayoutCustomAlertBinding
 import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.Global.getDimension
@@ -23,11 +25,13 @@ import com.orbits.queuesystem.helper.Global.getTypeFace
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
 import com.orbits.queuesystem.mvvm.counters.model.CounterListDataModel
 import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
+import com.orbits.queuesystem.mvvm.users.model.UserListDataModel
 
 object Dialogs {
 
     var addServiceDialog: Dialog? = null
     var addCounterDialog: Dialog? = null
+    var addUserDialog: Dialog? = null
     var customDialog: Dialog? = null
 
     fun showAddServiceDialog(
@@ -121,19 +125,102 @@ object Dialogs {
             }
 
             binding.btnAlertPositive.setOnClickListener {
-                addCounterDialog?.dismiss()
-                alertDialogInterface.onAddCounter(
-                    model = CounterListDataModel(
-                        id = binding.edtCounterId.text.toString(),
-                        counterId = binding.edtCounterId.text.toString(),
-                        name = binding.edtCounterName.text.toString(),
-                        nameAr = binding.edtCounterNameAr.text.toString(),
-                        counterType = binding.edtCounterType.text.toString(),
-                        serviceId = serviceId
-                    )
-                )
+                when {
+                    binding.edtCounterId.text.toString().isEmpty() -> {
+                        Toast.makeText(activity, "Please enter counter id", Toast.LENGTH_SHORT).show()
+                    }
+                    binding.edtCounterName.text.toString().isEmpty() -> {
+                        Toast.makeText(activity, "Please enter counter name", Toast.LENGTH_SHORT).show()
+                    }
+                    binding.edtCounterNameAr.text.toString().isEmpty() -> {
+                        Toast.makeText(activity, "Please enter counter name in arabic", Toast.LENGTH_SHORT).show()
+                    }
+                    binding.edtCounterType.text.toString().isEmpty() -> {
+                        Toast.makeText(activity, "Please select counter type", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        addCounterDialog?.dismiss()
+                        alertDialogInterface.onAddCounter(
+                            model = CounterListDataModel(
+                                id = binding.edtCounterId.text.toString(),
+                                counterId = binding.edtCounterId.text.toString(),
+                                name = binding.edtCounterName.text.toString(),
+                                nameAr = binding.edtCounterNameAr.text.toString(),
+                                counterType = binding.edtCounterType.text.toString(),
+                                serviceId = serviceId
+                            )
+                        )
+                    }
+                }
             }
             addCounterDialog?.show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
+    fun showAddUserDialog(
+        activity: Context,
+        isCancellable: Boolean? = true,
+        alertDialogInterface: AlertDialogInterface,
+    ) {
+        try {
+            addUserDialog = Dialog(activity)
+            addUserDialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            addUserDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            val binding: LayoutAddUserDialogBinding = DataBindingUtil.inflate(
+                LayoutInflater.from(activity),
+                R.layout.layout_add_user_dialog, null, false
+            )
+            addUserDialog?.setContentView(binding.root)
+            val lp: WindowManager.LayoutParams = WindowManager.LayoutParams()
+            lp.copyFrom(addUserDialog?.window?.attributes)
+            lp.width = getDimension(activity as Activity, 300.00)
+            lp.height = WindowManager.LayoutParams.WRAP_CONTENT
+            lp.gravity = Gravity.CENTER
+            addUserDialog?.window?.attributes = lp
+            addUserDialog?.setCanceledOnTouchOutside(isCancellable ?: true)
+            addUserDialog?.setCancelable(isCancellable ?: true)
+
+            binding.btnAlertPositive.text = activity.getString(R.string.confirm)
+
+            binding.ivCancel.setOnClickListener {
+                addUserDialog?.dismiss()
+            }
+
+            binding.btnAlertPositive.setOnClickListener {
+                when {
+                    binding.edtUserId.text.toString().isEmpty() -> {
+                        Toast.makeText(activity, "Please enter user id", Toast.LENGTH_SHORT).show()
+                    }
+                    binding.edtUserName.text.toString().isEmpty() -> {
+                        Toast.makeText(activity, "Please enter user name", Toast.LENGTH_SHORT).show()
+                    }
+                    binding.edtPassword.text.toString().isEmpty() -> {
+                        Toast.makeText(activity, "Please enter password", Toast.LENGTH_SHORT).show()
+                    }
+                    binding.edtConfirmPassword.text.toString().isEmpty() -> {
+                        Toast.makeText(activity, "Please enter confirm password", Toast.LENGTH_SHORT).show()
+                    }
+                    binding.edtConfirmPassword.text.toString() != binding.edtPassword.text.toString() -> {
+                        Toast.makeText(activity, "Both password does not match", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        addUserDialog?.dismiss()
+                        alertDialogInterface.onAddUser(
+                            model = UserListDataModel(
+                                id = binding.edtUserId.text.toString(),
+                                userId = binding.edtUserId.text.toString(),
+                                userName = binding.edtUserName.text.toString(),
+                                password = binding.edtPassword.text.toString(),
+                            )
+                        )
+                    }
+                }
+
+            }
+            addUserDialog?.show()
         } catch (e: Exception) {
             e.printStackTrace()
         }

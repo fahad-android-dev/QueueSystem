@@ -18,4 +18,10 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="are_you_sure_you_want_to_delete_this_service">Are you sure you want to delete this service</string>
+    <string name="user_list">User List</string>
+    <string name="enter_user_name">Enter User Name</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="enter_confirm_password">Enter Confirm Password</string>
+    <string name="add_user_data">Add User Data</string>
+    <string name="enter_user_id">Enter User Id</string>
 </resources>

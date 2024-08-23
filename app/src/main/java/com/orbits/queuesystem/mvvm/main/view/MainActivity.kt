@@ -48,6 +48,7 @@ import com.orbits.queuesystem.mvvm.main.adapter.ServiceListAdapter
 import com.orbits.queuesystem.mvvm.main.model.DisplayListDataModel
 import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
 import com.orbits.queuesystem.mvvm.main.model.TransactionListDataModel
+import com.orbits.queuesystem.mvvm.users.view.UserListActivity
 import java.io.OutputStream
 import java.net.Socket
 import java.text.SimpleDateFormat
@@ -86,10 +87,15 @@ class MainActivity : BaseActivity(), MessageListener {
             binding.layoutToolbar,
             title = getString(R.string.app_name),
             isBackArrow = false,
+            iconTwo = R.drawable.ic_user_list,
             toolbarClickListener = object : CommonInterfaceClickEvent {
                 override fun onToolBarListener(type: String) {
                     if (type == Constants.TOOLBAR_ICON_ONE) {
                         val intent = Intent(this@MainActivity, CounterListActivity::class.java)
+                        startActivity(intent)
+                    }
+                    if (type == Constants.TOOLBAR_ICON_TWO) {
+                        val intent = Intent(this@MainActivity, UserListActivity::class.java)
                         startActivity(intent)
                     }
                 }
