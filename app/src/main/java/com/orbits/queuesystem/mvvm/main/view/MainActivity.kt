@@ -87,7 +87,6 @@ class MainActivity : BaseActivity(), MessageListener {
 
 
         initializeToolbar()
-
         initializeFields()
         onClickListeners()
 
@@ -207,10 +206,10 @@ class MainActivity : BaseActivity(), MessageListener {
                         sendMessageToWebSocketClient(it ?: "", createUserJsonData(json.get("userName").asString))
                     }
                 }
-
                 else if (json.has(Constants.DISPLAY_ID)){
                     manageCounterDisplayData(json)
-                }else {
+                }
+                else {
                     manageKeypadData(json)
                 }
 
@@ -261,6 +260,7 @@ class MainActivity : BaseActivity(), MessageListener {
             }
 
         } else {
+            println("here is transaction with service id ${json.get("serviceId")?.asString ?: ""}")
             println("here is transaction with status 1 in dislpay  ${getTransactionFromDbWithCalledStatus(json.get("serviceId")?.asString ?: "")}")
             sendMessageToWebSocketClient(
                 json.get("displayId")?.asString ?: "",
@@ -274,6 +274,27 @@ class MainActivity : BaseActivity(), MessageListener {
                 serviceId = json.get("serviceId")?.asString ?: ""
 
             )
+            val issueModel = getTransactionFromDbWithCalledStatus(json.get("serviceId")?.asString ?: "")
+            val changedModel = TransactionListDataModel(
+                id = issueModel?.id.asString(),
+                counterId = issueModel?.counterId,
+                serviceId = issueModel?.serviceId,
+                entityID = issueModel?.entityID,
+                serviceAssign = issueModel?.serviceAssign,
+                token = issueModel?.token,
+                ticketToken = issueModel?.ticketToken,
+                keypadToken = issueModel?.keypadToken,
+                issueTime = issueModel?.issueTime,
+                startKeypadTime = getStartTimeForKeypad(),
+                endKeypadTime = issueModel?.endKeypadTime,
+                status = "4"
+
+            )
+            val changedDbModel = parseInTransactionDbModel(changedModel, changedModel.id ?: "")
+            println("here is changed transactions model 2222 $changedDbModel")
+            addTransactionInDB(changedDbModel)
+
+
             arrListDisplays.add(model)
         }
     }
@@ -354,6 +375,26 @@ class MainActivity : BaseActivity(), MessageListener {
                                         )
                                     )
 
+                                    val displayModel = getTransactionFromDbWithCalledStatus(it.serviceId)
+                                    val changedDisplayModel = TransactionListDataModel(
+                                        id = displayModel?.id.asString(),
+                                        counterId = displayModel?.counterId,
+                                        serviceId = displayModel?.serviceId,
+                                        entityID = displayModel?.entityID,
+                                        serviceAssign = displayModel?.serviceAssign,
+                                        token = displayModel?.token,
+                                        ticketToken = displayModel?.ticketToken,
+                                        keypadToken = displayModel?.keypadToken,
+                                        issueTime = displayModel?.issueTime,
+                                        startKeypadTime = displayModel?.startKeypadTime,
+                                        endKeypadTime = displayModel?.endKeypadTime,
+                                        status = "4"
+
+                                    )
+                                    val changedDisplayDbModel = parseInTransactionDbModel(changedDisplayModel, changedDisplayModel.id ?: "")
+                                    println("here is changed transactions model 2222 $changedDisplayDbModel")
+                                    addTransactionInDB(changedDisplayDbModel)
+
                                 }
                             }
                         }
@@ -376,6 +417,63 @@ class MainActivity : BaseActivity(), MessageListener {
                             getTransactionByToken(json.get("tokenNo")?.asString ?: "")
                         )
                     )
+
+                    val issueModel = getTransactionFromDbWithCalledStatus(json.get("serviceId")?.asString ?: "")
+                    val changedModel = TransactionListDataModel(
+                        id = issueModel?.id.asString(),
+                        counterId = issueModel?.counterId,
+                        serviceId = issueModel?.serviceId,
+                        entityID = issueModel?.entityID,
+                        serviceAssign = issueModel?.serviceAssign,
+                        token = issueModel?.token,
+                        ticketToken = issueModel?.ticketToken,
+                        keypadToken = issueModel?.keypadToken,
+                        issueTime = issueModel?.issueTime,
+                        startKeypadTime = getStartTimeForKeypad(),
+                        endKeypadTime = issueModel?.endKeypadTime,
+                        status = "2"
+
+                    )
+                    val changedDbModel = parseInTransactionDbModel(changedModel, changedModel.id ?: "")
+                    addTransactionInDB(changedDbModel)
+
+                    Extensions.handler(500){
+                        println("here is arrlist Display 111 $arrListDisplays")
+                        if (arrListDisplays.isNotEmpty()){
+                            println("here is display list 222 $arrListDisplays")
+                            arrListDisplays.forEach {
+                                if (it?.counterId == (json.get("counterId")?.asString ?: "")){
+                                    sendMessageToWebSocketClient(
+                                        it.id ?: "",
+                                        createServiceJsonDataWithTransaction(
+                                            getTransactionByToken(json.get("tokenNo")?.asString ?: "")
+                                        )
+                                    )
+
+                                    val displayModel = getTransactionByToken(json.get("tokenNo")?.asString ?: "")
+                                    val changedDisplayModel = TransactionListDataModel(
+                                        id = displayModel?.id.asString(),
+                                        counterId = displayModel?.counterId,
+                                        serviceId = displayModel?.serviceId,
+                                        entityID = displayModel?.entityID,
+                                        serviceAssign = displayModel?.serviceAssign,
+                                        token = displayModel?.token,
+                                        ticketToken = displayModel?.ticketToken,
+                                        keypadToken = displayModel?.keypadToken,
+                                        issueTime = displayModel?.issueTime,
+                                        startKeypadTime = displayModel?.startKeypadTime,
+                                        endKeypadTime = displayModel?.endKeypadTime,
+                                        status = "4"
+
+                                    )
+                                    val changedDisplayDbModel = parseInTransactionDbModel(changedDisplayModel, changedDisplayModel.id ?: "")
+                                    println("here is changed transactions model 2222 $changedDisplayDbModel")
+                                    addTransactionInDB(changedDisplayDbModel)
+
+                                }
+                            }
+                        }
+                    }
                 }
 
             }else {
