@@ -29,9 +29,9 @@ class ServerService : Service() {
     @SuppressLint("ForegroundServiceType")
     private fun start() {
         val notification = NotificationCompat.Builder(this, "2")
-            .setSmallIcon(R.drawable.ic_app_logo)
-            .setContentTitle("Aflak")
-            .setContentText("Queue System is Running")
+            .setSmallIcon(R.mipmap.ic_launcher_new)
+            .setContentTitle("Queue Server ")
+            .setContentText("Queue System is Running on Background")
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setVisibility(NotificationCompat.VISIBILITY_SECRET)
             .build()

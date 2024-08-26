@@ -1,5 +1,6 @@
 package com.orbits.queuesystem.mvvm.main.view
 
+import NetworkMonitor
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -67,6 +68,7 @@ class MainActivity : BaseActivity(), MessageListener {
     private var outStream: OutputStream? = null
     private val arrListClients = CopyOnWriteArrayList<String>()
     private var arrListDisplays = ArrayList<DisplayListDataModel?>()
+    private lateinit var networkMonitor: NetworkMonitor
     val gson = Gson()
     var serviceId = ""
     var serviceType = ""
@@ -75,9 +77,17 @@ class MainActivity : BaseActivity(), MessageListener {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        startServerService()
+        networkMonitor = NetworkMonitor(this) {
+            startServerService()
+            runOnUiThread {
+                initializeSocket()
+            }
+        }
+        networkMonitor.registerNetworkCallback()
+
+
         initializeToolbar()
-        initializeSocket()
+
         initializeFields()
         onClickListeners()
 
