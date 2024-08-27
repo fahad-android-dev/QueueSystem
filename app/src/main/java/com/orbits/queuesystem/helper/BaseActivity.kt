@@ -12,6 +12,7 @@ import android.view.Window
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.LayoutToolbarBinding
 import java.util.*
 
@@ -85,6 +86,7 @@ open class BaseActivity : AppCompatActivity() {
         binding: LayoutToolbarBinding,
         title: String = "",
         iconTwo: Int = 0,
+        iconMenu: Int = 0,
         isBackArrow: Boolean = true,
         toolbarClickListener: CommonInterfaceClickEvent? = null
     ) {
@@ -100,10 +102,21 @@ open class BaseActivity : AppCompatActivity() {
         if (layoutToolbarBinding?.conIconTwo?.isVisible == true)
             layoutToolbarBinding?.ivIconTwo?.setImageResource(iconTwo)
 
-        layoutToolbarBinding?.linBackArrow?.isVisible = isBackArrow
-        layoutToolbarBinding?.linBackArrow?.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+        layoutToolbarBinding?.linBackArrow?.isVisible = isBackArrow && iconMenu == 0
+
+        if (iconMenu != 0){
+            layoutToolbarBinding?.linBackArrow?.isVisible = true
+            layoutToolbarBinding?.ivArrow?.setImageResource(iconMenu)
+            layoutToolbarBinding?.linBackArrow?.setOnClickListener {
+                toolbarClickListener?.onToolBarListener(Constants.TOOLBAR_ICON_MENU)
+            }
+        }else {
+            layoutToolbarBinding?.ivArrow?.setImageResource(R.drawable.ic_back_arrow)
+            layoutToolbarBinding?.linBackArrow?.setOnClickListener {
+                onBackPressedDispatcher.onBackPressed()
+            }
         }
+
         layoutToolbarBinding?.conIconOne?.setOnClickListener {
             toolbarClickListener?.onToolBarListener(Constants.TOOLBAR_ICON_ONE)
         }
@@ -111,6 +124,7 @@ open class BaseActivity : AppCompatActivity() {
         layoutToolbarBinding?.conIconTwo?.setOnClickListener {
             toolbarClickListener?.onToolBarListener(Constants.TOOLBAR_ICON_TWO)
         }
+
         layoutToolbarBinding?.txtToolbarHeader?.text = title
     }
 }

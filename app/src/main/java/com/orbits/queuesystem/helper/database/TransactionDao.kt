@@ -51,5 +51,11 @@ interface TransactionDao {
     @Query("SELECT * FROM TRANSACTIONDATADBMODEL WHERE ticketToken = :ticketToken")
     fun getAllTransactionsByToken(ticketToken: String): List<TransactionDataDbModel?>
 
+    @Query("UPDATE TransactionDataDbModel SET status = 5 WHERE status IN (0,1)")
+    fun resetAllTransactions()
+
+    @Query("UPDATE ServiceDataDbModel SET tokenNo = tokenStart")
+    fun updateServiceToken()
+
 
 }

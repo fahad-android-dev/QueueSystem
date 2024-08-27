@@ -54,7 +54,7 @@ class UserListAdapter : RecyclerView.Adapter<UserListAdapter.MyViewHolder>() {
         }
 
         holder.binding.linDelete.setOnClickListener {
-            onClickEvent?.onItemClick("deleteCounter", position)
+            onClickEvent?.onItemClick("deleteUser", position)
         }
     }
 

@@ -27,4 +27,7 @@ interface UserDao {
     @Query("SELECT userId FROM UserDataDbModel WHERE userId=:userId")
     fun isUserPresent(userId: String?): Boolean
 
+    @Query("DELETE from UserDataDbModel where id=:id")
+    fun deleteUser(id: String?)
+
 }

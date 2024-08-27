@@ -13,4 +13,5 @@ interface AlertDialogInterface {
     fun onAddService(model:ServiceListDataModel) {}
     fun onAddCounter(model:CounterListDataModel) {}
     fun onAddUser(model:UserListDataModel) {}
+    fun onTimeSelected(hour:String,minute:String) {}
 }

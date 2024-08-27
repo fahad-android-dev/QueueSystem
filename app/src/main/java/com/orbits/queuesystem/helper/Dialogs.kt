@@ -21,6 +21,7 @@ import com.orbits.queuesystem.databinding.LayoutAddCounterDialogBinding
 import com.orbits.queuesystem.databinding.LayoutAddServiceDialogBinding
 import com.orbits.queuesystem.databinding.LayoutAddUserDialogBinding
 import com.orbits.queuesystem.databinding.LayoutCustomAlertBinding
+import com.orbits.queuesystem.databinding.LayoutTimePickerDialogBinding
 import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.Global.getDimension
 import com.orbits.queuesystem.helper.Global.getTypeFace
@@ -34,6 +35,7 @@ object Dialogs {
     var addServiceDialog: Dialog? = null
     var addCounterDialog: Dialog? = null
     var addUserDialog: Dialog? = null
+    var timePickerDialog: Dialog? = null
     var customDialog: Dialog? = null
 
     fun showAddServiceDialog(
@@ -282,6 +284,45 @@ object Dialogs {
                 bottomSheerDialog.show()
             }
         } catch (e: Exception) {
+        }
+    }
+
+
+    fun showTimePicker(
+        activity: Activity,
+        alertDialogInterface: AlertDialogInterface,
+    ) {
+        try {
+            timePickerDialog = Dialog(activity)
+            timePickerDialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            timePickerDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            val binding: LayoutTimePickerDialogBinding = DataBindingUtil.inflate(
+                LayoutInflater.from(activity),
+                R.layout.layout_time_picker_dialog, null, false
+            )
+            timePickerDialog?.setContentView(binding.root)
+            val lp: WindowManager.LayoutParams = WindowManager.LayoutParams()
+            lp.copyFrom(timePickerDialog?.window?.attributes)
+            lp.width = getDimension(activity as Activity, 300.00)
+            lp.height = WindowManager.LayoutParams.WRAP_CONTENT
+            lp.gravity = Gravity.CENTER
+            timePickerDialog?.window?.attributes = lp
+
+            binding.timePicker.setIs24HourView(true)
+
+            binding.txtTimeCancel.setOnClickListener {
+                timePickerDialog?.dismiss()
+            }
+
+            binding.txtTimeDone.setOnClickListener {
+                alertDialogInterface.onTimeSelected(binding.timePicker.hour.asString(), binding.timePicker.minute.asString())
+                timePickerDialog?.dismiss()
+            }
+
+
+            timePickerDialog?.show()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

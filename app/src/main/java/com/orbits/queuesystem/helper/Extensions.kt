@@ -29,6 +29,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doAfterTextChanged
@@ -45,6 +46,8 @@ import java.io.File
 import java.io.IOException
 import java.io.Serializable
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.ceil
 
@@ -619,6 +622,17 @@ object Extensions {
             }
         }
         return total % IBAN_MODULUS == 1L
+    }
+
+    fun getFormattedDateTime(date: String, time: String): String {
+        return "$date $time"
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getCurrentDateTime(): String {
+        val now = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        return now.format(formatter)
     }
 
 }

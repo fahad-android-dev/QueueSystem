@@ -3,7 +3,7 @@ package com.orbits.queuesystem.helper.database
 import android.content.Context
 import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.Extensions.printLog
-import com.orbits.queuesystem.helper.database.LocalDB.getAllUserFromDB
+import com.orbits.queuesystem.helper.database.LocalDB.getAllResetData
 
 object LocalDB {
 
@@ -185,6 +185,12 @@ object LocalDB {
         return db?.getAllTransactionsByToken(ticketToken) as ArrayList<TransactionDataDbModel?>
     }
 
+    fun Context.resetAllTransactionInDb() {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        db?.resetAllTransactions()
+        db?.updateServiceToken()
+    }
+
 
 
     /*-----------------------------------------------Transaction-------------------------------------------------------------*/
@@ -215,7 +221,54 @@ object LocalDB {
         return db?.getAllUsers() as ArrayList<UserDataDbModel?>?
     }
 
+    fun Context.deleteUserInDb(id: String? = "0"): ArrayList<UserDataDbModel?>? {
+        ("Here i am user id   $id").printLog()
+        val db = AppDatabase.getAppDatabase(this).userDao()
+        db?.deleteUser(id)
+        return db?.getAllUsers() as ArrayList<UserDataDbModel?>?
+    }
+
 
 
     /*-----------------------------------------------Users-------------------------------------------------------------*/
+
+    /*-----------------------------------------------Reset Time-------------------------------------------------------------*/
+
+
+    fun Context.addResetData(data: ResetDataDbModel): ArrayList<ResetDataDbModel?> {
+        val db = AppDatabase.getAppDatabase(this).resetTimeDao()
+        db?.addResetTime(data)
+        return db?.getAllResetData() as ArrayList<ResetDataDbModel?>
+    }
+
+    fun Context.updateResetDateTime(resetDateTime: String){
+        val db = AppDatabase.getAppDatabase(this).resetTimeDao()
+        db?.updateResetTime(resetDateTime)
+    }
+
+    fun Context.updateCurrentDateTimeInDb(currentDateTime: String){
+        val db = AppDatabase.getAppDatabase(this).resetTimeDao()
+        db?.updateCurrentTime(currentDateTime)
+    }
+
+    fun Context.updateLastDateTimeInDb(lastDateTime: String){
+        val db = AppDatabase.getAppDatabase(this).resetTimeDao()
+        db?.updateLastDateTime(lastDateTime)
+    }
+
+    fun Context.isResetDoneInDb(): Boolean {
+        val db = AppDatabase.getAppDatabase(this).resetTimeDao()
+        return db?.isResetDone() ?: false
+    }
+
+
+    fun Context.getAllResetData(): ArrayList<ResetDataDbModel?>? {
+        val db = AppDatabase.getAppDatabase(this).resetTimeDao()
+        return db?.getAllResetData() as ArrayList<ResetDataDbModel?>
+    }
+
+
+
+
+    /*-----------------------------------------------Reset Time-------------------------------------------------------------*/
 }

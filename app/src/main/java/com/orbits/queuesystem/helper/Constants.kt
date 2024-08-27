@@ -30,6 +30,7 @@ object Constants {
 
     const val TOOLBAR_ICON_ONE = "iconOne"
     const val TOOLBAR_ICON_TWO = "iconTwo"
+    const val TOOLBAR_ICON_MENU = "iconMenu"
 
     const val TRANSACTION = "transaction"
 

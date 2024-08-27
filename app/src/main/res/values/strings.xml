@@ -24,4 +24,13 @@
     <string name="enter_confirm_password">Enter Confirm Password</string>
     <string name="add_user_data">Add User Data</string>
     <string name="enter_user_id">Enter User Id</string>
+    <string name="users">Users</string>
+    <string name="reset_queue">Reset Queue</string>
+    <string name="home">Home</string>
+    <string name="reset">Reset</string>
+    <string name="reset_now">Reset Now</string>
+    <string name="set_reset_time">Set Reset Time</string>
+    <string name="select_reset_time">Select Reset Time</string>
+    <string name="are_you_sure_you_want_to_reset_queue_now">Are You sure you want to reset queue now ??</string>
+    <string name="queue_reset_successfully">Queue reset successfully</string>
 </resources>

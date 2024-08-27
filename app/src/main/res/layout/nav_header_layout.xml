@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        style="@style/AppBackGroundStyleLight"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/conQueue"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:paddingVertical="@dimen/_35sdp"
+                    android:background="@color/color_logo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/txtNavHeadTitle"
+                        style="@style/TextStyleStartSemiBold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_12sdp"
+                        android:gravity="start"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="@dimen/_2sdp"
+                        android:maxLines="2"
+                        android:textAlignment="viewStart"
+                        android:textAllCaps="true"
+                        android:textColor="@color/txt_color_white"
+                        android:textSize="@dimen/_18ssp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:text="Queue System" />
+
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/conHome"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:paddingVertical="@dimen/_15sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/conQueue">
+
+                    <TextView
+                        android:id="@+id/txtHomeTitle"
+                        style="@style/TextStyleStartSemiBold"
+                        android:layout_width="@dimen/_200sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:gravity="start"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="@dimen/_2sdp"
+                        android:maxLines="1"
+                        android:textAlignment="viewStart"
+                        android:textAllCaps="true"
+                        android:textColor="@color/txt_color_primary"
+                        android:textSize="@dimen/btn_text_size"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:text="@string/home" />
+
+
+                    <ImageView
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:layout_marginEnd="@dimen/screen_margin"
+                        android:src="@drawable/ic_right_arrow"
+                        app:layout_constraintBottom_toBottomOf="@+id/txtHomeTitle"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/txtHomeTitle"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/conUsers"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:paddingVertical="@dimen/_15sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/conHome">
+
+                    <TextView
+                        android:id="@+id/txtUsersTitle"
+                        style="@style/TextStyleStartSemiBold"
+                        android:layout_width="@dimen/_200sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:gravity="start"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="@dimen/_2sdp"
+                        android:maxLines="1"
+                        android:textAlignment="viewStart"
+                        android:textAllCaps="true"
+                        android:textColor="@color/txt_color_primary"
+                        android:textSize="@dimen/btn_text_size"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:text="@string/users" />
+
+
+                    <ImageView
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:layout_marginEnd="@dimen/screen_margin"
+                        android:src="@drawable/ic_right_arrow"
+                        app:layout_constraintBottom_toBottomOf="@+id/txtUsersTitle"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/txtUsersTitle"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/conReset"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:paddingVertical="@dimen/_15sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/conUsers">
+
+                    <TextView
+                        android:id="@+id/txtResetTitle"
+                        style="@style/TextStyleStartSemiBold"
+                        android:layout_width="@dimen/_200sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:gravity="start"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="@dimen/_2sdp"
+                        android:maxLines="1"
+                        android:textAlignment="viewStart"
+                        android:textAllCaps="true"
+                        android:textColor="@color/txt_color_primary"
+                        android:textSize="@dimen/btn_text_size"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:text="@string/reset_queue" />
+
+
+                    <ImageView
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:layout_marginEnd="@dimen/screen_margin"
+                        android:src="@drawable/ic_right_arrow"
+                        app:layout_constraintBottom_toBottomOf="@+id/txtResetTitle"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/txtResetTitle"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -4,14 +4,17 @@ import NetworkMonitor
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.ActivityMainBinding
+import com.orbits.queuesystem.databinding.NavHeaderLayoutBinding
 import com.orbits.queuesystem.helper.AlertDialogInterface
 import com.orbits.queuesystem.helper.BaseActivity
 import com.orbits.queuesystem.helper.CommonInterfaceClickEvent
@@ -20,6 +23,8 @@ import com.orbits.queuesystem.helper.Dialogs
 import com.orbits.queuesystem.helper.Extensions
 import com.orbits.queuesystem.helper.Extensions.asInt
 import com.orbits.queuesystem.helper.Extensions.asString
+import com.orbits.queuesystem.helper.Extensions.getCurrentDateTime
+import com.orbits.queuesystem.helper.Extensions.hideKeyboard
 import com.orbits.queuesystem.helper.JsonConfig.createJsonData
 import com.orbits.queuesystem.helper.JsonConfig.createServiceJsonDataWithModel
 import com.orbits.queuesystem.helper.JsonConfig.createServiceJsonDataWithTransaction
@@ -35,6 +40,7 @@ import com.orbits.queuesystem.helper.database.LocalDB.addServiceInDB
 import com.orbits.queuesystem.helper.database.LocalDB.addServiceTokenToDB
 import com.orbits.queuesystem.helper.database.LocalDB.addTransactionInDB
 import com.orbits.queuesystem.helper.database.LocalDB.deleteServiceInDb
+import com.orbits.queuesystem.helper.database.LocalDB.getAllResetData
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getAllTransactionFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithIssuedStatus
@@ -45,11 +51,16 @@ import com.orbits.queuesystem.helper.database.LocalDB.getTransactionByToken
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithCalledStatus
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithDisplayStatus
 import com.orbits.queuesystem.helper.database.LocalDB.isCounterAssigned
+import com.orbits.queuesystem.helper.database.LocalDB.isResetDoneInDb
+import com.orbits.queuesystem.helper.database.LocalDB.resetAllTransactionInDb
+import com.orbits.queuesystem.helper.database.LocalDB.updateCurrentDateTimeInDb
+import com.orbits.queuesystem.helper.database.LocalDB.updateLastDateTimeInDb
 import com.orbits.queuesystem.mvvm.counters.view.CounterListActivity
 import com.orbits.queuesystem.mvvm.main.adapter.ServiceListAdapter
 import com.orbits.queuesystem.mvvm.main.model.DisplayListDataModel
 import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
 import com.orbits.queuesystem.mvvm.main.model.TransactionListDataModel
+import com.orbits.queuesystem.mvvm.reset.view.ResetActivity
 import com.orbits.queuesystem.mvvm.users.view.UserListActivity
 import java.io.OutputStream
 import java.net.Socket
@@ -69,10 +80,13 @@ class MainActivity : BaseActivity(), MessageListener {
     private val arrListClients = CopyOnWriteArrayList<String>()
     private var arrListDisplays = ArrayList<DisplayListDataModel?>()
     private lateinit var networkMonitor: NetworkMonitor
+    private lateinit var headerLayout: NavHeaderLayoutBinding
     val gson = Gson()
     var serviceId = ""
     var serviceType = ""
 
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -85,11 +99,60 @@ class MainActivity : BaseActivity(), MessageListener {
         }
         networkMonitor.registerNetworkCallback()
 
+        updateCurrentDateTimeInDb(getCurrentDateTime())
+        println("here is reset data in main ${getAllResetData()}")
 
+        initResetData()
+        initLeftNavMenuDrawer()
         initializeToolbar()
         initializeFields()
         onClickListeners()
 
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun initResetData(){
+        if(getAllResetData()?.isNotEmpty() == true){
+            println("here is data reset everyday ${getAllResetData()}")
+            if (isResetDoneInDb()){
+                println("here is data resetted")
+                resetAllTransactionInDb()
+                Toast.makeText(this@MainActivity,
+                    getString(R.string.queue_reset_successfully), Toast.LENGTH_SHORT).show()
+                updateLastDateTimeInDb(getCurrentDateTime())
+            }
+        }
+    }
+
+    private fun initLeftNavMenuDrawer() {
+        headerLayout = binding.headerLayout
+
+        binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                binding.drawerLayout.hideKeyboard()
+            }
+            override fun onDrawerOpened(drawerView: View) {}
+            override fun onDrawerClosed(drawerView: View) {}
+            override fun onDrawerStateChanged(newState: Int) {}
+        })
+
+        onLeftNavMenuDrawerClickListener()
+    }
+
+    private fun onLeftNavMenuDrawerClickListener() {
+        headerLayout.conHome.setOnClickListener {
+            binding.drawerLayout.closeDrawers()
+        }
+
+        headerLayout.conUsers.setOnClickListener {
+            val intent = Intent(this@MainActivity, UserListActivity::class.java)
+            startActivity(intent)
+        }
+
+        headerLayout.conReset.setOnClickListener {
+            val intent = Intent(this@MainActivity, ResetActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun initializeToolbar() {
@@ -97,16 +160,17 @@ class MainActivity : BaseActivity(), MessageListener {
             binding.layoutToolbar,
             title = getString(R.string.app_name),
             isBackArrow = false,
-            iconTwo = R.drawable.ic_user_list,
+            iconMenu = R.drawable.ic_menu,
             toolbarClickListener = object : CommonInterfaceClickEvent {
                 override fun onToolBarListener(type: String) {
-                    if (type == Constants.TOOLBAR_ICON_ONE) {
-                        val intent = Intent(this@MainActivity, CounterListActivity::class.java)
-                        startActivity(intent)
-                    }
-                    if (type == Constants.TOOLBAR_ICON_TWO) {
-                        val intent = Intent(this@MainActivity, UserListActivity::class.java)
-                        startActivity(intent)
+                    when (type) {
+                        Constants.TOOLBAR_ICON_ONE -> {
+                            val intent = Intent(this@MainActivity, CounterListActivity::class.java)
+                            startActivity(intent)
+                        }
+                        Constants.TOOLBAR_ICON_MENU -> {
+                            binding.drawerLayout.open()
+                        }
                     }
                 }
             }
@@ -361,21 +425,29 @@ class MainActivity : BaseActivity(), MessageListener {
 
                     Extensions.handler(500){
                         println("here is arrlist Display $arrListDisplays")
-                        if (arrListDisplays.isNotEmpty()){
+                        if (arrListDisplays.isNotEmpty()) {
                             println("here is display list  $arrListDisplays")
-                            arrListDisplays.forEach {
-                                println("here is display ids  ${it?.id}")
-                                println("here is counter ids for display  ${it?.counterId}")
-                                println("here is counter ids for counter  ${json.get("counterId")?.asString ?: ""}")
-                                if (it?.counterId == (json.get("counterId")?.asString ?: "")){
+
+                            val targetCounterId = json.get("counterId")?.asString ?: ""
+
+                            val matchFound = arrListDisplays.any { it?.counterId == targetCounterId }
+
+                            if (matchFound) {
+                                // Retrieve the matching item
+                                val matchingItem = arrListDisplays.find { it?.counterId == targetCounterId }
+
+                                if (matchingItem != null) {
+                                    println("here is display ids  ${matchingItem.id}")
+                                    println("here is counter ids for display  ${matchingItem.counterId}")
+
                                     sendMessageToWebSocketClient(
-                                        it.id ?: "",
+                                        matchingItem.id ?: "",
                                         createServiceJsonDataWithTransaction(
-                                            getTransactionFromDbWithCalledStatus(it.serviceId)
+                                            getTransactionFromDbWithCalledStatus(matchingItem.serviceId)
                                         )
                                     )
 
-                                    val displayModel = getTransactionFromDbWithCalledStatus(it.serviceId)
+                                    val displayModel = getTransactionFromDbWithCalledStatus(matchingItem.serviceId)
                                     val changedDisplayModel = TransactionListDataModel(
                                         id = displayModel?.id.asString(),
                                         counterId = displayModel?.counterId,
@@ -389,15 +461,14 @@ class MainActivity : BaseActivity(), MessageListener {
                                         startKeypadTime = displayModel?.startKeypadTime,
                                         endKeypadTime = displayModel?.endKeypadTime,
                                         status = "4"
-
                                     )
                                     val changedDisplayDbModel = parseInTransactionDbModel(changedDisplayModel, changedDisplayModel.id ?: "")
                                     println("here is changed transactions model 2222 $changedDisplayDbModel")
                                     addTransactionInDB(changedDisplayDbModel)
-
                                 }
                             }
                         }
+
                     }
 
                 }
@@ -438,13 +509,24 @@ class MainActivity : BaseActivity(), MessageListener {
                     addTransactionInDB(changedDbModel)
 
                     Extensions.handler(500){
-                        println("here is arrlist Display 111 $arrListDisplays")
-                        if (arrListDisplays.isNotEmpty()){
-                            println("here is display list 222 $arrListDisplays")
-                            arrListDisplays.forEach {
-                                if (it?.counterId == (json.get("counterId")?.asString ?: "")){
+                        println("here is arrlist Display $arrListDisplays")
+                        if (arrListDisplays.isNotEmpty()) {
+                            println("here is display list  $arrListDisplays")
+
+                            val targetCounterId = json.get("counterId")?.asString ?: ""
+
+                            val matchFound = arrListDisplays.any { it?.counterId == targetCounterId }
+
+                            if (matchFound) {
+                                // Retrieve the matching item
+                                val matchingItem = arrListDisplays.find { it?.counterId == targetCounterId }
+
+                                if (matchingItem != null) {
+                                    println("here is display ids  ${matchingItem.id}")
+                                    println("here is counter ids for display  ${matchingItem.counterId}")
+
                                     sendMessageToWebSocketClient(
-                                        it.id ?: "",
+                                        matchingItem.id ?: "",
                                         createServiceJsonDataWithTransaction(
                                             getTransactionByToken(json.get("tokenNo")?.asString ?: "")
                                         )
@@ -469,10 +551,10 @@ class MainActivity : BaseActivity(), MessageListener {
                                     val changedDisplayDbModel = parseInTransactionDbModel(changedDisplayModel, changedDisplayModel.id ?: "")
                                     println("here is changed transactions model 2222 $changedDisplayDbModel")
                                     addTransactionInDB(changedDisplayDbModel)
-
                                 }
                             }
                         }
+
                     }
                 }
 
@@ -540,8 +622,7 @@ class MainActivity : BaseActivity(), MessageListener {
                     status = "0"
 
                 )
-                val dbModel =
-                    parseInTransactionDbModel(model, model.id ?: "")
+                val dbModel = parseInTransactionDbModel(model, model.id ?: "")
                 addTransactionInDB(dbModel)
                 println("here is transaction id ${getAllTransactionFromDB()}")
                 sendMessageToWebSocketClient(

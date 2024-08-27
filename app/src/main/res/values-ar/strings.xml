@@ -20,4 +20,10 @@
     <string name="are_you_sure_you_want_to_delete_this_service">Are you sure you want to delete this service</string>
     <string name="enter_password">Enter Password</string>
     <string name="add_user_data">Add User Data</string>
+    <string name="users">Users</string>
+    <string name="home">Home</string>
+    <string name="reset">Reset</string>
+    <string name="reset_now">Reset Now</string>
+    <string name="set_reset_time">Set Reset Time</string>
+    <string name="queue_reset_successfully">Queue reset successfully</string>
 </resources>
