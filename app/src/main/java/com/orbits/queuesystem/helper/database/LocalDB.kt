@@ -267,6 +267,11 @@ object LocalDB {
         return db?.getAllResetData() as ArrayList<ResetDataDbModel?>
     }
 
+    fun Context.getResetData(): ResetDataDbModel? {
+        val db = AppDatabase.getAppDatabase(this).resetTimeDao()
+        return db?.getResetData()
+    }
+
 
 
 

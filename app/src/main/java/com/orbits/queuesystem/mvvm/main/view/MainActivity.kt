@@ -24,6 +24,7 @@ import com.orbits.queuesystem.helper.Extensions
 import com.orbits.queuesystem.helper.Extensions.asInt
 import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.Extensions.getCurrentDateTime
+import com.orbits.queuesystem.helper.Extensions.getNextDate
 import com.orbits.queuesystem.helper.Extensions.hideKeyboard
 import com.orbits.queuesystem.helper.JsonConfig.createJsonData
 import com.orbits.queuesystem.helper.JsonConfig.createServiceJsonDataWithModel
@@ -46,6 +47,7 @@ import com.orbits.queuesystem.helper.database.LocalDB.getAllTransactionFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithIssuedStatus
 import com.orbits.queuesystem.helper.database.LocalDB.getCounterIdForService
 import com.orbits.queuesystem.helper.database.LocalDB.getCurrentServiceToken
+import com.orbits.queuesystem.helper.database.LocalDB.getResetData
 import com.orbits.queuesystem.helper.database.LocalDB.getServiceById
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionByToken
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithCalledStatus
@@ -55,6 +57,7 @@ import com.orbits.queuesystem.helper.database.LocalDB.isResetDoneInDb
 import com.orbits.queuesystem.helper.database.LocalDB.resetAllTransactionInDb
 import com.orbits.queuesystem.helper.database.LocalDB.updateCurrentDateTimeInDb
 import com.orbits.queuesystem.helper.database.LocalDB.updateLastDateTimeInDb
+import com.orbits.queuesystem.helper.database.LocalDB.updateResetDateTime
 import com.orbits.queuesystem.mvvm.counters.view.CounterListActivity
 import com.orbits.queuesystem.mvvm.main.adapter.ServiceListAdapter
 import com.orbits.queuesystem.mvvm.main.model.DisplayListDataModel
@@ -120,6 +123,7 @@ class MainActivity : BaseActivity(), MessageListener {
                 Toast.makeText(this@MainActivity,
                     getString(R.string.queue_reset_successfully), Toast.LENGTH_SHORT).show()
                 updateLastDateTimeInDb(getCurrentDateTime())
+                updateResetDateTime(getNextDate(getResetData()?.resetDateTime ?: ""))
             }
         }
     }

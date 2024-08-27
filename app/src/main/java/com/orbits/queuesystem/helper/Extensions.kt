@@ -635,4 +635,19 @@ object Extensions {
         return now.format(formatter)
     }
 
+    fun getNextDate(currentDate: String): String {
+        // Define the date format
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+
+        // Parse the current date
+        val calendar = Calendar.getInstance()
+        calendar.time = dateFormat.parse(currentDate) ?: return ""
+
+        // Add one day
+        calendar.add(Calendar.DAY_OF_MONTH, 1)
+
+        // Format the new date
+        return dateFormat.format(calendar.time)
+    }
+
 }

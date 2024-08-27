@@ -27,4 +27,8 @@ interface ResetTimeDao {
 
     @Query("SELECT * FROM ResetDataDbModel")
     fun getAllResetData(): List<ResetDataDbModel?>?
+
+
+    @Query("SELECT * FROM ResetDataDbModel LIMIT 1")
+    fun getResetData(): ResetDataDbModel?
 }
