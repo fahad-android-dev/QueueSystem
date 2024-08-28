@@ -1,21 +1,18 @@
-package com.orbits.queuesystem.helper
+package com.orbits.queuesystem.helper.configs
 
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.orbits.queuesystem.helper.Constants
 import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.database.CounterDataDbModel
 import com.orbits.queuesystem.helper.database.LocalDB.getAllCounterFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
-import com.orbits.queuesystem.helper.database.LocalDB.getAllTransactionFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getAllUserFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getCurrentServiceToken
-import com.orbits.queuesystem.helper.database.LocalDB.getKeypadServiceToken
-import com.orbits.queuesystem.helper.database.LocalDB.getStartServiceToken
 import com.orbits.queuesystem.helper.database.ServiceDataDbModel
 import com.orbits.queuesystem.helper.database.TransactionDataDbModel
-import com.orbits.queuesystem.helper.database.UserDataDbModel
 
 object JsonConfig {
 

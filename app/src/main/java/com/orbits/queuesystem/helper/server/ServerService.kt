@@ -1,4 +1,4 @@
-package com.orbits.queuesystem.helper
+package com.orbits.queuesystem.helper.server
 
 import android.annotation.SuppressLint
 import android.app.Service

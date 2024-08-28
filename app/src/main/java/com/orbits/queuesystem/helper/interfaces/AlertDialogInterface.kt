@@ -1,6 +1,5 @@
-package com.orbits.queuesystem.helper
+package com.orbits.queuesystem.helper.interfaces
 
-import android.view.View
 import com.orbits.queuesystem.mvvm.counters.model.CounterListDataModel
 import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
 import com.orbits.queuesystem.mvvm.users.model.UserListDataModel

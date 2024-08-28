@@ -4,13 +4,13 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.ActivityUserListBinding
-import com.orbits.queuesystem.helper.AlertDialogInterface
+import com.orbits.queuesystem.helper.interfaces.AlertDialogInterface
 import com.orbits.queuesystem.helper.BaseActivity
-import com.orbits.queuesystem.helper.CommonInterfaceClickEvent
+import com.orbits.queuesystem.helper.interfaces.CommonInterfaceClickEvent
 import com.orbits.queuesystem.helper.Constants
 import com.orbits.queuesystem.helper.Dialogs
-import com.orbits.queuesystem.helper.UserConfig.parseInUserDbModel
-import com.orbits.queuesystem.helper.UserConfig.parseInUserModelArraylist
+import com.orbits.queuesystem.helper.configs.UserConfig.parseInUserDbModel
+import com.orbits.queuesystem.helper.configs.UserConfig.parseInUserModelArraylist
 import com.orbits.queuesystem.helper.database.LocalDB.addUserInDB
 import com.orbits.queuesystem.helper.database.LocalDB.deleteUserInDb
 import com.orbits.queuesystem.helper.database.LocalDB.getAllUserFromDB

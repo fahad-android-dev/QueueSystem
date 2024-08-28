@@ -2,6 +2,7 @@ package com.orbits.queuesystem.helper
 
 import android.content.Context
 import com.orbits.queuesystem.helper.Extensions.asString
+import com.orbits.queuesystem.helper.models.UserResponseModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
@@ -49,23 +50,6 @@ object PrefUtils {
 
     /**  -----------------------  ------------------------------------  ---------------------------------- */
 
-    /**  -----------------------      APP CONFIG         ---------------------------------- */
-
-    fun Context.setAppConfig(result: AppConfigModel) {
-        val dt = DataStoreManager(this)
-        runBlocking { dt.saveAppConfig(result) }
-    }
-
-    fun Context.getAppConfig(): AppConfigModel? {
-        val dt = DataStoreManager(this)
-        return runBlocking { dt.getAppConfig().firstOrNull() }
-    }
-
-    fun Context.isEnglishLanguage(): Boolean {
-        return getAppConfig()?.lang == "en"
-    }
-
-    /**  -----------------------  ------------------------------------  ---------------------------------- */
 
 
 }

@@ -1,4 +1,4 @@
-package com.orbits.queuesystem.helper
+package com.orbits.queuesystem.helper.interfaces
 
 interface CommonInterfaceClickEvent {
     fun onItemClick(type: String, position: Int) {}

@@ -6,15 +6,11 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.LayoutToolbarBinding
-import java.util.*
+import com.orbits.queuesystem.helper.interfaces.CommonInterfaceClickEvent
 
 
 open class BaseActivity : AppCompatActivity() {

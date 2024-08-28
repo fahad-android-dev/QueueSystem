@@ -1,10 +1,8 @@
-package com.orbits.queuesystem.helper
+package com.orbits.queuesystem.helper.configs
 
 import android.content.Context
 import com.orbits.queuesystem.helper.database.CounterDataDbModel
-import com.orbits.queuesystem.helper.database.ServiceDataDbModel
 import com.orbits.queuesystem.mvvm.counters.model.CounterListDataModel
-import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
 
 object CounterConfig {
 

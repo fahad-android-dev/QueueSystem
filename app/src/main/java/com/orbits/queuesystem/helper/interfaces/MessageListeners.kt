@@ -1,4 +1,4 @@
-package com.orbits.queuesystem.helper
+package com.orbits.queuesystem.helper.interfaces
 
 import com.google.gson.JsonObject
 import java.net.Socket

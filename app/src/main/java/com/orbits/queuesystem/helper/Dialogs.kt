@@ -26,6 +26,8 @@ import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.Global.getDimension
 import com.orbits.queuesystem.helper.Global.getTypeFace
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
+import com.orbits.queuesystem.helper.interfaces.AlertDialogInterface
+import com.orbits.queuesystem.helper.interfaces.WheelViewEvent
 import com.orbits.queuesystem.mvvm.counters.model.CounterListDataModel
 import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
 import com.orbits.queuesystem.mvvm.users.model.UserListDataModel

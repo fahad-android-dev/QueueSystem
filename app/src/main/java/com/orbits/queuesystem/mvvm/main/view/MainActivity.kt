@@ -15,9 +15,9 @@ import com.google.gson.JsonObject
 import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.ActivityMainBinding
 import com.orbits.queuesystem.databinding.NavHeaderLayoutBinding
-import com.orbits.queuesystem.helper.AlertDialogInterface
+import com.orbits.queuesystem.helper.interfaces.AlertDialogInterface
 import com.orbits.queuesystem.helper.BaseActivity
-import com.orbits.queuesystem.helper.CommonInterfaceClickEvent
+import com.orbits.queuesystem.helper.interfaces.CommonInterfaceClickEvent
 import com.orbits.queuesystem.helper.Constants
 import com.orbits.queuesystem.helper.Dialogs
 import com.orbits.queuesystem.helper.Extensions
@@ -26,17 +26,16 @@ import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.Extensions.getCurrentDateTime
 import com.orbits.queuesystem.helper.Extensions.getNextDate
 import com.orbits.queuesystem.helper.Extensions.hideKeyboard
-import com.orbits.queuesystem.helper.JsonConfig.createJsonData
-import com.orbits.queuesystem.helper.JsonConfig.createServiceJsonDataWithModel
-import com.orbits.queuesystem.helper.JsonConfig.createServiceJsonDataWithTransaction
-import com.orbits.queuesystem.helper.JsonConfig.createUserJsonData
-import com.orbits.queuesystem.helper.MessageListener
-import com.orbits.queuesystem.helper.ServerService
-import com.orbits.queuesystem.helper.ServiceConfig.parseInServiceDbModel
-import com.orbits.queuesystem.helper.ServiceConfig.parseInServiceModelArraylist
-import com.orbits.queuesystem.helper.TCPServer
-import com.orbits.queuesystem.helper.TransactionConfig.parseInTransactionDbModel
-import com.orbits.queuesystem.helper.WebSocketClient
+import com.orbits.queuesystem.helper.configs.JsonConfig.createJsonData
+import com.orbits.queuesystem.helper.configs.JsonConfig.createServiceJsonDataWithModel
+import com.orbits.queuesystem.helper.configs.JsonConfig.createServiceJsonDataWithTransaction
+import com.orbits.queuesystem.helper.configs.JsonConfig.createUserJsonData
+import com.orbits.queuesystem.helper.interfaces.MessageListener
+import com.orbits.queuesystem.helper.server.ServerService
+import com.orbits.queuesystem.helper.configs.ServiceConfig.parseInServiceDbModel
+import com.orbits.queuesystem.helper.configs.ServiceConfig.parseInServiceModelArraylist
+import com.orbits.queuesystem.helper.server.TCPServer
+import com.orbits.queuesystem.helper.configs.TransactionConfig.parseInTransactionDbModel
 import com.orbits.queuesystem.helper.database.LocalDB.addServiceInDB
 import com.orbits.queuesystem.helper.database.LocalDB.addServiceTokenToDB
 import com.orbits.queuesystem.helper.database.LocalDB.addTransactionInDB
@@ -78,7 +77,6 @@ class MainActivity : BaseActivity(), MessageListener {
     private var arrListService = ArrayList<ServiceListDataModel?>()
     private lateinit var tcpServer: TCPServer
     private lateinit var socket: Socket
-    private lateinit var webSocketClient: WebSocketClient
     private var outStream: OutputStream? = null
     private val arrListClients = CopyOnWriteArrayList<String>()
     private var arrListDisplays = ArrayList<DisplayListDataModel?>()
@@ -187,8 +185,6 @@ class MainActivity : BaseActivity(), MessageListener {
             tcpServer.start()
         }.start()
 
-        webSocketClient = WebSocketClient(8085)
-        webSocketClient.start()
 
     }
 

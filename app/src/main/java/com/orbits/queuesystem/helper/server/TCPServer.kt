@@ -1,4 +1,4 @@
-package com.orbits.queuesystem.helper
+package com.orbits.queuesystem.helper.server
 
 import android.content.Context
 import android.os.Build
@@ -10,7 +10,9 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
-import com.orbits.queuesystem.helper.database.LocalDB.getCounterIdForService
+import com.orbits.queuesystem.helper.Constants
+import com.orbits.queuesystem.helper.Extensions
+import com.orbits.queuesystem.helper.interfaces.MessageListener
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -25,7 +27,7 @@ import java.util.UUID
 import kotlin.experimental.xor
 import kotlin.random.Random
 
-class TCPServer(private val port: Int, private val messageListener: MessageListener,private val context: Context) {
+class TCPServer(private val port: Int, private val messageListener: MessageListener, private val context: Context) {
 
     private var serverSocket: ServerSocket? = null
     private val clients = HashMap<String, ClientHandler>()
@@ -167,7 +169,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                             clients[clientId] = this
                                             addToConnectedClients(clientId)
                                             messageListener.onClientConnected(clientSocket,arrListClients)
-                                            Extensions.handler(400){
+                                            Extensions.handler(400) {
                                                 messageListener.onMessageJsonReceived(jsonObject)
                                             }
                                         }
@@ -175,7 +177,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         if (jsonObject.has("transaction")){
                                             println("here is msg with status")
                                             messageListener.onClientConnected(clientSocket,arrListClients)
-                                            Extensions.handler(400){
+                                            Extensions.handler(400) {
                                                 messageListener.onMessageJsonReceived(jsonObject)
                                             }
                                         }else {
@@ -184,12 +186,15 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                             println("here is counter id $counterId")
                                             if (!counterId.isNullOrEmpty()) {
                                                 // Update client ID in WebSocketManager
-                                                WebSocketManager.updateClientId(clientId ?: "", counterId ?: "")
+                                                WebSocketManager.updateClientId(
+                                                    clientId ?: "",
+                                                    counterId ?: ""
+                                                )
                                                 clientId = counterId ?: ""
                                                 clients[clientId ?: ""] = this
                                                 addToConnectedClients(clientId ?: "")
                                                 messageListener.onClientConnected(clientSocket,arrListClients)
-                                                Extensions.handler(400){
+                                                Extensions.handler(400) {
                                                     messageListener.onMessageJsonReceived(jsonObject)
                                                 }
                                             }
@@ -202,18 +207,21 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         println("here is ticketId id $ticketId")
                                         if (!ticketId.isNullOrEmpty()) {
                                             // Update client ID in WebSocketManager
-                                            WebSocketManager.updateClientId(clientId, ticketId ?: "")
+                                            WebSocketManager.updateClientId(
+                                                clientId,
+                                                ticketId ?: ""
+                                            )
                                             clientId = ticketId ?: ""
                                             clients[clientId] = this
                                             addToConnectedClients(clientId)
                                             messageListener.onClientConnected(clientSocket,arrListClients)
-                                            Extensions.handler(400){
+                                            Extensions.handler(400) {
                                                 messageListener.onMessageJsonReceived(jsonObject)
                                             }
                                         }
                                     }else {
                                         messageListener.onClientConnected(clientSocket,arrListClients)
-                                        Extensions.handler(400){
+                                        Extensions.handler(400) {
                                             messageListener.onMessageJsonReceived(jsonObject)
                                         }
                                     }
@@ -223,7 +231,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                     clients[clientId] = this
                                     addToConnectedClients(clientId)
                                     messageListener.onClientConnected(clientSocket,arrListClients)
-                                    Extensions.handler(400){
+                                    Extensions.handler(400) {
                                         messageListener.onMessageJsonReceived(jsonObject)
                                     }
                                 }
@@ -234,14 +242,14 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                     clients[clientId] = this
                                     addToConnectedClients(clientId)
                                     messageListener.onClientConnected(clientSocket,arrListClients)
-                                    Extensions.handler(400){
+                                    Extensions.handler(400) {
                                         messageListener.onMessageJsonReceived(jsonObject)
                                     }
                                 }
                                 else -> {
                                     clients[clientId] = this
                                     messageListener.onClientConnected(clientSocket,arrListClients)
-                                    Extensions.handler(400){
+                                    Extensions.handler(400) {
                                         messageListener.onMessageJsonReceived(jsonObject)
                                     }
                                 }

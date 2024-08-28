@@ -7,7 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.LvItemServiceListBinding
-import com.orbits.queuesystem.helper.CommonInterfaceClickEvent
+import com.orbits.queuesystem.helper.interfaces.CommonInterfaceClickEvent
 import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
 import me.thanel.swipeactionview.SwipeActionView
 import me.thanel.swipeactionview.SwipeGestureListener

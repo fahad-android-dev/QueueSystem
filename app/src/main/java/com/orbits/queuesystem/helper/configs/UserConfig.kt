@@ -1,13 +1,9 @@
-package com.orbits.queuesystem.helper
+package com.orbits.queuesystem.helper.configs
 
 import android.content.Context
 import com.orbits.queuesystem.helper.Extensions.asInt
 import com.orbits.queuesystem.helper.Extensions.asString
-import com.orbits.queuesystem.helper.database.CounterDataDbModel
-import com.orbits.queuesystem.helper.database.ServiceDataDbModel
 import com.orbits.queuesystem.helper.database.UserDataDbModel
-import com.orbits.queuesystem.mvvm.counters.model.CounterListDataModel
-import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
 import com.orbits.queuesystem.mvvm.users.model.UserListDataModel
 
 object UserConfig {

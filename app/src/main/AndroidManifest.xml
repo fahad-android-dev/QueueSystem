@@ -47,7 +47,7 @@
         </activity>
 
         <service
-            android:name=".helper.ServerService"
+            android:name=".helper.server.ServerService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
     </application>

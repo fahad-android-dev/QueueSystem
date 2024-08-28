@@ -1,4 +1,4 @@
-package com.orbits.queuesystem.helper
+package com.orbits.queuesystem.helper.configs
 
 import android.content.Context
 import com.orbits.queuesystem.helper.Extensions.asInt

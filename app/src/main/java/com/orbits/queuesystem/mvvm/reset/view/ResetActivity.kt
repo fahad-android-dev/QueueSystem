@@ -5,9 +5,9 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.orbits.queuesystem.R
 import com.orbits.queuesystem.databinding.ActivityResetBinding
-import com.orbits.queuesystem.helper.AlertDialogInterface
+import com.orbits.queuesystem.helper.interfaces.AlertDialogInterface
 import com.orbits.queuesystem.helper.BaseActivity
-import com.orbits.queuesystem.helper.CommonInterfaceClickEvent
+import com.orbits.queuesystem.helper.interfaces.CommonInterfaceClickEvent
 import com.orbits.queuesystem.helper.Constants
 import com.orbits.queuesystem.helper.Dialogs
 import com.orbits.queuesystem.helper.Extensions.getFormattedDateTime

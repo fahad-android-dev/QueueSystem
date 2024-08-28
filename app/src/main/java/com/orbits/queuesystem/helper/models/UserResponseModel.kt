@@ -1,4 +1,4 @@
-package com.orbits.queuesystem.helper
+package com.orbits.queuesystem.helper.models
 
 import kotlinx.serialization.Serializable
 

@@ -6,9 +6,8 @@ import com.google.gson.Gson
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
-import com.orbits.queuesystem.helper.DataStoreManager.PreferencesKeys.APP
-import com.orbits.queuesystem.helper.DataStoreManager.PreferencesKeys.USER_REMEMBER_DATA
 import com.orbits.queuesystem.helper.DataStoreManager.PreferencesKeys.USER_RESPONSE_DATA
+import com.orbits.queuesystem.helper.models.UserResponseModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -24,18 +23,6 @@ class DataStoreManager(val context: Context) {
         val APP = stringPreferencesKey("application")
     }
 
-
-    suspend fun saveAppConfig(responseModel: AppConfigModel) {
-        instance.edit { preferences ->
-            preferences[APP] = Gson().toJson(responseModel)
-        }
-    }
-
-    suspend fun getAppConfig(): Flow<AppConfigModel> {
-        return instance.data.map { preferences ->
-            Gson().fromJson(preferences[APP] ?: "" , AppConfigModel::class.java)
-        }
-    }
 
     suspend fun saveUserData(responseModel: UserResponseModel?) {
         instance.edit { preferences ->
@@ -53,13 +40,4 @@ class DataStoreManager(val context: Context) {
         }
     }
 
-
-
-    suspend fun clearDataStore() = instance.edit {
-        it.remove(USER_RESPONSE_DATA)
-    }
-
-    suspend fun clearRememberDataStore() = instance.edit {
-        it.remove(USER_REMEMBER_DATA)
-    }
 }
