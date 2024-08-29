@@ -3,7 +3,6 @@ package com.orbits.queuesystem.helper.database
 import android.content.Context
 import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.Extensions.printLog
-import com.orbits.queuesystem.helper.database.LocalDB.getAllResetData
 
 object LocalDB {
 
@@ -173,6 +172,15 @@ object LocalDB {
     fun Context.getTransactionFromDbWithCalledStatus(serviceId: String?): TransactionDataDbModel? {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
         return db?.getTransactionByCalledStatus(serviceId ?: "")
+    }
+
+    fun Context.getLastTransactionFromDbWithStatusTwo(serviceId: String?): TransactionDataDbModel? {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        return db?.getLastTransactionByStatusTwo(serviceId ?: "")
+    }
+    fun Context.getLastTransactionFromDbWithStatusOne(serviceId: String?): TransactionDataDbModel? {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        return db?.getLastTransactionByStatusOne(serviceId ?: "")
     }
 
     fun Context.getTransactionByToken(token: String): TransactionDataDbModel? {

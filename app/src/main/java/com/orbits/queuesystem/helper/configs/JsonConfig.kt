@@ -93,6 +93,16 @@ object JsonConfig {
         }
     }
 
+    fun Context.createReconnectionJsonDataWithTransaction(transactionModel: TransactionDataDbModel?): JsonObject {
+        println("here is transaction model ${transactionModel}")
+        val jsonModel = gson.toJson(transactionModel)
+        return JsonObject().apply {
+            if (transactionModel != null) add(Constants.TRANSACTION,  gson.fromJson(jsonModel, JsonObject::class.java))
+            addProperty("reconnected", "reconnected")
+
+        }
+    }
+
 
     fun Context.createUserJsonData(userName:String): JsonObject {
         val model = getAllUserFromDB()?.find { it?.userName == userName }
