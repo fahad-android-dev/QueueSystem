@@ -18,8 +18,13 @@ object LocalDB {
     fun Context.addServiceInDB(services: ServiceDataDbModel): ArrayList<ServiceDataDbModel?> {
         val db = AppDatabase.getAppDatabase(this).mainDao()
         if (db?.isServicePresent(services.entityID) == true) {
-            val qty = db.getServiceInDb(services.entityID)
-            db.updateServiceOffline(services.serviceId, services.entityID)
+            db.updateServiceOffline(
+                services.entityID,
+                services.tokenStart,
+                services.tokenEnd,
+                services.serviceName,
+                services.serviceNameAr,
+            )
         } else {
             db?.addService(services)
         }
@@ -90,8 +95,13 @@ object LocalDB {
     fun Context.addCounterInDB(counters: CounterDataDbModel): ArrayList<CounterDataDbModel?> {
         val db = AppDatabase.getAppDatabase(this).counterDao()
         if (db?.isCounterPresent(counters.entityID) == true) {
-            val qty = db.getCounterInDb(counters.entityID)
-            db.updateCounterOffline(counters.counterId, counters.entityID)
+            db.updateCounterOffline(
+                counters.counterId,
+                counterName = counters.counterName,
+                counterNameAr = counters.counterNameAr,
+                serviceAssign = counters.serviceAssign,
+                serviceId = counters.serviceId
+            )
         } else {
             db?.addCounter(counters)
         }

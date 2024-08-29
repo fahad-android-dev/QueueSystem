@@ -13,11 +13,21 @@ interface MainDao {
     fun addService(vararg services: ServiceDataDbModel)
 
     @Query(
-        "UPDATE ServiceDataDbModel SET serviceId =:serviceId,entityId =:serviceEntityID"
+        """
+    UPDATE ServiceDataDbModel 
+    SET tokenStart = :tokenStart, 
+        tokenEnd = :tokenEnd, 
+        serviceName = :serviceName, 
+        serviceNameAr = :serviceNameAr
+    WHERE entityId = :entityId
+    """
     )
     fun updateServiceOffline(
-        serviceId: String?,
-        serviceEntityID: String?,
+        entityId: String?,
+        tokenStart: String?,
+        tokenEnd: String?,
+        serviceName: String?,
+        serviceNameAr: String?,
     )
 
     @Query("DELETE from ServiceDataDbModel where entityId=:serviceEntityID")

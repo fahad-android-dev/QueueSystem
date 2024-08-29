@@ -53,8 +53,8 @@ class ServiceListAdapter : RecyclerView.Adapter<ServiceListAdapter.MyViewHolder>
             onClickEvent?.onItemClick("serviceClicked",position)
         }
 
-        holder.binding.linDelete.setOnClickListener {
-            onClickEvent?.onItemClick("deleteService", position)
+        holder.binding.linEdit.setOnClickListener {
+            onClickEvent?.onItemClick("editService", position)
         }
     }
 

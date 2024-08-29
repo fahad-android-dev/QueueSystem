@@ -42,7 +42,7 @@ object Dialogs {
 
     fun showAddServiceDialog(
         activity: Context,
-        isCancellable: Boolean? = true,
+        editServiceModel : ServiceListDataModel? = null,
         alertDialogInterface: AlertDialogInterface,
     ) {
         try {
@@ -60,8 +60,20 @@ object Dialogs {
             lp.height = WindowManager.LayoutParams.WRAP_CONTENT
             lp.gravity = Gravity.CENTER
             addServiceDialog?.window?.attributes = lp
-            addServiceDialog?.setCanceledOnTouchOutside(isCancellable ?: true)
-            addServiceDialog?.setCancelable(isCancellable ?: true)
+            addServiceDialog?.setCanceledOnTouchOutside(true)
+            addServiceDialog?.setCancelable(true)
+
+            if (editServiceModel != null){
+                binding.edtServiceId.isEnabled = false
+                binding.edtServiceId.setText(editServiceModel.id)
+                binding.edtServiceName.setText(editServiceModel.name)
+                binding.edtServiceNameAr.setText(editServiceModel.nameAr)
+                binding.edtTokenEnd.setText(editServiceModel.tokenEnd)
+                binding.edtTokenStart.setText(editServiceModel.tokenStart)
+            }else {
+                binding.edtServiceId.isEnabled = true
+
+            }
 
             binding.btnAlertPositive.text = activity.getString(R.string.confirm)
 
@@ -70,17 +82,54 @@ object Dialogs {
             }
 
             binding.btnAlertPositive.setOnClickListener {
-                addServiceDialog?.dismiss()
-                alertDialogInterface.onAddService(
-                    model = ServiceListDataModel(
-                        serviceId = binding.edtServiceId.text.toString(),
-                        name = binding.edtServiceName.text.toString(),
-                        nameAr = binding.edtServiceNameAr.text.toString(),
-                        tokenStart = binding.edtTokenStart.text.toString(),
-                        tokenEnd = binding.edtTokenEnd.text.toString(),
-                        tokenNo = binding.edtTokenStart.text.toString(),
-                    )
-                )
+                when {
+                    binding.edtServiceId.text.toString().isEmpty() -> {
+                        Toast.makeText(activity, "Please enter service id", Toast.LENGTH_SHORT).show()
+                    }
+                    binding.edtServiceName.text.toString().isEmpty() -> {
+                        Toast.makeText(activity, "Please enter service name", Toast.LENGTH_SHORT).show()
+                    }
+                    binding.edtServiceNameAr.text.toString().isEmpty() -> {
+                        Toast.makeText(activity, "Please enter service name in arabic", Toast.LENGTH_SHORT).show()
+                    }
+                    binding.edtTokenStart.text.toString().isEmpty() -> {
+                        Toast.makeText(activity, "Please enter token start", Toast.LENGTH_SHORT).show()
+                    }
+                    binding.edtTokenEnd.text.toString().isEmpty() -> {
+                        Toast.makeText(activity, "Please enter token end", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        addServiceDialog?.dismiss()
+                        if (editServiceModel != null){
+                            alertDialogInterface.onUpdateService(
+                                model = ServiceListDataModel(
+                                    serviceId = binding.edtServiceId.text.toString(),
+                                    name = binding.edtServiceName.text.toString(),
+                                    nameAr = binding.edtServiceNameAr.text.toString(),
+                                    tokenStart = binding.edtTokenStart.text.toString(),
+                                    tokenEnd = binding.edtTokenEnd.text.toString(),
+                                    tokenNo = binding.edtTokenStart.text.toString(),
+                                )
+                            )
+                        }else {
+                            alertDialogInterface.onAddService(
+                                model = ServiceListDataModel(
+                                    serviceId = binding.edtServiceId.text.toString(),
+                                    name = binding.edtServiceName.text.toString(),
+                                    nameAr = binding.edtServiceNameAr.text.toString(),
+                                    tokenStart = binding.edtTokenStart.text.toString(),
+                                    tokenEnd = binding.edtTokenEnd.text.toString(),
+                                    tokenNo = binding.edtTokenStart.text.toString(),
+                                )
+                            )
+
+                        }
+                    }
+                }
+
+
+
+
             }
             addServiceDialog?.show()
         } catch (e: Exception) {
@@ -90,7 +139,7 @@ object Dialogs {
 
     fun showAddCounterDialog(
         activity: Context,
-        isCancellable: Boolean? = true,
+        editCounterModel : CounterListDataModel? = null,
         alertDialogInterface: AlertDialogInterface,
     ) {
         try {
@@ -109,10 +158,21 @@ object Dialogs {
             lp.height = WindowManager.LayoutParams.WRAP_CONTENT
             lp.gravity = Gravity.CENTER
             addCounterDialog?.window?.attributes = lp
-            addCounterDialog?.setCanceledOnTouchOutside(isCancellable ?: true)
-            addCounterDialog?.setCancelable(isCancellable ?: true)
+            addCounterDialog?.setCanceledOnTouchOutside(true)
+            addCounterDialog?.setCancelable(true)
 
             binding.btnAlertPositive.text = activity.getString(R.string.confirm)
+
+            if (editCounterModel != null){
+                binding.edtCounterId.isEnabled = false
+                binding.edtCounterId.setText(editCounterModel.counterId)
+                binding.edtCounterName.setText(editCounterModel.name)
+                binding.edtCounterType.setText(editCounterModel.counterType)
+                binding.edtCounterNameAr.setText(editCounterModel.nameAr)
+            }else {
+                binding.edtCounterId.isEnabled = true
+
+            }
 
             binding.ivCancel.setOnClickListener {
                 addCounterDialog?.dismiss()
@@ -127,6 +187,8 @@ object Dialogs {
                     activity.getAllServiceFromDB()?.get(value)?.isSelected = true
                     binding.edtCounterType.setText(activity.getAllServiceFromDB()?.get(value)?.serviceName)
                     serviceId = activity.getAllServiceFromDB()?.get(value)?.id.asString()
+                    println("here is counter service id $serviceId")
+                    println("here is counter type 111 ${activity.getAllServiceFromDB()?.get(value)?.serviceName}")
                 }
             }
 
@@ -146,16 +208,30 @@ object Dialogs {
                     }
                     else -> {
                         addCounterDialog?.dismiss()
-                        alertDialogInterface.onAddCounter(
-                            model = CounterListDataModel(
-                                id = binding.edtCounterId.text.toString(),
-                                counterId = binding.edtCounterId.text.toString(),
-                                name = binding.edtCounterName.text.toString(),
-                                nameAr = binding.edtCounterNameAr.text.toString(),
-                                counterType = binding.edtCounterType.text.toString(),
-                                serviceId = serviceId
+                        if (editCounterModel != null){
+                            alertDialogInterface.onUpdateCounter(
+                                model = CounterListDataModel(
+                                    id = binding.edtCounterId.text.toString(),
+                                    counterId = binding.edtCounterId.text.toString(),
+                                    name = binding.edtCounterName.text.toString(),
+                                    nameAr = binding.edtCounterNameAr.text.toString(),
+                                    counterType = binding.edtCounterType.text.toString(),
+                                    serviceId = serviceId
+                                )
                             )
-                        )
+                        }else {
+                            alertDialogInterface.onAddCounter(
+                                model = CounterListDataModel(
+                                    id = binding.edtCounterId.text.toString(),
+                                    counterId = binding.edtCounterId.text.toString(),
+                                    name = binding.edtCounterName.text.toString(),
+                                    nameAr = binding.edtCounterNameAr.text.toString(),
+                                    counterType = binding.edtCounterType.text.toString(),
+                                    serviceId = serviceId
+                                )
+                            )
+                        }
+
                     }
                 }
             }

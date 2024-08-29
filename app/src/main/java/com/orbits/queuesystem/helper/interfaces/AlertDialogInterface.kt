@@ -10,7 +10,9 @@ interface AlertDialogInterface {
     fun onNoClick() {}
     fun onCloseDialog() {}
     fun onAddService(model:ServiceListDataModel) {}
+    fun onUpdateService(model:ServiceListDataModel) {}
     fun onAddCounter(model:CounterListDataModel) {}
+    fun onUpdateCounter(model:CounterListDataModel) {}
     fun onAddUser(model:UserListDataModel) {}
     fun onTimeSelected(hour:String,minute:String) {}
 }

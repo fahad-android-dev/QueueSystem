@@ -15,12 +15,23 @@ interface CounterDao {
     /*@Query("UPDATE ServiceDataDbModel SET quantity =:strQty WHERE entityID = :productEntityID")
     fun updateProductsInCart(strQty: Int?, productEntityID: String?)
 */
+
     @Query(
-        "UPDATE CounterDataDbModel SET counterId =:counterId,entityId =:counterEntityID"
+        """
+    UPDATE CounterDataDbModel 
+    SET counterName = :counterName, 
+        counterNameAr = :counterNameAr, 
+        counterType = :serviceAssign,
+        serviceId = :serviceId
+    WHERE counterId = :counterId
+    """
     )
     fun updateCounterOffline(
         counterId: String?,
-        counterEntityID: String?,
+        counterName: String?,
+        counterNameAr: String?,
+        serviceAssign: String?,
+        serviceId: String?,
     )
 
     @Query("DELETE from CounterDataDbModel where entityId=:counterEntityID")

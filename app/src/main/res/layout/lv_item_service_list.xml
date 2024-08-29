@@ -17,11 +17,11 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/linDelete"
+            android:id="@+id/linEdit"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="match_parent"
             android:background="@drawable/bg_right_curve"
-            android:backgroundTint="@color/red_color"
+            android:backgroundTint="@color/color_logo"
             android:layout_gravity="end"
             android:clickable="true"
             android:focusable="true"
@@ -31,7 +31,7 @@
                 android:layout_width="@dimen/_15sdp"
                 android:layout_height="@dimen/_15sdp"
                 android:layout_gravity="center|center_horizontal"
-                android:src="@drawable/ic_delete"
+                android:src="@drawable/ic_edit"
                 app:tint="@color/color_white" />
 
         </LinearLayout>

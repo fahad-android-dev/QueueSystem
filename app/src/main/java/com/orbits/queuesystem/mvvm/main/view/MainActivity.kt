@@ -217,20 +217,18 @@ class MainActivity : BaseActivity(), MessageListener {
         arrListService.addAll(data)
         adapter.onClickEvent = object : CommonInterfaceClickEvent {
             override fun onItemClick(type: String, position: Int) {
-                if (type == "deleteService") {
-                    Dialogs.showCustomAlert(
-                        activity = this@MainActivity,
-                        msg = getString(R.string.are_you_sure_you_want_to_delete_this_service),
-                        yesBtn = getString(R.string.yes),
-                        noBtn = getString(R.string.no),
-                        alertDialogInterface = object : AlertDialogInterface {
-                            override fun onYesClick() {
-                                deleteServiceInDb(arrListService[position]?.id)
-                                arrListService.remove(arrListService[position])
-                                adapter.setData(arrListService)
-                            }
+                if (type == "editService") {
+                    Dialogs.showAddServiceDialog(
+                        this@MainActivity,
+                        editServiceModel = data[position],
+                        object : AlertDialogInterface {
+                        override fun onUpdateService(model: ServiceListDataModel) {
+                            val dbModel = parseInServiceDbModel(model, model.serviceId ?: "")
+                            addServiceInDB(dbModel)
+                            setData(parseInServiceModelArraylist(getAllServiceFromDB()))
+                            println("here is all services ${getAllServiceFromDB()}")
                         }
-                    )
+                    })
                 }
             }
         }
@@ -239,7 +237,9 @@ class MainActivity : BaseActivity(), MessageListener {
 
     private fun onClickListeners() {
         binding.btnAddService.setOnClickListener {
-            Dialogs.showAddServiceDialog(this, true, object : AlertDialogInterface {
+            Dialogs.showAddServiceDialog(this,
+                editServiceModel = null,
+                object : AlertDialogInterface {
                 override fun onAddService(model: ServiceListDataModel) {
                     val dbModel = parseInServiceDbModel(model, model.serviceId ?: "")
                     addServiceInDB(dbModel)

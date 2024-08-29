@@ -52,8 +52,8 @@ class CounterListAdapter : RecyclerView.Adapter<CounterListAdapter.MyViewHolder>
             onClickEvent?.onItemClick("counterClicked",position)
         }
 
-        holder.binding.linDelete.setOnClickListener {
-            onClickEvent?.onItemClick("deleteCounter", position)
+        holder.binding.linEdit.setOnClickListener {
+            onClickEvent?.onItemClick("editCounter", position)
         }
     }
 

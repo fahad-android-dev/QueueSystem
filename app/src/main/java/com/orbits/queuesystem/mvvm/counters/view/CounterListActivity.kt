@@ -56,20 +56,19 @@ class CounterListActivity : BaseActivity() {
         arrListCounter.addAll(data)
         adapter.onClickEvent = object : CommonInterfaceClickEvent {
             override fun onItemClick(type: String, position: Int) {
-                if(type == "deleteCounter"){
-                    Dialogs.showCustomAlert(
-                        activity = this@CounterListActivity,
-                        msg = getString(R.string.are_you_sure_you_want_to_delete_this_counter),
-                        yesBtn = getString(R.string.yes),
-                        noBtn = getString(R.string.no),
-                        alertDialogInterface = object : AlertDialogInterface {
-                            override fun onYesClick() {
-                                deleteCounterInDb(arrListCounter[position]?.id)
-                                arrListCounter.removeAt(position)
-                                adapter.setData(arrListCounter)
-                            }
+                if(type == "editCounter"){
+                    Dialogs.showAddCounterDialog(
+                        this@CounterListActivity,
+                        editCounterModel = data[position],
+                        object : AlertDialogInterface {
+                        override fun onUpdateCounter(model: CounterListDataModel) {
+                            println("here is counter service id ${model.serviceId}")
+                            val dbModel = parseInCounterDbModel(model, model.counterId ?: "")
+                            addCounterInDB(dbModel)
+                            setData(parseInCounterModelArraylist(getAllCounterFromDB()))
+                            println("here is counter all counters ${getAllCounterFromDB()}")
                         }
-                    )
+                    })
 
                 }
             }
@@ -79,7 +78,10 @@ class CounterListActivity : BaseActivity() {
 
     private fun onClickListeners(){
         binding.btnAddCounter.setOnClickListener {
-            Dialogs.showAddCounterDialog(this, true, object : AlertDialogInterface {
+            Dialogs.showAddCounterDialog(
+                this,
+                editCounterModel = null,
+                object : AlertDialogInterface {
                 override fun onAddCounter(model: CounterListDataModel) {
                     val dbModel = parseInCounterDbModel(model, model.counterId ?: "")
                     addCounterInDB(dbModel)
