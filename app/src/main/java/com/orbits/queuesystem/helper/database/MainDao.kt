@@ -17,6 +17,7 @@ interface MainDao {
     UPDATE ServiceDataDbModel 
     SET tokenStart = :tokenStart, 
         tokenEnd = :tokenEnd, 
+        tokenNo = :tokenNo, 
         serviceName = :serviceName, 
         serviceNameAr = :serviceNameAr
     WHERE entityId = :entityId
@@ -26,6 +27,7 @@ interface MainDao {
         entityId: String?,
         tokenStart: String?,
         tokenEnd: String?,
+        tokenNo: String?,
         serviceName: String?,
         serviceNameAr: String?,
     )

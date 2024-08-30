@@ -28,6 +28,10 @@ interface TransactionDao {
     @Query("SELECT * FROM TransactionDataDbModel WHERE token = :token LIMIT 1")
     fun getTransactionByToken(token: String): TransactionDataDbModel?
 
+    @Query("SELECT * FROM TransactionDataDbModel WHERE serviceId = :serviceId")
+    fun getTransactionsByServiceId(serviceId: String): List<TransactionDataDbModel?>
+
+
     @Query("SELECT token FROM TransactionDataDbModel WHERE issueTime=:issueTime")
     fun isTransactionPresent(issueTime: String?): Boolean
 
@@ -53,9 +57,6 @@ interface TransactionDao {
 
     @Query("UPDATE TransactionDataDbModel SET token = :tokenNo WHERE entityID = :entityID")
     fun updateTransactionToken(entityID: String, tokenNo: Int)
-
-    @Query("SELECT * FROM TRANSACTIONDATADBMODEL WHERE ticketToken = :ticketToken")
-    fun getAllTransactionsByToken(ticketToken: String): List<TransactionDataDbModel?>
 
     @Query("UPDATE TransactionDataDbModel SET status = 5 WHERE status IN (0,1)")
     fun resetAllTransactions()

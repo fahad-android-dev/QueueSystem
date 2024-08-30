@@ -26,6 +26,7 @@ import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.Global.getDimension
 import com.orbits.queuesystem.helper.Global.getTypeFace
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
+import com.orbits.queuesystem.helper.database.LocalDB.getTransactionsByService
 import com.orbits.queuesystem.helper.interfaces.AlertDialogInterface
 import com.orbits.queuesystem.helper.interfaces.WheelViewEvent
 import com.orbits.queuesystem.mvvm.counters.model.CounterListDataModel
@@ -70,6 +71,13 @@ object Dialogs {
                 binding.edtServiceNameAr.setText(editServiceModel.nameAr)
                 binding.edtTokenEnd.setText(editServiceModel.tokenEnd)
                 binding.edtTokenStart.setText(editServiceModel.tokenStart)
+                if (activity.getTransactionsByService(editServiceModel.id)?.isEmpty() == true){
+                    binding.edtTokenStart.isEnabled = true
+                    binding.edtTokenEnd.isEnabled = true
+                }else {
+                    binding.edtTokenStart.isEnabled = false
+                    binding.edtTokenEnd.isEnabled = false
+                }
             }else {
                 binding.edtServiceId.isEnabled = true
 

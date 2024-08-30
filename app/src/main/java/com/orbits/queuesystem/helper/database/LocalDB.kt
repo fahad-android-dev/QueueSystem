@@ -22,6 +22,7 @@ object LocalDB {
                 services.entityID,
                 services.tokenStart,
                 services.tokenEnd,
+                services.tokenNo,
                 services.serviceName,
                 services.serviceNameAr,
             )
@@ -198,9 +199,9 @@ object LocalDB {
         return db?.getTransactionByToken(token)
     }
 
-    fun Context.getAllTransactionsWithToken(ticketToken: String): ArrayList<TransactionDataDbModel?> {
+    fun Context.getTransactionsByService(serviceId: String?): ArrayList<TransactionDataDbModel?>? {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
-        return db?.getAllTransactionsByToken(ticketToken) as ArrayList<TransactionDataDbModel?>
+        return db?.getTransactionsByServiceId(serviceId ?: "")  as ArrayList<TransactionDataDbModel?>?
     }
 
     fun Context.resetAllTransactionInDb() {

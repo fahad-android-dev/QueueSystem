@@ -40,7 +40,6 @@ import com.orbits.queuesystem.helper.configs.TransactionConfig.parseInTransactio
 import com.orbits.queuesystem.helper.database.LocalDB.addServiceInDB
 import com.orbits.queuesystem.helper.database.LocalDB.addServiceTokenToDB
 import com.orbits.queuesystem.helper.database.LocalDB.addTransactionInDB
-import com.orbits.queuesystem.helper.database.LocalDB.deleteServiceInDb
 import com.orbits.queuesystem.helper.database.LocalDB.getAllResetData
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getAllTransactionFromDB
@@ -291,7 +290,7 @@ class MainActivity : BaseActivity(), MessageListener {
             serviceId = model?.get("serviceId")?.asString ?: ""
             serviceType = model?.get("serviceType")?.asString ?: ""
             println("here is service id $serviceId")
-            if (serviceId.isNotEmpty() && isCounterAssigned(serviceType)) {
+            if (serviceId.isNotEmpty() && isCounterAssigned(serviceId)) {
                 val updateModel = TransactionListDataModel(
                     id = model?.get("id")?.asString ?: "",
                     counterId = model?.get("counterId")?.asString ?: "",
@@ -389,7 +388,7 @@ class MainActivity : BaseActivity(), MessageListener {
             serviceType = model?.get("serviceType")?.asString ?: ""
             val service = getServiceById(serviceId.asInt())
             println("here is service id $serviceId")
-            if ((serviceId.isNotEmpty() && isCounterAssigned(serviceType)) && (getCurrentServiceToken(serviceId) <= service?.tokenEnd.asInt())) {
+            if ((serviceId.isNotEmpty() && isCounterAssigned(serviceId)) && (getCurrentServiceToken(serviceId) <= service?.tokenEnd.asInt())) {
                 val updateModel = TransactionListDataModel(
                     id = model?.get("id")?.asString ?: "",
                     counterId = model?.get("counterId")?.asString ?: "",
@@ -654,8 +653,8 @@ class MainActivity : BaseActivity(), MessageListener {
             println("here is is the last token :::: ${service?.tokenEnd}")
             println("here is is the service :::: $service")
             println("here is is the current token :::: ${getCurrentServiceToken(serviceId)}")
-           // (serviceId.isNotEmpty() && isCounterAssigned(serviceType)) && (getCurrentServiceToken(serviceId) <= service?.tokenEnd.asInt())
-            if (serviceId.isNotEmpty() && isCounterAssigned(serviceType)) {
+           // (serviceId.isNotEmpty() && isCounterAssigned(serviceId)) && (getCurrentServiceToken(serviceId) <= service?.tokenEnd.asInt())
+            if (serviceId.isNotEmpty() && isCounterAssigned(serviceId)) {
                 val model = TransactionListDataModel(
                     counterId = getCounterIdForService(serviceType),
                     serviceId = serviceId,
