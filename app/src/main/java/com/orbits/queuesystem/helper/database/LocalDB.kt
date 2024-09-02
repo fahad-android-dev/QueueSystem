@@ -110,11 +110,11 @@ object LocalDB {
         return db?.getAllCounter() as ArrayList<CounterDataDbModel?>
     }
 
-    fun Context.getCounterIdForService(serviceAssign: String): String {
+    fun Context.getCounterIdForService(serviceId: String): String {
         val db = AppDatabase.getAppDatabase(this).counterDao()
         // Query your database to find the counter ID associated with the service ID
         // Return the counter ID or null if not found
-        return db?.getCounterIdByServiceId(serviceAssign) ?: ""
+        return db?.getCounterIdByServiceId(serviceId) ?: ""
     }
 
     fun Context.getAllCounterFromDB(): ArrayList<CounterDataDbModel?>? {
@@ -122,18 +122,11 @@ object LocalDB {
         return db?.getAllCounter() as ArrayList<CounterDataDbModel?>?
     }
 
-    fun Context.deleteCounterTableFromDB() {
+    fun Context.getCounterFromDB(counterId: String?): CounterDataDbModel? {
         val db = AppDatabase.getAppDatabase(this).counterDao()
-        return db?.deleteCounterTable() ?: Unit
+        return db?.getCounterById(counterId ?: "")
     }
 
-
-    fun Context.deleteCounterInDb(productEntityID: String? = "0"): ArrayList<CounterDataDbModel?>? {
-        ("Here i am delete counter id   $productEntityID").printLog()
-        val db = AppDatabase.getAppDatabase(this).counterDao()
-        db?.deleteCounter(productEntityID)
-        return db?.getAllCounter() as ArrayList<CounterDataDbModel?>?
-    }
 
     /*-----------------------------------------------Counter-------------------------------------------------------------*/
 
@@ -170,6 +163,11 @@ object LocalDB {
         return db?.getAllTransaction() as ArrayList<TransactionDataDbModel?>?
     }
 
+    fun Context.getTransactionIssuedStatusFromCounter(counterId: String?,serviceId: String?): TransactionDataDbModel? {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        return db?.getTransactionIssuedStatusWithCounter(counterId ?: "", serviceId ?:"")
+    }
+
     fun Context.getTransactionFromDbWithIssuedStatus(serviceId: String?): TransactionDataDbModel? {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
         return db?.getTransactionByIssuedStatus(serviceId ?: "")
@@ -185,18 +183,22 @@ object LocalDB {
         return db?.getTransactionByCalledStatus(serviceId ?: "")
     }
 
-    fun Context.getLastTransactionFromDbWithStatusTwo(serviceId: String?): TransactionDataDbModel? {
+    fun Context.getLastTransactionFromDbWithStatusTwo(counterId: String?): TransactionDataDbModel? {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
-        return db?.getLastTransactionByStatusTwo(serviceId ?: "")
+        return db?.getLastTransactionByStatusTwo(counterId ?: "")
     }
     fun Context.getLastTransactionFromDbWithStatusOne(serviceId: String?): TransactionDataDbModel? {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
         return db?.getLastTransactionByStatusOne(serviceId ?: "")
     }
-
-    fun Context.getTransactionByToken(token: String): TransactionDataDbModel? {
+    fun Context.getLastTransactionFromDbWithStatusZero(serviceId: String?): TransactionDataDbModel? {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
-        return db?.getTransactionByToken(token)
+        return db?.getLastTransactionByStatusZero(serviceId ?: "")
+    }
+
+    fun Context.getTransactionByToken(token: String,serviceId: String): TransactionDataDbModel? {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        return db?.getTransactionByToken(token,serviceId)
     }
 
     fun Context.getTransactionsByService(serviceId: String?): ArrayList<TransactionDataDbModel?>? {

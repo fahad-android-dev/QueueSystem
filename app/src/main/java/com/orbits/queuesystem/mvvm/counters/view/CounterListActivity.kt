@@ -12,7 +12,6 @@ import com.orbits.queuesystem.helper.configs.CounterConfig.parseInCounterDbModel
 import com.orbits.queuesystem.helper.configs.CounterConfig.parseInCounterModelArraylist
 import com.orbits.queuesystem.helper.Dialogs
 import com.orbits.queuesystem.helper.database.LocalDB.addCounterInDB
-import com.orbits.queuesystem.helper.database.LocalDB.deleteCounterInDb
 import com.orbits.queuesystem.helper.database.LocalDB.getAllCounterFromDB
 import com.orbits.queuesystem.mvvm.counters.adapter.CounterListAdapter
 import com.orbits.queuesystem.mvvm.counters.model.CounterListDataModel

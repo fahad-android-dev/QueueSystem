@@ -84,7 +84,7 @@ object JsonConfig {
     }
 
 
-    fun Context.createServiceJsonDataWithTransaction(transactionModel: TransactionDataDbModel?): JsonObject {
+    fun Context.createServiceJsonDataWithTransaction(transactionModel: Any?): JsonObject {
         println("here is transaction model ${transactionModel}")
         val jsonModel = gson.toJson(transactionModel)
         return JsonObject().apply {
@@ -93,12 +93,23 @@ object JsonConfig {
         }
     }
 
-    fun Context.createReconnectionJsonDataWithTransaction(transactionModel: TransactionDataDbModel?): JsonObject {
-        println("here is transaction model ${transactionModel}")
-        val jsonModel = gson.toJson(transactionModel)
+    fun Context.createReconnectionJsonDataWithTransaction(): JsonObject {
         return JsonObject().apply {
-            if (transactionModel != null) add(Constants.TRANSACTION,  gson.fromJson(jsonModel, JsonObject::class.java))
             addProperty("reconnected", "reconnected")
+
+        }
+    }
+
+    fun Context.createDisplayConnectionMessage(): JsonObject {
+        return JsonObject().apply {
+            addProperty("displayConnected", "displayConnected")
+
+        }
+    }
+
+    fun Context.createNoTokensData(): JsonObject {
+        return JsonObject().apply {
+            addProperty("errorMessage", "No Token Available for the service")
 
         }
     }

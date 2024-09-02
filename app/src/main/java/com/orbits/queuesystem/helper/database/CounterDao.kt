@@ -53,11 +53,14 @@ interface CounterDao {
     @Query("SELECT * FROM CounterDataDbModel")
     fun getAllCounter(): List<CounterDataDbModel?>
 
+    @Query("SELECT * FROM CounterDataDbModel WHERE counterId = :counterId LIMIT 1")
+    fun getCounterById(counterId: String): CounterDataDbModel?
+
     @Query("DELETE FROM CounterDataDbModel")
     fun deleteCounterTable()
 
-    @Query("SELECT counterId FROM CounterDataDbModel WHERE serviceAssign = :serviceAssign")
-    fun getCounterIdByServiceId(serviceAssign: String): String?
+    @Query("SELECT counterId FROM CounterDataDbModel WHERE serviceId = :serviceId")
+    fun getCounterIdByServiceId(serviceId: String): String?
 
 
     /*-----------------------------------------------Counter-------------------------------------------------------------*/
