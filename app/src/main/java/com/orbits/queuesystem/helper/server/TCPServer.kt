@@ -280,9 +280,116 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                     while (inStream?.readLine().also { message = it } != null) {
                         println("Received from TCP client $clientId: $message")
                         try {
-                            println("Received WebSocket jsonObject from client $clientId: $message")
+                            println("Received TCP jsonObject from client $clientId: $message")
                             val jsonObject = Gson().fromJson(message, JsonObject::class.java)
-                            messageListener.onMessageJsonReceived(jsonObject)
+                            println("here is counter id 111 $counterId")
+                            when {
+                                jsonObject.has(Constants.KEYPAD_COUNTER_TYPE) -> {
+                                    if (jsonObject.has("displayId")){
+                                        val displayId = jsonObject.get("displayId").asString
+                                        println("here is display id $displayId")
+                                        if (!displayId.isNullOrEmpty()) {
+                                            WebSocketManager.updateClientId(clientId, displayId)
+                                            clientId = displayId
+                                            clients[clientId] = this
+                                            addToConnectedClients(clientId)
+                                            messageListener.onClientConnected(clientSocket,arrListClients)
+                                            Extensions.handler(400) {
+                                                messageListener.onMessageJsonReceived(jsonObject)
+                                            }
+                                        }
+                                    }else {
+                                        if (jsonObject.has("transaction")){
+                                            println("here is msg with status")
+                                            messageListener.onClientConnected(clientSocket,arrListClients)
+                                            Extensions.handler(400) {
+                                                messageListener.onMessageJsonReceived(jsonObject)
+                                            }
+                                        }else {
+                                            println("here is msg without status")
+                                            counterId = jsonObject.get("counterId").asString // Fetch from database
+                                            println("here is counter id $counterId")
+                                            if (!counterId.isNullOrEmpty()) {
+                                                // Update client ID in WebSocketManager
+                                                WebSocketManager.updateClientId(
+                                                    clientId ?: "",
+                                                    counterId ?: ""
+                                                )
+                                                clientId = counterId ?: ""
+                                                clients[clientId ?: ""] = this
+                                                addToConnectedClients(clientId ?: "")
+                                                messageListener.onClientConnected(clientSocket,arrListClients)
+                                                Extensions.handler(400) {
+                                                    messageListener.onMessageJsonReceived(jsonObject)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                jsonObject.has(Constants.TICKET_TYPE) -> {
+                                    if (ticketId == null){
+                                        ticketId = jsonObject.get("ticketId").asString
+                                        println("here is ticketId id $ticketId")
+                                        if (!ticketId.isNullOrEmpty()) {
+                                            // Update client ID in WebSocketManager
+                                            WebSocketManager.updateClientId(
+                                                clientId,
+                                                ticketId ?: ""
+                                            )
+                                            clientId = ticketId ?: ""
+                                            clients[clientId] = this
+                                            addToConnectedClients(clientId)
+                                            messageListener.onClientConnected(clientSocket,arrListClients)
+                                            Extensions.handler(400) {
+                                                messageListener.onMessageJsonReceived(jsonObject)
+                                            }
+                                        }
+                                    }else {
+                                        messageListener.onClientConnected(clientSocket,arrListClients)
+                                        Extensions.handler(400) {
+                                            messageListener.onMessageJsonReceived(jsonObject)
+                                        }
+                                    }
+                                }
+                                jsonObject.has(Constants.CONNECTION) -> {
+                                    println("here is connection received")
+                                    clients[clientId] = this
+                                    addToConnectedClients(clientId)
+                                    messageListener.onClientConnected(clientSocket,arrListClients)
+                                    Extensions.handler(400) {
+                                        messageListener.onMessageJsonReceived(jsonObject)
+                                    }
+                                }
+                                jsonObject.has(Constants.DISPLAY_CONNECTION) -> {
+                                    println("here is connection received")
+                                    clients[clientId] = this
+                                    addToConnectedClients(clientId)
+                                    messageListener.onClientConnected(clientSocket,arrListClients)
+                                    Extensions.handler(400) {
+                                        messageListener.onMessageJsonReceived(jsonObject)
+                                    }
+                                }
+                                jsonObject.has(Constants.USERNAME) -> {
+                                    var userClientId = UUID.randomUUID().toString()
+                                    WebSocketManager.updateClientId(clientId, userClientId)
+                                    clientId = userClientId
+                                    clients[clientId] = this
+                                    addToConnectedClients(clientId)
+                                    messageListener.onClientConnected(clientSocket,arrListClients)
+                                    Extensions.handler(400) {
+                                        messageListener.onMessageJsonReceived(jsonObject)
+                                    }
+                                }
+                                else -> {
+                                    clients[clientId] = this
+                                    messageListener.onClientConnected(clientSocket,arrListClients)
+                                    Extensions.handler(400) {
+                                        messageListener.onMessageJsonReceived(jsonObject)
+                                    }
+                                }
+                            }
+
+
                         } catch (e: JsonSyntaxException) {
                             println("Invalid JSON format received from client $clientId: $message")
                             inStream?.close()

@@ -5,6 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -66,42 +67,48 @@ class VoiceConfigurationActivity : BaseActivity() {
             Constants.ENGLISH -> {
                 showSelected(binding.ivEnglish)
                 showSelectedEditText(listOf(binding.edtEnglishMessage))
+                showSelectedTokenCounters(listOf(binding.linTokenCounterEn))
             }
             Constants.ARABIC -> {
                 showSelected(binding.ivArabic)
                 showSelectedEditText(listOf(binding.edtArabicMessage))
+                showSelectedTokenCounters(listOf(binding.linTokenCounterAr))
             }
             Constants.ENGLISH_ARABIC -> {
                 showSelected(binding.ivEnglishArabic)
                 showSelectedEditText(listOf(binding.edtEnglishMessage,binding.edtArabicMessage))
+                showSelectedTokenCounters(listOf(binding.linTokenCounterEn,binding.linTokenCounterAr))
             }
             Constants.ARABIC_ENGLISH -> {
                 showSelected(binding.ivArabicEnglish)
                 showSelectedEditText(listOf(binding.edtEnglishMessage,binding.edtArabicMessage))
+                showSelectedTokenCounters(listOf(binding.linTokenCounterEn,binding.linTokenCounterAr))
             }
         }
-
-
     }
 
     private fun onClickListeners(){
         binding.conEnglish.setOnClickListener {
             showSelected(binding.ivEnglish)
             showSelectedEditText(listOf(binding.edtEnglishMessage))
+            showSelectedTokenCounters(listOf(binding.linTokenCounterEn))
         }
         binding.conArabic.setOnClickListener {
             showSelected(binding.ivArabic)
             showSelectedEditText(listOf(binding.edtArabicMessage))
+            showSelectedTokenCounters(listOf(binding.linTokenCounterAr))
         }
 
         binding.conEnglishArabic.setOnClickListener {
             showSelected(binding.ivEnglishArabic)
             showSelectedEditText(listOf(binding.edtEnglishMessage,binding.edtArabicMessage))
+            showSelectedTokenCounters(listOf(binding.linTokenCounterEn,binding.linTokenCounterAr))
         }
 
         binding.conArabicEnglish.setOnClickListener {
             showSelected(binding.ivArabicEnglish)
             showSelectedEditText(listOf(binding.edtEnglishMessage,binding.edtArabicMessage))
+            showSelectedTokenCounters(listOf(binding.linTokenCounterEn,binding.linTokenCounterAr))
         }
         binding.switchMale.setOnCheckedChangeListener { view, isChecked ->
             if (isChecked) {
@@ -116,10 +123,43 @@ class VoiceConfigurationActivity : BaseActivity() {
             }
         }
 
+        binding.btnTokenEn.setOnClickListener {
+            val currentText = binding.edtEnglishMessage.text.toString()
+            val textToInsert = " <token>"
+            val cursorPosition = binding.edtEnglishMessage.selectionStart
+            val newText = StringBuilder(currentText).insert(cursorPosition, textToInsert).toString()
+            binding.edtEnglishMessage.setText(newText)
+            binding.edtEnglishMessage.setSelection(cursorPosition + textToInsert.length)
+        }
+
+        binding.btnCounterEn.setOnClickListener {
+            val currentText = binding.edtEnglishMessage.text.toString()
+            val textToInsert = " <counter>"
+            val cursorPosition = binding.edtEnglishMessage.selectionStart
+            val newText = StringBuilder(currentText).insert(cursorPosition, textToInsert).toString()
+            binding.edtEnglishMessage.setText(newText)
+            binding.edtEnglishMessage.setSelection(cursorPosition + textToInsert.length)
+        }
+
+        binding.btnTokenAr.setOnClickListener {
+            val currentText = binding.edtArabicMessage.text.toString()
+            val textToInsert = " <token>"
+            val cursorPosition = binding.edtArabicMessage.selectionStart
+            val newText = StringBuilder(currentText).insert(cursorPosition, textToInsert).toString()
+            binding.edtArabicMessage.setText(newText)
+            binding.edtArabicMessage.setSelection(cursorPosition + textToInsert.length)
+        }
+
+        binding.btnCounterAr.setOnClickListener {
+            val currentText = binding.edtArabicMessage.text.toString()
+            val textToInsert = " <counter>"
+            val cursorPosition = binding.edtArabicMessage.selectionStart
+            val newText = StringBuilder(currentText).insert(cursorPosition, textToInsert).toString()
+            binding.edtArabicMessage.setText(newText)
+            binding.edtArabicMessage.setSelection(cursorPosition + textToInsert.length)
+        }
+
         binding.btnConfirm.setOnClickListener {
-            println("here is english msg ${binding.edtEnglishMessage.text}")
-            println("here is ar msg ${binding.edtArabicMessage.text}")
-            println("here is gender $gender")
             setUserDataResponse(
                 UserResponseModel(
                     voice_selected =
@@ -160,10 +200,21 @@ class VoiceConfigurationActivity : BaseActivity() {
 
         )
 
-
         allEditTexts.forEach { it.isVisible = false }
 
-
         editTextsToShow.forEach { it.isVisible = true }
+    }
+
+    private fun showSelectedTokenCounters(tokenCounters: List<LinearLayout>) {
+        // List of all EditTexts you want to control
+        val allLinear = listOf(
+            binding.linTokenCounterEn,
+            binding.linTokenCounterAr,
+
+            )
+
+        allLinear.forEach { it.isVisible = false }
+
+        tokenCounters.forEach { it.isVisible = true }
     }
 }

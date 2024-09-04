@@ -7,11 +7,6 @@
 
     </data>
 
-    <androidx.drawerlayout.widget.DrawerLayout
-        android:id="@+id/drawerLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main"
             android:layout_width="match_parent"
@@ -26,7 +21,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:fillViewport="true"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="@dimen/_15sdp"
+                app:layout_constraintBottom_toTopOf="@+id/conConfirm"
                 app:layout_constraintTop_toBottomOf="@+id/layoutToolbar">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -133,9 +129,6 @@
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                     </LinearLayout>
-
-
-
 
 
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -306,6 +299,52 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
+                    <LinearLayout
+                        android:id="@+id/linTokenCounterEn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2"
+                        android:visibility="gone"
+                        android:layout_marginTop="@dimen/_15sdp"
+                        android:layout_marginHorizontal="@dimen/screen_margin"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/conArabicEnglish">
+
+
+                        <TextView
+                            android:id="@+id/btnTokenEn"
+                            android:layout_width="match_parent"
+                            style="@style/TextStyleCenterMedium"
+                            android:layout_gravity="center"
+                            android:textSize="@dimen/btn_text_size"
+                            android:text="@string/token"
+                            android:layout_weight="1"
+                            android:textAllCaps="false"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:includeFontPadding="false"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/btnCounterEn"
+                            android:layout_width="match_parent"
+                            style="@style/TextStyleCenterMedium"
+                            android:layout_gravity="center"
+                            android:textSize="@dimen/btn_text_size"
+                            android:text="@string/counter"
+                            android:layout_weight="1"
+                            android:textAllCaps="false"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:includeFontPadding="false"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
                     <EditText
                         android:id="@+id/edtEnglishMessage"
                         style="@style/CommonInputEditTextStyle"
@@ -317,12 +356,58 @@
                         android:visibility="gone"
                         android:inputType="textMultiLine"
                         android:paddingTop="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_20sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
                         android:imeOptions="actionDone"
                         android:layout_marginHorizontal="@dimen/screen_margin"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/conArabicEnglish" />
+                        app:layout_constraintTop_toBottomOf="@+id/linTokenCounterEn" />
+
+                    <LinearLayout
+                        android:id="@+id/linTokenCounterAr"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2"
+                        android:visibility="gone"
+                        android:layout_marginTop="@dimen/_15sdp"
+                        android:layout_marginHorizontal="@dimen/screen_margin"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/edtEnglishMessage">
+
+
+                        <TextView
+                            android:id="@+id/btnTokenAr"
+                            android:layout_width="match_parent"
+                            style="@style/TextStyleCenterMedium"
+                            android:layout_gravity="center"
+                            android:textSize="@dimen/btn_text_size"
+                            android:text="@string/token"
+                            android:layout_weight="1"
+                            android:textAllCaps="false"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:includeFontPadding="false"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/btnCounterAr"
+                            android:layout_width="match_parent"
+                            style="@style/TextStyleCenterMedium"
+                            android:layout_gravity="center"
+                            android:textSize="@dimen/btn_text_size"
+                            android:text="@string/counter"
+                            android:layout_weight="1"
+                            android:textAllCaps="false"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:includeFontPadding="false"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
 
                     <EditText
                         android:id="@+id/edtArabicMessage"
@@ -335,28 +420,13 @@
                         android:visibility="gone"
                         android:inputType="textMultiLine"
                         android:paddingTop="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_20sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
                         android:imeOptions="actionDone"
                         android:layout_marginHorizontal="@dimen/screen_margin"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/edtEnglishMessage" />
+                        app:layout_constraintTop_toBottomOf="@+id/linTokenCounterAr" />
 
-                    <TextView
-                        android:id="@+id/btnConfirm"
-                        android:layout_width="match_parent"
-                        style="@style/CommonButtonStyle"
-                        android:layout_gravity="center"
-                        android:textSize="@dimen/btn_text_size"
-                        android:text="@string/confirm"
-                        android:layout_marginHorizontal="@dimen/screen_margin"
-                        android:textAllCaps="false"
-                        android:layout_marginBottom="@dimen/_20sdp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:includeFontPadding="false"
-                        android:layout_height="@dimen/btn_size" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -364,28 +434,41 @@
             </androidx.core.widget.NestedScrollView>
 
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/conConfirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_white"
+                android:paddingVertical="@dimen/_10sdp"
+                android:elevation="@dimen/_2sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+
+                <TextView
+                    android:id="@+id/btnConfirm"
+                    android:layout_width="match_parent"
+                    style="@style/CommonButtonStyle"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/btn_text_size"
+                    android:text="@string/confirm"
+                    android:layout_marginHorizontal="@dimen/screen_margin"
+                    android:textAllCaps="false"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:includeFontPadding="false"
+                    android:layout_height="@dimen/btn_size" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigationView"
-            android:layout_width="@dimen/_240sdp"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:layout_marginEnd="@dimen/_40sdp"
-            android:fitsSystemWindows="true"
-            android:theme="@style/NavigationDrawerText"
-            app:itemBackground="@color/app_bg_color"
-            app:itemIconPadding="@dimen/_10sdp"
-            app:itemTextAppearance="@style/fontRegular">
-
-            <include
-                android:id="@+id/headerLayout"
-                layout="@layout/nav_header_layout" />
-        </com.google.android.material.navigation.NavigationView>
-
-    </androidx.drawerlayout.widget.DrawerLayout>
 
 
 </layout>

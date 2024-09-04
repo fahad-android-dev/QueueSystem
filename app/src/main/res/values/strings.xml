@@ -36,10 +36,12 @@
     <string name="voice_configuration">Voice Configuration</string>
     <string name="english">English</string>
     <string name="arabic">Arabic</string>
-    <string name="arabic_first_english_first">Arabic First English First</string>
-    <string name="english_first_arabic_first">English First Arabic First</string>
+    <string name="arabic_first_english_first">Arabic First English Second</string>
+    <string name="english_first_arabic_first">English First Arabic Second</string>
     <string name="enter_custom_message">Enter Custom Message</string>
     <string name="enter_english_message">Enter English Message</string>
     <string name="enter_arabic_message">Enter Arabic Message</string>
     <string name="male_voice">Male Voice</string>
+    <string name="token">Token</string>
+    <string name="counter">Counter</string>
 </resources>
