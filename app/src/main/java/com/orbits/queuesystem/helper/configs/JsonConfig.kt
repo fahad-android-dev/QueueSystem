@@ -40,6 +40,29 @@ object JsonConfig {
     }
 
 
+    fun Context.createDisplayJsonData(id:String): JsonObject {
+        val itemsArray = JsonArray().apply {
+            val services = getAllServiceFromDB()
+            services?.forEach { service ->
+                add(service?.toJsonObject())
+            }
+        }
+
+        val counterArray = JsonArray().apply {
+            val counters = getAllCounterFromDB()
+            counters?.forEach { counter ->
+                add(counter?.toCounterJsonObject())
+            }
+        }
+
+        return JsonObject().apply {
+            add("items", itemsArray)
+            add("counters", counterArray)
+            addProperty("displayId", id)
+        }
+    }
+
+
     fun Context.createAllJsonData(): JsonObject {
         val itemsArray = JsonArray().apply {
             val services = getAllServiceFromDB()

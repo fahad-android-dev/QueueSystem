@@ -26,4 +26,9 @@
     <string name="reset_now">Reset Now</string>
     <string name="set_reset_time">Set Reset Time</string>
     <string name="queue_reset_successfully">Queue reset successfully</string>
+    <string name="voice_configuration">Voice Configuration</string>
+    <string name="english">English</string>
+    <string name="arabic_first_english_first">Arabic First English First</string>
+    <string name="english_first_arabic_first">English First Arabic First</string>
+    <string name="enter_arabic_message">Enter Arabic Message</string>
 </resources>

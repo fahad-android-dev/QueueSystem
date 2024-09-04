@@ -41,6 +41,8 @@
     <!--todo Border colors colors add here `keep variables name start with "border_color"`-->
     <color name="border_color_primary">@color/color_grey</color>
     <color name="border_color_grey">#707070</color>
+    <color name="switch_bg_color_checked">@color/color_logo</color>
+    <color name="switch_bg_color_unchecked">#E7E7E7</color>
 
     <!--todo tint colors colors add here `keep variables name start with "tint_color_"` -->
     <color name="tint_color_selected">@color/color_black </color>

@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserResponseModel(
     val `data`: UserDataModel? = null,
-    var message: String? = null,
-    var token: Int? = null,
-    val status: Int? = null,
-    val success: Boolean? = null
+    var voice_selected: String? = null,
+    var msg_en: String? = null,
+    var msg_ar: String? = null,
+    var voice_gender: String? = null,
 )
 
 @Serializable

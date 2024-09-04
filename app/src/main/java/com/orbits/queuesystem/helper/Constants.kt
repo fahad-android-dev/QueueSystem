@@ -39,12 +39,22 @@ object Constants {
 
 
     const val KEYPAD_COUNTER_TYPE = "keypadCounterType"
-    const val COUNTER_DISPLAY_TYPE = "counterDisplayType"
-    const val KEYPAD_CONNECTION_TYPE = "keypadConnectionType"
     const val TICKET_TYPE = "ticketType"
     const val SERVICE_TYPE = "serviceType"
     const val CONNECTION = "connection"
+    const val DISPLAY_CONNECTION = "displayConnection"
     const val USERNAME = "userName"
     const val DISPLAY_ID = "displayId"
+
+
+    /*Voices Config Ids*/
+
+    const val ENGLISH = "1"
+    const val ARABIC = "2"
+    const val ENGLISH_ARABIC = "3"
+    const val ARABIC_ENGLISH = "4"
+
+    const val MALE = "M"
+    const val FEMALE = "F"
 
 }

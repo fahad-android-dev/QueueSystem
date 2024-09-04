@@ -15,7 +15,6 @@
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -29,6 +28,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.QueueSystem"
         tools:targetApi="31">
+        <activity
+            android:name=".mvvm.voice.view.VoiceConfigurationActivity"
+            android:exported="false" />
         <activity
             android:name=".mvvm.reset.view.ResetActivity"
             android:exported="false" />

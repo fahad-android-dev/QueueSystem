@@ -4,6 +4,8 @@ import NetworkMonitor
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.speech.tts.Voice
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -20,13 +22,14 @@ import com.orbits.queuesystem.helper.BaseActivity
 import com.orbits.queuesystem.helper.interfaces.CommonInterfaceClickEvent
 import com.orbits.queuesystem.helper.Constants
 import com.orbits.queuesystem.helper.Dialogs
-import com.orbits.queuesystem.helper.Extensions
 import com.orbits.queuesystem.helper.Extensions.asInt
 import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.Extensions.getCurrentDateTime
 import com.orbits.queuesystem.helper.Extensions.getNextDate
+import com.orbits.queuesystem.helper.Extensions.handler
 import com.orbits.queuesystem.helper.Extensions.hideKeyboard
-import com.orbits.queuesystem.helper.configs.JsonConfig.createDisplayConnectionMessage
+import com.orbits.queuesystem.helper.PrefUtils.getUserDataResponse
+import com.orbits.queuesystem.helper.configs.JsonConfig.createDisplayJsonData
 import com.orbits.queuesystem.helper.configs.JsonConfig.createJsonData
 import com.orbits.queuesystem.helper.configs.JsonConfig.createNoTokensData
 import com.orbits.queuesystem.helper.configs.JsonConfig.createReconnectionJsonDataWithTransaction
@@ -39,6 +42,7 @@ import com.orbits.queuesystem.helper.configs.ServiceConfig.parseInServiceDbModel
 import com.orbits.queuesystem.helper.configs.ServiceConfig.parseInServiceModelArraylist
 import com.orbits.queuesystem.helper.server.TCPServer
 import com.orbits.queuesystem.helper.configs.TransactionConfig.parseInTransactionDbModel
+import com.orbits.queuesystem.helper.database.CounterDataDbModel
 import com.orbits.queuesystem.helper.database.LocalDB.addServiceInDB
 import com.orbits.queuesystem.helper.database.LocalDB.addServiceTokenToDB
 import com.orbits.queuesystem.helper.database.LocalDB.addTransactionInDB
@@ -56,13 +60,13 @@ import com.orbits.queuesystem.helper.database.LocalDB.getServiceById
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionByToken
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithCalledStatus
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithDisplayStatus
-import com.orbits.queuesystem.helper.database.LocalDB.getTransactionIssuedStatusFromCounter
 import com.orbits.queuesystem.helper.database.LocalDB.isCounterAssigned
 import com.orbits.queuesystem.helper.database.LocalDB.isResetDoneInDb
 import com.orbits.queuesystem.helper.database.LocalDB.resetAllTransactionInDb
 import com.orbits.queuesystem.helper.database.LocalDB.updateCurrentDateTimeInDb
 import com.orbits.queuesystem.helper.database.LocalDB.updateLastDateTimeInDb
 import com.orbits.queuesystem.helper.database.LocalDB.updateResetDateTime
+import com.orbits.queuesystem.helper.database.TransactionDataDbModel
 import com.orbits.queuesystem.mvvm.counters.view.CounterListActivity
 import com.orbits.queuesystem.mvvm.main.adapter.ServiceListAdapter
 import com.orbits.queuesystem.mvvm.main.model.DisplayListDataModel
@@ -70,6 +74,7 @@ import com.orbits.queuesystem.mvvm.main.model.ServiceListDataModel
 import com.orbits.queuesystem.mvvm.main.model.TransactionListDataModel
 import com.orbits.queuesystem.mvvm.reset.view.ResetActivity
 import com.orbits.queuesystem.mvvm.users.view.UserListActivity
+import com.orbits.queuesystem.mvvm.voice.view.VoiceConfigurationActivity
 import java.io.OutputStream
 import java.net.Socket
 import java.text.SimpleDateFormat
@@ -77,7 +82,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.concurrent.CopyOnWriteArrayList
 
-class MainActivity : BaseActivity(), MessageListener {
+class MainActivity : BaseActivity(), MessageListener, TextToSpeech.OnInitListener {
     private lateinit var binding: ActivityMainBinding
     private var adapter = ServiceListAdapter()
     private var arrListService = ArrayList<ServiceListDataModel?>()
@@ -91,12 +96,17 @@ class MainActivity : BaseActivity(), MessageListener {
     val gson = Gson()
     var serviceId = ""
     var serviceType = ""
+    var counter = 1
+    private lateinit var textToSpeech: TextToSpeech
+    private var maleVoice: Voice? = null
+    private var femaleVoice: Voice? = null
 
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        textToSpeech = TextToSpeech(this, this)
 
         networkMonitor = NetworkMonitor(this) {
             startServerService()
@@ -109,12 +119,42 @@ class MainActivity : BaseActivity(), MessageListener {
         updateCurrentDateTimeInDb(getCurrentDateTime())
         println("here is reset data in main ${getAllResetData()}")
 
+
         initResetData()
         initLeftNavMenuDrawer()
         initializeToolbar()
         initializeFields()
         onClickListeners()
 
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            var langResult = textToSpeech.setLanguage(Locale.US)
+
+
+            when (getUserDataResponse()?.voice_selected) {
+                Constants.ENGLISH -> {
+                    langResult = textToSpeech.setLanguage(Locale.US)
+                }
+                Constants.ARABIC -> {
+                    langResult = textToSpeech.setLanguage(Locale("ar"))
+                }
+                Constants.ENGLISH_ARABIC -> {
+                    langResult = textToSpeech.setLanguage(Locale.ENGLISH)
+                }
+                Constants.ARABIC_ENGLISH -> {
+                    langResult = textToSpeech.setLanguage(Locale.ENGLISH)
+                }
+            }
+
+            if (langResult == TextToSpeech.LANG_MISSING_DATA || langResult == TextToSpeech.LANG_NOT_SUPPORTED) {
+               println("here is text speech 111")
+            }
+        } else {
+            println("here is text speech 222")
+            // Handle initialization failure
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -159,6 +199,11 @@ class MainActivity : BaseActivity(), MessageListener {
 
         headerLayout.conReset.setOnClickListener {
             val intent = Intent(this@MainActivity, ResetActivity::class.java)
+            startActivity(intent)
+        }
+
+        headerLayout.conVoiceConfig.setOnClickListener {
+            val intent = Intent(this@MainActivity, VoiceConfigurationActivity::class.java)
             startActivity(intent)
         }
     }
@@ -213,6 +258,13 @@ class MainActivity : BaseActivity(), MessageListener {
     private fun initializeFields() {
         binding.rvServiceList.adapter = adapter
         setData(parseInServiceModelArraylist(getAllServiceFromDB()))
+
+
+
+    }
+
+    fun generateCustomId(): String {
+        return counter++.toString()
     }
 
     private fun setData(data: ArrayList<ServiceListDataModel?>) {
@@ -268,6 +320,11 @@ class MainActivity : BaseActivity(), MessageListener {
                 }
                 else if(json.has(Constants.CONNECTION)){
                     sendMessageToWebSocketClient(arrListClients.lastOrNull()?.toString() ?: "", createJsonData())
+                }
+                else if(json.has(Constants.DISPLAY_CONNECTION)){
+                    sendMessageToWebSocketClient(arrListClients.lastOrNull()?.toString() ?: "", createDisplayJsonData(
+                        "D${generateCustomId()}"
+                    ))
                 }
                 else if(json.has(Constants.USERNAME)){
                     arrListClients.forEach {
@@ -435,84 +492,20 @@ class MainActivity : BaseActivity(), MessageListener {
                         ),
                         onSuccess = {
                             println("here is arrlist Display $arrListDisplays")
-                            if (arrListDisplays.isNotEmpty()) {
-                                println("here is display list  $arrListDisplays")
+                            sendDisplayData(
+                                json = json,
+                                counterModel = counterModel,
+                                sentModel = getTransactionFromDbWithIssuedStatus(counterModel?.serviceId)
 
-                                val targetCounterId = json.get("counterId")?.asString ?: ""
+                            )
+                            val token = getTransactionFromDbWithIssuedStatus(counterModel?.serviceId)?.token
+                            callTokens(token ?: "", counterModel)
 
-                                val matchFound = arrListDisplays.any { it?.counterId == targetCounterId }
-
-                                if (matchFound) {
-                                    // Retrieve the matching item
-                                    val matchingItem = arrListDisplays.find { it?.counterId == targetCounterId }
-
-                                    if (matchingItem != null) {
-                                        println("here is display ids  ${matchingItem.id}")
-                                        println("here is counter ids for display  ${matchingItem.counterId}")
-                                        val sentModel = getTransactionFromDbWithIssuedStatus(counterModel?.serviceId)
-                                        println("here is sentModel 111  $sentModel")
-
-                                        /*sendMessageToWebSocketClient(
-                                            matchingItem.id ?: "",
-                                            createServiceJsonDataWithTransaction(
-                                                sentModel
-                                            )
-                                        )*/
-
-                                        sendMessageToWebSocketClientWith(
-                                            matchingItem.id ?: "",
-                                            createServiceJsonDataWithTransaction(sentModel),
-                                            onSuccess = {
-                                                val displayModel = getTransactionFromDbWithIssuedStatus(counterModel?.serviceId)
-                                                val changedDisplayModel = TransactionListDataModel(
-                                                    id = displayModel?.id.asString(),
-                                                    counterId = displayModel?.counterId,
-                                                    serviceId = displayModel?.serviceId,
-                                                    entityID = displayModel?.entityID,
-                                                    serviceAssign = displayModel?.serviceAssign,
-                                                    token = displayModel?.token,
-                                                    ticketToken = displayModel?.ticketToken,
-                                                    keypadToken = displayModel?.keypadToken,
-                                                    issueTime = displayModel?.issueTime,
-                                                    startKeypadTime = displayModel?.startKeypadTime,
-                                                    endKeypadTime = displayModel?.endKeypadTime,
-                                                    status = "1"
-                                                )
-                                                val changedDisplayDbModel = parseInTransactionDbModel(changedDisplayModel, changedDisplayModel.id ?: "")
-                                                println("here is changed transactions model 2222 $changedDisplayDbModel")
-                                                addTransactionInDB(changedDisplayDbModel)
-                                            },
-                                            onFailure = { e ->
-                                                println("Error: ${e.message}")
-                                                // Handle failure, such as logging or notifying the user
-                                            }
-                                        )
-                                    }
-                                }
-                            }
                         },
                         onFailure = {}
 
                     )
 
-                    /*val issueModel = getTransactionFromDbWithIssuedStatus(serviceId)
-                    val changedModel = TransactionListDataModel(
-                        id = issueModel?.id.asString(),
-                        counterId = issueModel?.counterId,
-                        serviceId = issueModel?.serviceId,
-                        entityID = issueModel?.entityID,
-                        serviceAssign = issueModel?.serviceAssign,
-                        token = issueModel?.token,
-                        ticketToken = issueModel?.ticketToken,
-                        keypadToken = issueModel?.keypadToken,
-                        issueTime = issueModel?.issueTime,
-                        startKeypadTime = getStartTimeForKeypad(),
-                        endKeypadTime = issueModel?.endKeypadTime,
-                        status = "1"
-
-                    )
-                    val changedDbModel = parseInTransactionDbModel(changedModel, changedModel.id ?: "")
-                    addTransactionInDB(changedDbModel)*/
 
                     println("here is changed transactions 1111 ${getAllTransactionFromDB()}")
 
@@ -558,57 +551,17 @@ class MainActivity : BaseActivity(), MessageListener {
                     val changedDbModel = parseInTransactionDbModel(changedModel, changedModel.id ?: "")
                     addTransactionInDB(changedDbModel)
 
-                    Extensions.handler(500){
+                    handler(500){
                         println("here is arrlist Display $arrListDisplays")
-                        if (arrListDisplays.isNotEmpty()) {
-                            println("here is display list  $arrListDisplays")
 
-                            val targetCounterId = json.get("counterId")?.asString ?: ""
+                        sendDisplayData(
+                            json = json,
+                            counterModel = counterModel,
+                            sentModel = getTransactionByToken(json.get("tokenNo")?.asString ?: "",counterModel?.serviceId ?: "")
 
-                            val matchFound = arrListDisplays.any { it?.counterId == targetCounterId }
-
-                            if (matchFound) {
-                                // Retrieve the matching item
-                                val matchingItem = arrListDisplays.find { it?.counterId == targetCounterId }
-
-                                if (matchingItem != null) {
-                                    println("here is display ids  ${matchingItem.id}")
-                                    println("here is counter ids for display  ${matchingItem.counterId}")
-                                    val sentModel = getTransactionByToken(json.get("tokenNo")?.asString ?: "",counterModel?.serviceId ?: "")
-                                    println("here is sentModel 5555  $sentModel")
-
-                                    sendMessageToWebSocketClientWith(
-                                        matchingItem.id ?: "",
-                                        createServiceJsonDataWithTransaction(sentModel),
-                                        onSuccess = {
-                                            val displayModel = getTransactionByToken(json.get("tokenNo")?.asString ?: "",counterModel?.serviceId ?: "")
-                                            val changedDisplayModel = TransactionListDataModel(
-                                                id = displayModel?.id.asString(),
-                                                counterId = displayModel?.counterId,
-                                                serviceId = displayModel?.serviceId,
-                                                entityID = displayModel?.entityID,
-                                                serviceAssign = displayModel?.serviceAssign,
-                                                token = displayModel?.token,
-                                                ticketToken = displayModel?.ticketToken,
-                                                keypadToken = displayModel?.keypadToken,
-                                                issueTime = displayModel?.issueTime,
-                                                startKeypadTime = displayModel?.startKeypadTime,
-                                                endKeypadTime = displayModel?.endKeypadTime,
-                                                status = "1"
-
-                                            )
-                                            val changedDisplayDbModel = parseInTransactionDbModel(changedDisplayModel, changedDisplayModel.id ?: "")
-                                            println("here is changed transactions model 2222 $changedDisplayDbModel")
-                                            addTransactionInDB(changedDisplayDbModel)
-                                        },
-                                        onFailure = { e ->
-                                            println("Error: ${e.message}")
-                                            // Handle failure, such as logging or notifying the user
-                                        }
-                                    )
-                                }
-                            }
-                        }
+                        )
+                        val token = getTransactionByToken(json.get("tokenNo")?.asString ?: "",counterModel?.serviceId ?: "")?.token
+                        callTokens(token ?: "", counterModel)
 
                     }
                 }
@@ -627,76 +580,18 @@ class MainActivity : BaseActivity(), MessageListener {
                         )
                     )
 
-                    /*val issueModel = getTransactionFromDbWithCalledStatus(counterModel?.serviceId ?: "")
-                    val changedModel = TransactionListDataModel(
-                        id = issueModel?.id.asString(),
-                        counterId = issueModel?.counterId,
-                        serviceId = issueModel?.serviceId,
-                        entityID = issueModel?.entityID,
-                        serviceAssign = issueModel?.serviceAssign,
-                        token = issueModel?.token,
-                        ticketToken = issueModel?.ticketToken,
-                        keypadToken = issueModel?.keypadToken,
-                        issueTime = issueModel?.issueTime,
-                        startKeypadTime = getStartTimeForKeypad(),
-                        endKeypadTime = issueModel?.endKeypadTime,
-                        status = "2"
 
-                    )
-                    val changedDbModel = parseInTransactionDbModel(changedModel, changedModel.id ?: "")
-                    addTransactionInDB(changedDbModel)*/
-
-                    Extensions.handler(500){
+                    handler(500){
                         println("here is arrlist Display $arrListDisplays")
-                        if (arrListDisplays.isNotEmpty()) {
-                            println("here is display list  $arrListDisplays")
 
-                            val targetCounterId = json.get("counterId")?.asString ?: ""
+                        sendDisplayData(
+                            json = json,
+                            counterModel = counterModel,
+                            sentModel = getTransactionByToken(json.get("repeatToken")?.asString ?: "",counterModel?.serviceId ?: "")
+                        )
 
-                            val matchFound = arrListDisplays.any { it?.counterId == targetCounterId }
-
-                            if (matchFound) {
-                                // Retrieve the matching item
-                                val matchingItem = arrListDisplays.find { it?.counterId == targetCounterId }
-
-                                if (matchingItem != null) {
-                                    println("here is display ids  ${matchingItem.id}")
-                                    println("here is counter ids for display  ${matchingItem.counterId}")
-                                    val sentModel = getTransactionByToken(json.get("repeatToken")?.asString ?: "",counterModel?.serviceId ?: "")
-                                    println("here is sentModel 5555  $sentModel")
-
-                                    sendMessageToWebSocketClientWith(
-                                        matchingItem.id ?: "",
-                                        createServiceJsonDataWithTransaction(sentModel),
-                                        onSuccess = {
-                                            val displayModel = getTransactionByToken(json.get("repeatToken")?.asString ?: "",counterModel?.serviceId ?: "")
-                                            val changedDisplayModel = TransactionListDataModel(
-                                                id = displayModel?.id.asString(),
-                                                counterId = displayModel?.counterId,
-                                                serviceId = displayModel?.serviceId,
-                                                entityID = displayModel?.entityID,
-                                                serviceAssign = displayModel?.serviceAssign,
-                                                token = displayModel?.token,
-                                                ticketToken = displayModel?.ticketToken,
-                                                keypadToken = displayModel?.keypadToken,
-                                                issueTime = displayModel?.issueTime,
-                                                startKeypadTime = displayModel?.startKeypadTime,
-                                                endKeypadTime = displayModel?.endKeypadTime,
-                                                status = "1"
-
-                                            )
-                                            val changedDisplayDbModel = parseInTransactionDbModel(changedDisplayModel, changedDisplayModel.id ?: "")
-                                            println("here is changed transactions model 2222 $changedDisplayDbModel")
-                                            addTransactionInDB(changedDisplayDbModel)
-                                        },
-                                        onFailure = { e ->
-                                            println("Error: ${e.message}")
-                                            // Handle failure, such as logging or notifying the user
-                                        }
-                                    )
-                                }
-                            }
-                        }
+                        val token = getTransactionByToken(json.get("repeatToken")?.asString ?: "",counterModel?.serviceId ?: "")?.token
+                        callTokens(token ?: "", counterModel)
 
                     }
                 }
@@ -740,67 +635,18 @@ class MainActivity : BaseActivity(), MessageListener {
                                 )
                             }
 
-
                         }
                     ),
                     onSuccess = {
 
                         println("here is arrlist Display $arrListDisplays")
-                        if (arrListDisplays.isNotEmpty()) {
-                            println("here is display list  $arrListDisplays")
 
-                            val targetCounterId = json.get("counterId")?.asString ?: ""
+                        sendDisplayData(
+                            json = json,
+                            counterModel = counterModel,
+                            sentModel = getTransactionFromDbWithIssuedStatus(counterModel?.serviceId)
 
-                            val matchFound = arrListDisplays.any { it?.counterId == targetCounterId }
-
-                            if (matchFound) {
-                                // Retrieve the matching item
-                                val matchingItem = arrListDisplays.find { it?.counterId == targetCounterId }
-
-                                if (matchingItem != null) {
-                                    println("here is display ids  ${matchingItem.id}")
-                                    println("here is counter ids for display  ${matchingItem.counterId}")
-                                    val sentModel = getTransactionFromDbWithIssuedStatus(counterModel?.serviceId)
-                                    println("here is sentModel 111  $sentModel")
-
-                                    /*sendMessageToWebSocketClient(
-                                        matchingItem.id ?: "",
-                                        createServiceJsonDataWithTransaction(
-                                            sentModel
-                                        )
-                                    )*/
-
-                                    sendMessageToWebSocketClientWith(
-                                        matchingItem.id ?: "",
-                                        createServiceJsonDataWithTransaction(sentModel),
-                                        onSuccess = {
-                                            val displayModel = getTransactionFromDbWithIssuedStatus(counterModel?.serviceId)
-                                            val changedDisplayModel = TransactionListDataModel(
-                                                id = displayModel?.id.asString(),
-                                                counterId = displayModel?.counterId,
-                                                serviceId = displayModel?.serviceId,
-                                                entityID = displayModel?.entityID,
-                                                serviceAssign = displayModel?.serviceAssign,
-                                                token = displayModel?.token,
-                                                ticketToken = displayModel?.ticketToken,
-                                                keypadToken = displayModel?.keypadToken,
-                                                issueTime = displayModel?.issueTime,
-                                                startKeypadTime = displayModel?.startKeypadTime,
-                                                endKeypadTime = displayModel?.endKeypadTime,
-                                                status = "1"
-                                            )
-                                            val changedDisplayDbModel = parseInTransactionDbModel(changedDisplayModel, changedDisplayModel.id ?: "")
-                                            println("here is changed transactions model 2222 $changedDisplayDbModel")
-                                            addTransactionInDB(changedDisplayDbModel)
-                                        },
-                                        onFailure = { e ->
-                                            println("Error: ${e.message}")
-                                            // Handle failure, such as logging or notifying the user
-                                        }
-                                    )
-                                }
-                            }
-                        }
+                        )
                     },
                     onFailure = {  }
                 )
@@ -952,6 +798,69 @@ class MainActivity : BaseActivity(), MessageListener {
         }
     }
 
+    private fun sendDisplayData(json: JsonObject,counterModel: CounterDataDbModel?,sentModel: TransactionDataDbModel?){
+        if (arrListDisplays.isNotEmpty()) {
+            println("here is display list  $arrListDisplays")
+
+            val targetCounterId = json.get("counterId")?.asString ?: ""
+
+            val matchFound = arrListDisplays.any { it?.counterId == targetCounterId }
+
+            if (matchFound) {
+                // Retrieve the matching item
+                val matchingItem = arrListDisplays.filter { it?.counterId == targetCounterId }
+
+                println("here is sentModel 111  $sentModel")
+
+                var isDbUpdated = false  // Flag to ensure the database is updated only once
+                matchingItem.forEach {
+                    sendMessageToWebSocketClientWith(
+                        it?.id ?: "",
+                        createServiceJsonDataWithTransaction(sentModel),
+                        onSuccess = {
+                            if (!isDbUpdated) {
+                                val changedDisplayModel = TransactionListDataModel(
+                                    id = sentModel?.id.asString(),
+                                    counterId = sentModel?.counterId,
+                                    serviceId = sentModel?.serviceId,
+                                    entityID = sentModel?.entityID,
+                                    serviceAssign = sentModel?.serviceAssign,
+                                    token = sentModel?.token,
+                                    ticketToken = sentModel?.ticketToken,
+                                    keypadToken = sentModel?.keypadToken,
+                                    issueTime = sentModel?.issueTime,
+                                    startKeypadTime = sentModel?.startKeypadTime,
+                                    endKeypadTime = sentModel?.endKeypadTime,
+                                    status = "1"
+                                )
+
+                                val changedDisplayDbModel = parseInTransactionDbModel(changedDisplayModel, changedDisplayModel.id ?: "")
+                                println("Here is the changed transactions model: $changedDisplayDbModel")
+
+                                // Update the database
+                                addTransactionInDB(changedDisplayDbModel)
+
+                                // Set the flag to prevent further updates
+                                isDbUpdated = true
+                            }
+                        },
+                        onFailure = { e ->
+                            println("Error: ${e.message}")
+                            // Handle failure, such as logging or notifying the user
+                        }
+                    )
+                }
+
+            }
+        }
+    }
+
+
+
+    private fun speakText(text: String , id : String ?= "") {
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, id)
+    }
+
 
     fun getCurrentTimeFormatted(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
@@ -967,5 +876,89 @@ class MainActivity : BaseActivity(), MessageListener {
         val currentTime = Date()
 
         return dateFormat.format(currentTime)
+    }
+
+    private fun callTokens(token:String,counterModel: CounterDataDbModel?){
+
+
+        val customMsgEn =
+            getUserDataResponse()?.msg_en
+            ?.replace("<token>", token)
+            ?.replace("<counter>", counterModel?.id.asString())
+
+        val customMsgAr =
+            getUserDataResponse()?.msg_ar
+                ?.replace("<token>", token)
+                ?.replace("<counter>", counterModel?.id.asString())
+
+        when (getUserDataResponse()?.voice_selected) {
+            Constants.ENGLISH -> {
+                textToSpeech.language = Locale.US
+                setEnMaleVoice()
+                speakText(customMsgEn ?: "")
+            }
+            Constants.ARABIC -> {
+                textToSpeech.language = Locale.US
+                setArMaleVoice()
+                speakText(customMsgAr ?: "")
+            }
+            Constants.ENGLISH_ARABIC -> {
+                println("here is gender 000 ${getUserDataResponse()?.voice_gender}")
+                textToSpeech.language = Locale.US
+                setEnMaleVoice()
+                speakText(customMsgEn ?: "", Constants.ENGLISH)
+                textToSpeech.setOnUtteranceCompletedListener { id ->
+                    if (id == Constants.ENGLISH){
+                        setArMaleVoice()
+                        speakText(customMsgAr ?: "")
+                    }
+                }
+
+            }
+            Constants.ARABIC_ENGLISH -> {
+                setArMaleVoice()
+                textToSpeech.speak(customMsgAr, TextToSpeech.QUEUE_FLUSH, null, Constants.ARABIC)
+                textToSpeech.setOnUtteranceCompletedListener { id ->
+                    if (id == Constants.ARABIC){
+                        textToSpeech.language = Locale.US
+                        setEnMaleVoice()
+                        speakText(customMsgEn ?: "")
+                    }
+
+                }
+
+            }
+        }
+    }
+
+    private fun setEnMaleVoice() {
+        val voices = textToSpeech.voices
+        for (voice in voices) {
+            if (getUserDataResponse()?.voice_gender == Constants.MALE) {
+                println("Selected voice: ${voice.name}")
+                println("Selected voice: 111")
+                if (voice.name.contains("en-in-x-ene-network", ignoreCase = true)) {
+                    maleVoice = voice
+                    textToSpeech.voice = maleVoice
+                    println("Selected male voice: ${voice.name}")
+                    println("Selected voice: 222")
+                }
+            }
+        }
+    }
+
+
+    private fun setArMaleVoice() {
+        val voices = textToSpeech.voices
+        for (voice in voices) {
+            if (getUserDataResponse()?.voice_gender == Constants.MALE) {
+                println("Selected voice: ${voice.name}")
+                if (voice.name.contains("ar-xa-x-ard-network", ignoreCase = true)) {
+                    maleVoice = voice
+                    textToSpeech.voice = maleVoice
+                    println("Selected male voice: ${voice.name}")
+                }
+            }
+        }
     }
 }

@@ -22,28 +22,6 @@ object PrefUtils {
         }
     }
 
-    fun Context.getConnectionCode(): String? {
-        val dt = DataStoreManager(this)
-        return runBlocking {
-            dt.getUserData().firstOrNull()?.data?.connection_code
-        }
-    }
-
-    fun Context.getUserId(): String {
-        return getUserDataResponse()?.data?.id.asString()
-    }
-
-    fun Context.getUserName(): String {
-        val userModel = getUserDataResponse()
-        return userModel?.data?.firstName ?: ""
-    }
-
-    fun Context.isUserLoggedIn(): Boolean {
-        return this.getUserDataResponse()?.data?.id != null
-    }
-    fun Context.isCodeVerified(): Boolean {
-        return this.getUserDataResponse()?.data?.isCodeVerified != false
-    }
 
 
 

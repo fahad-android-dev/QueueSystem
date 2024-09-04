@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include
+                android:id="@+id/layoutToolbar"
+                layout="@layout/layout_toolbar" />
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nestedScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:fillViewport="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layoutToolbar">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/linSwitches"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        >
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/conMaleSwitch"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingVertical="@dimen/_15sdp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <TextView
+                                android:id="@+id/txtMaleTitle"
+                                style="@style/TextStyleStartMedium"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_12sdp"
+                                android:gravity="start"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="@dimen/_2sdp"
+                                android:maxLines="1"
+                                android:textAlignment="viewStart"
+                                android:textColor="@color/txt_color_primary"
+                                android:textSize="@dimen/_11ssp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                android:text="@string/male_voice" />
+
+
+                            <com.suke.widget.SwitchButton
+                                android:id="@+id/switchMale"
+                                style="@style/SwitchButtonStyle"
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_22sdp"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:layout_marginEnd="@dimen/screen_margin"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:ignore="MissingClass" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/conFemaleSwitch"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingVertical="@dimen/_15sdp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <TextView
+                                android:id="@+id/txtFemaleTitle"
+                                style="@style/TextStyleStartMedium"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_12sdp"
+                                android:gravity="start"
+                                android:includeFontPadding="false"
+                                android:lineSpacingExtra="@dimen/_2sdp"
+                                android:maxLines="1"
+                                android:textAlignment="viewStart"
+                                android:textColor="@color/txt_color_primary"
+                                android:textSize="@dimen/_11ssp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                android:text="Female" />
+
+
+                            <com.suke.widget.SwitchButton
+                                android:id="@+id/switchFemale"
+                                style="@style/SwitchButtonStyle"
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_22sdp"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:layout_marginEnd="@dimen/screen_margin"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:ignore="MissingClass" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </LinearLayout>
+
+
+
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/conEnglish"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:paddingVertical="@dimen/_15sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/linSwitches">
+
+                        <TextView
+                            android:id="@+id/txtEnglishTitle"
+                            style="@style/TextStyleStartSemiBold"
+                            android:layout_width="@dimen/_200sdp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_12sdp"
+                            android:gravity="start"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="@dimen/_2sdp"
+                            android:maxLines="1"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/txt_color_primary"
+                            android:textSize="@dimen/btn_text_size"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:text="@string/english" />
+
+
+                        <ImageView
+                            android:id="@+id/ivEnglish"
+                            android:layout_width="@dimen/_15sdp"
+                            android:layout_height="@dimen/_15sdp"
+                            android:layout_marginEnd="@dimen/screen_margin"
+                            android:src="@drawable/ic_checked"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/conArabic"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:paddingVertical="@dimen/_15sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/conEnglish">
+
+                        <TextView
+                            android:id="@+id/txtArabicTitle"
+                            style="@style/TextStyleStartSemiBold"
+                            android:layout_width="@dimen/_200sdp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_12sdp"
+                            android:gravity="start"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="@dimen/_2sdp"
+                            android:maxLines="1"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/txt_color_primary"
+                            android:textSize="@dimen/btn_text_size"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:text="@string/arabic" />
+
+
+                        <ImageView
+                            android:id="@+id/ivArabic"
+                            android:layout_width="@dimen/_15sdp"
+                            android:layout_height="@dimen/_15sdp"
+                            android:layout_marginEnd="@dimen/screen_margin"
+                            android:src="@drawable/ic_checked"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@+id/txtArabicTitle"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/txtArabicTitle"
+                            />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/conEnglishArabic"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:paddingVertical="@dimen/_15sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/conArabic">
+
+                        <TextView
+                            android:id="@+id/txtEnglishArabicTitle"
+                            style="@style/TextStyleStartSemiBold"
+                            android:layout_width="@dimen/_200sdp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_12sdp"
+                            android:gravity="start"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="@dimen/_2sdp"
+                            android:maxLines="1"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/txt_color_primary"
+                            android:textSize="@dimen/btn_text_size"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:text="@string/english_first_arabic_first" />
+
+
+                        <ImageView
+                            android:id="@+id/ivEnglishArabic"
+                            android:layout_width="@dimen/_15sdp"
+                            android:layout_height="@dimen/_15sdp"
+                            android:layout_marginEnd="@dimen/screen_margin"
+                            android:src="@drawable/ic_checked"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@+id/txtEnglishArabicTitle"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/txtEnglishArabicTitle"
+                            />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/conArabicEnglish"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:paddingVertical="@dimen/_15sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/conEnglishArabic">
+
+                        <TextView
+                            android:id="@+id/txtArabicEnglishTitle"
+                            style="@style/TextStyleStartSemiBold"
+                            android:layout_width="@dimen/_200sdp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_12sdp"
+                            android:gravity="start"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="@dimen/_2sdp"
+                            android:maxLines="1"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/txt_color_primary"
+                            android:textSize="@dimen/btn_text_size"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:text="@string/arabic_first_english_first" />
+
+
+                        <ImageView
+                            android:id="@+id/ivArabicEnglish"
+                            android:layout_width="@dimen/_15sdp"
+                            android:layout_height="@dimen/_15sdp"
+                            android:layout_marginEnd="@dimen/screen_margin"
+                            android:src="@drawable/ic_checked"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@+id/txtArabicEnglishTitle"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/txtArabicEnglishTitle"
+                            />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <EditText
+                        android:id="@+id/edtEnglishMessage"
+                        style="@style/CommonInputEditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_90sdp"
+                        android:hint="@string/enter_english_message"
+                        android:gravity="top"
+                        android:maxLines="8"
+                        android:visibility="gone"
+                        android:inputType="textMultiLine"
+                        android:paddingTop="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:imeOptions="actionDone"
+                        android:layout_marginHorizontal="@dimen/screen_margin"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/conArabicEnglish" />
+
+                    <EditText
+                        android:id="@+id/edtArabicMessage"
+                        style="@style/CommonInputEditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_90sdp"
+                        android:hint="@string/enter_arabic_message"
+                        android:gravity="top"
+                        android:maxLines="8"
+                        android:visibility="gone"
+                        android:inputType="textMultiLine"
+                        android:paddingTop="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:imeOptions="actionDone"
+                        android:layout_marginHorizontal="@dimen/screen_margin"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/edtEnglishMessage" />
+
+                    <TextView
+                        android:id="@+id/btnConfirm"
+                        android:layout_width="match_parent"
+                        style="@style/CommonButtonStyle"
+                        android:layout_gravity="center"
+                        android:textSize="@dimen/btn_text_size"
+                        android:text="@string/confirm"
+                        android:layout_marginHorizontal="@dimen/screen_margin"
+                        android:textAllCaps="false"
+                        android:layout_marginBottom="@dimen/_20sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:includeFontPadding="false"
+                        android:layout_height="@dimen/btn_size" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </androidx.core.widget.NestedScrollView>
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigationView"
+            android:layout_width="@dimen/_240sdp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:layout_marginEnd="@dimen/_40sdp"
+            android:fitsSystemWindows="true"
+            android:theme="@style/NavigationDrawerText"
+            app:itemBackground="@color/app_bg_color"
+            app:itemIconPadding="@dimen/_10sdp"
+            app:itemTextAppearance="@style/fontRegular">
+
+            <include
+                android:id="@+id/headerLayout"
+                layout="@layout/nav_header_layout" />
+        </com.google.android.material.navigation.NavigationView>
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+
+</layout>

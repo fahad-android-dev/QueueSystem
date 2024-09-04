@@ -462,4 +462,14 @@
         <item name="cornerSize">7%</item>
     </style>
 
+    <style name="SwitchButtonStyle">
+        <item name="android:rotation">0</item>
+        <item name="sb_checked">false</item>
+        <item name="sb_border_width">@dimen/_2sdp</item>
+        <item name="sb_background">@color/switch_bg_color_unchecked</item>
+        <item name="sb_uncheck_color">@color/switch_bg_color_unchecked</item>
+        <item name="sb_checked_color">@color/switch_bg_color_checked</item>
+        <item name="sb_show_indicator">false</item>
+    </style>
+
 </resources>
