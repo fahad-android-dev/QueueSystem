@@ -33,6 +33,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
     private val clients = HashMap<String, ClientHandler>()
     private val connectedClientsList = MutableLiveData<List<String>>()
     var arrListClients = ArrayList<String>()
+    var masterDisplay = 1
 
     init {
         connectedClientsList.value = emptyList()
@@ -129,7 +130,6 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
         var clientId = UUID.randomUUID().toString()
         private var counterId : String? = null
         private var ticketId : String? = null
-        var masterDisplay = 1
 
         init {
             try {
