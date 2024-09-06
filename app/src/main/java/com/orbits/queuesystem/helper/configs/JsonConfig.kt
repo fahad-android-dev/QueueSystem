@@ -9,6 +9,7 @@ import com.orbits.queuesystem.helper.Extensions.asString
 import com.orbits.queuesystem.helper.database.CounterDataDbModel
 import com.orbits.queuesystem.helper.database.LocalDB.getAllCounterFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
+import com.orbits.queuesystem.helper.database.LocalDB.getAllTransactionFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getAllUserFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getCurrentServiceToken
 import com.orbits.queuesystem.helper.database.ServiceDataDbModel
@@ -63,31 +64,15 @@ object JsonConfig {
     }
 
 
-    fun Context.createAllJsonData(): JsonObject {
-        val itemsArray = JsonArray().apply {
-            val services = getAllServiceFromDB()
-            services?.forEach { service ->
-                add(service?.toJsonObject())
+    fun Context.createMasterDisplayJsonData(transactions:ArrayList<TransactionDataDbModel?>?): JsonObject {
+        val transactionArray = JsonArray().apply {
+            transactions?.forEach { transaction ->
+                add(transaction?.toTransactionJsonObject())
             }
         }
-
-        val counterArray = JsonArray().apply {
-            val counters = getAllCounterFromDB()
-            counters?.forEach { counter ->
-                add(counter?.toCounterJsonObject())
-            }
-        }
-
-        val combinedArray = JsonArray()
-
-        itemsArray.forEach { combinedArray.add(it) }
-
-        // Add all elements from counterArray to combinedArray
-        counterArray.forEach { combinedArray.add(it) }
-
 
         return JsonObject().apply {
-            add("items", combinedArray)
+            add("transactions", transactionArray)
         }
     }
 
@@ -123,12 +108,6 @@ object JsonConfig {
         }
     }
 
-    fun Context.createDisplayConnectionMessage(): JsonObject {
-        return JsonObject().apply {
-            addProperty("displayConnected", "displayConnected")
-
-        }
-    }
 
     fun Context.createNoTokensData(): JsonObject {
         return JsonObject().apply {
@@ -170,12 +149,16 @@ object JsonConfig {
     }
 
 
-    fun ArrayList<TransactionDataDbModel?>.toKeypadJsonArray(): JsonArray {
-        return JsonArray().apply {
-            this@toKeypadJsonArray.forEach { transaction ->
-                transaction?.let { add(gson.toJsonTree(it)) }
-            }
+    fun TransactionDataDbModel.toTransactionJsonObject(): JsonObject {
+        return JsonObject().apply {
+            addProperty("id", entityID)
+            addProperty("counterId", counterId)
+            addProperty("counterType", counterType)
+            addProperty("serviceId", serviceId)
+            addProperty("keypadToken", keypadToken)
+            addProperty("token", token)
         }
     }
+
 
 }

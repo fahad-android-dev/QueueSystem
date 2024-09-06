@@ -43,8 +43,11 @@ object Constants {
     const val SERVICE_TYPE = "serviceType"
     const val CONNECTION = "connection"
     const val DISPLAY_CONNECTION = "displayConnection"
+    const val MASTER_DISPLAY_CONNECTION = "masterDisplayConnection"
+    const val MASTER_RECONNECTION = "masterReconnection"
     const val USERNAME = "userName"
     const val DISPLAY_ID = "displayId"
+    const val MASTER_DISPLAY_ID = "masterDisplayId"
 
 
     /*Voices Config Ids*/

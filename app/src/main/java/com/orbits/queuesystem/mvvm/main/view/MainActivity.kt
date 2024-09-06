@@ -31,6 +31,7 @@ import com.orbits.queuesystem.helper.Extensions.hideKeyboard
 import com.orbits.queuesystem.helper.PrefUtils.getUserDataResponse
 import com.orbits.queuesystem.helper.configs.JsonConfig.createDisplayJsonData
 import com.orbits.queuesystem.helper.configs.JsonConfig.createJsonData
+import com.orbits.queuesystem.helper.configs.JsonConfig.createMasterDisplayJsonData
 import com.orbits.queuesystem.helper.configs.JsonConfig.createNoTokensData
 import com.orbits.queuesystem.helper.configs.JsonConfig.createReconnectionJsonDataWithTransaction
 import com.orbits.queuesystem.helper.configs.JsonConfig.createServiceJsonDataWithModel
@@ -55,6 +56,7 @@ import com.orbits.queuesystem.helper.database.LocalDB.getCounterIdForService
 import com.orbits.queuesystem.helper.database.LocalDB.getCurrentServiceToken
 import com.orbits.queuesystem.helper.database.LocalDB.getLastTransactionFromDbWithStatusOne
 import com.orbits.queuesystem.helper.database.LocalDB.getLastTransactionFromDbWithStatusTwo
+import com.orbits.queuesystem.helper.database.LocalDB.getRequiredTransactionFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getResetData
 import com.orbits.queuesystem.helper.database.LocalDB.getServiceById
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionByToken
@@ -99,7 +101,6 @@ class MainActivity : BaseActivity(), MessageListener, TextToSpeech.OnInitListene
     var counter = 1
     private lateinit var textToSpeech: TextToSpeech
     private var maleVoice: Voice? = null
-    private var femaleVoice: Voice? = null
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -315,27 +316,35 @@ class MainActivity : BaseActivity(), MessageListener, TextToSpeech.OnInitListene
 
                 println("Received json in activity: $json")
 
-                if (json.has(Constants.TICKET_TYPE)){
-                    manageTicketData(json)
-                }
-                else if(json.has(Constants.CONNECTION)){
-                    sendMessageToWebSocketClient(arrListClients.lastOrNull()?.toString() ?: "", createJsonData())
-                }
-                else if(json.has(Constants.DISPLAY_CONNECTION)){
-                    sendMessageToWebSocketClient(arrListClients.lastOrNull()?.toString() ?: "", createDisplayJsonData(
-                        "D${generateCustomId()}"
-                    ))
-                }
-                else if(json.has(Constants.USERNAME)){
-                    arrListClients.forEach {
-                        sendMessageToWebSocketClient(it ?: "", createUserJsonData(json.get("userName").asString))
+                when {
+                    json.has(Constants.TICKET_TYPE) -> {
+                        manageTicketData(json)
                     }
-                }
-                else if (json.has(Constants.DISPLAY_ID)){
-                    manageCounterDisplayData(json)
-                }
-                else {
-                    manageKeypadData(json)
+                    json.has(Constants.CONNECTION) -> {
+                        sendMessageToWebSocketClient(arrListClients.lastOrNull()?.toString() ?: "", createJsonData())
+                    }
+                    json.has(Constants.DISPLAY_CONNECTION) -> {
+                        sendMessageToWebSocketClient(arrListClients.lastOrNull()?.toString() ?: "", createDisplayJsonData(
+                            "D${generateCustomId()}"
+                        ))
+                    }
+                    json.has(Constants.MASTER_DISPLAY_CONNECTION) || json.has(Constants.MASTER_RECONNECTION) -> {
+                        sendMessageToWebSocketClient(
+                            arrListClients.lastOrNull()?.toString() ?: "",
+                            createMasterDisplayJsonData(getRequiredTransactionFromDB())
+                        )
+                    }
+                    json.has(Constants.USERNAME) -> {
+                        arrListClients.forEach {
+                            sendMessageToWebSocketClient(it ?: "", createUserJsonData(json.get("userName").asString))
+                        }
+                    }
+                    json.has(Constants.DISPLAY_ID) -> {
+                        manageCounterDisplayData(json)
+                    }
+                    else -> {
+                        manageKeypadData(json)
+                    }
                 }
 
             } else {

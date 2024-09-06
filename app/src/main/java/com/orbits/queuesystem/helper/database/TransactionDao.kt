@@ -71,5 +71,8 @@ interface TransactionDao {
     @Query("UPDATE ServiceDataDbModel SET tokenNo = tokenStart")
     fun updateServiceToken()
 
+    @Query("SELECT * FROM TransactionDataDbModel WHERE status = 1 ORDER BY startKeypadTime DESC LIMIT 5")
+    fun getRequiredTransactions(): List<TransactionDataDbModel?>
+
 
 }

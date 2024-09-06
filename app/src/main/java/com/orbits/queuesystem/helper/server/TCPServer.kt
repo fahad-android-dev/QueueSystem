@@ -129,6 +129,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
         var clientId = UUID.randomUUID().toString()
         private var counterId : String? = null
         private var ticketId : String? = null
+        var masterDisplay = 1
 
         init {
             try {
@@ -244,6 +245,23 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         messageListener.onMessageJsonReceived(jsonObject)
                                     }
                                 }
+                                jsonObject.has(Constants.MASTER_DISPLAY_CONNECTION) -> {
+                                    println("here is connection received")
+                                    val masterId = "M${generateCustomMasterId()}"
+                                    if (masterId.isNotEmpty()) {
+                                        WebSocketManager.updateClientId(
+                                            clientId,
+                                            masterId
+                                        )
+                                        clientId = masterId
+                                        clients[clientId] = this
+                                        addToConnectedClients(clientId)
+                                        messageListener.onClientConnected(clientSocket,arrListClients)
+                                        Extensions.handler(400) {
+                                            messageListener.onMessageJsonReceived(jsonObject)
+                                        }
+                                    }
+                                }
                                 jsonObject.has(Constants.USERNAME) -> {
                                     var userClientId = UUID.randomUUID().toString()
                                     WebSocketManager.updateClientId(clientId, userClientId)
@@ -351,6 +369,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         }
                                     }
                                 }
+
                                 jsonObject.has(Constants.CONNECTION) -> {
                                     println("here is connection received")
                                     clients[clientId] = this
@@ -360,6 +379,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         messageListener.onMessageJsonReceived(jsonObject)
                                     }
                                 }
+
                                 jsonObject.has(Constants.DISPLAY_CONNECTION) -> {
                                     println("here is connection received")
                                     clients[clientId] = this
@@ -369,6 +389,25 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         messageListener.onMessageJsonReceived(jsonObject)
                                     }
                                 }
+
+                                jsonObject.has(Constants.MASTER_DISPLAY_CONNECTION) -> {
+                                    println("here is connection received")
+                                    val masterId = "M${generateCustomMasterId()}"
+                                    if (masterId.isNotEmpty()) {
+                                        WebSocketManager.updateClientId(
+                                            clientId,
+                                            masterId
+                                        )
+                                        clientId = masterId
+                                        clients[clientId] = this
+                                        addToConnectedClients(clientId)
+                                        messageListener.onClientConnected(clientSocket,arrListClients)
+                                        Extensions.handler(400) {
+                                            messageListener.onMessageJsonReceived(jsonObject)
+                                        }
+                                    }
+                                }
+
                                 jsonObject.has(Constants.USERNAME) -> {
                                     var userClientId = UUID.randomUUID().toString()
                                     WebSocketManager.updateClientId(clientId, userClientId)
@@ -418,22 +457,10 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
             }
         }
 
-        fun generateRandomAlphanumericCode(length: Int = 3): String {
-            // Define the character set: uppercase, lowercase, and digits
-            val charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-
-            // Create a StringBuilder to build the result
-            val result = StringBuilder(length)
-
-            // Generate random characters from the charset
-            val random = Random(System.currentTimeMillis())
-            repeat(length) {
-                val randomIndex = random.nextInt(charset.length)
-                result.append(charset[randomIndex])
-            }
-
-            return result.toString()
+        fun generateCustomMasterId(): String {
+            return masterDisplay++.toString()
         }
+
 
         @RequiresApi(Build.VERSION_CODES.O)
         private fun performHandshake(): Boolean {

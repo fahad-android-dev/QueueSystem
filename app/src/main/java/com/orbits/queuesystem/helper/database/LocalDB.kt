@@ -163,6 +163,11 @@ object LocalDB {
         return db?.getAllTransaction() as ArrayList<TransactionDataDbModel?>?
     }
 
+    fun Context.getRequiredTransactionFromDB(): ArrayList<TransactionDataDbModel?>? {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        return db?.getRequiredTransactions() as ArrayList<TransactionDataDbModel?>?
+    }
+
     fun Context.getTransactionIssuedStatusFromCounter(counterId: String?,serviceId: String?): TransactionDataDbModel? {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
         return db?.getTransactionIssuedStatusWithCounter(counterId ?: "", serviceId ?:"")
