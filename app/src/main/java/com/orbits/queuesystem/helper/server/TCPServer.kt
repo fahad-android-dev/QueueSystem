@@ -33,6 +33,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
     private val clients = HashMap<String, ClientHandler>()
     private val connectedClientsList = MutableLiveData<List<String>>()
     var arrListClients = ArrayList<String>()
+    var arrListMasterDisplays = ArrayList<String>()
     var masterDisplay = 1
 
     init {
@@ -256,6 +257,8 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         clientId = masterId
                                         clients[clientId] = this
                                         addToConnectedClients(clientId)
+                                        arrListMasterDisplays.add(clientId)
+                                        arrListMasterDisplays.add(clientId)
                                         messageListener.onClientConnected(clientSocket,arrListClients)
                                         Extensions.handler(400) {
                                             messageListener.onMessageJsonReceived(jsonObject)

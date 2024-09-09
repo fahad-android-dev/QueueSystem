@@ -32,6 +32,7 @@ import com.orbits.queuesystem.helper.PrefUtils.getUserDataResponse
 import com.orbits.queuesystem.helper.configs.JsonConfig.createDisplayJsonData
 import com.orbits.queuesystem.helper.configs.JsonConfig.createJsonData
 import com.orbits.queuesystem.helper.configs.JsonConfig.createMasterDisplayJsonData
+import com.orbits.queuesystem.helper.configs.JsonConfig.createMasterDisplayJsonDataWithMsg
 import com.orbits.queuesystem.helper.configs.JsonConfig.createNoTokensData
 import com.orbits.queuesystem.helper.configs.JsonConfig.createReconnectionJsonDataWithTransaction
 import com.orbits.queuesystem.helper.configs.JsonConfig.createServiceJsonDataWithModel
@@ -329,7 +330,7 @@ class MainActivity : BaseActivity(), MessageListener, TextToSpeech.OnInitListene
                     }
                     json.has(Constants.MASTER_DISPLAY_CONNECTION) || json.has(Constants.MASTER_RECONNECTION) -> {
                         sendMessageToWebSocketClient(
-                            arrListClients.lastOrNull()?.toString() ?: "",
+                            tcpServer.arrListMasterDisplays.lastOrNull() ?: "",
                             createMasterDisplayJsonData(getRequiredTransactionFromDB())
                         )
                     }
@@ -850,6 +851,14 @@ class MainActivity : BaseActivity(), MessageListener, TextToSpeech.OnInitListene
 
                                 // Set the flag to prevent further updates
                                 isDbUpdated = true
+                            }
+                            if (tcpServer.arrListMasterDisplays.isNotEmpty()){
+                                sendMessageToWebSocketClient(
+                                    tcpServer.arrListMasterDisplays.lastOrNull() ?: "",
+                                    createMasterDisplayJsonDataWithMsg(
+                                        getRequiredTransactionFromDB(),
+                                    )
+                                )
                             }
                         },
                         onFailure = { e ->

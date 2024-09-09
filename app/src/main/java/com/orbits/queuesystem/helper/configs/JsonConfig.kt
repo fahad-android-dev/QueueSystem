@@ -76,6 +76,19 @@ object JsonConfig {
         }
     }
 
+    fun Context.createMasterDisplayJsonDataWithMsg(transactions:ArrayList<TransactionDataDbModel?>?): JsonObject {
+        val transactionArray = JsonArray().apply {
+            transactions?.forEach { transaction ->
+                add(transaction?.toTransactionJsonObject())
+            }
+        }
+
+        return JsonObject().apply {
+            add("transactions", transactionArray)
+            addProperty("fromNext", "fromNext")
+        }
+    }
+
 
 
     fun Context.createServiceJsonDataWithModel(serviceId : String,transactionModel: TransactionDataDbModel): JsonObject {
