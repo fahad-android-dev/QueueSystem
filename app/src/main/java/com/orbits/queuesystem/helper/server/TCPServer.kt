@@ -40,11 +40,6 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
         connectedClientsList.value = emptyList()
     }
 
-    fun observeClientList(): LiveData<List<String>> {
-        println("here is Client List 000 ${connectedClientsList.value}")
-        return connectedClientsList
-    }
-
     fun start() {
         try {
             serverSocket = ServerSocket(port)
@@ -107,14 +102,6 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
 
     var counter = 1
 
-    fun generateCustomId(): String {
-        return counter++.toString()
-    }
-
-    fun sendMessageToWebSocketClient(clientAddress: String, message: String) {
-        val clientHandler = clients[clientAddress]
-        clientHandler?.sendMessageToClientNew(message)
-    }
 
 
 
@@ -128,7 +115,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
         private var inStream: BufferedReader? = null
         var outStream: OutputStream? = null
         var isWebSocket = false
-        var clientId = UUID.randomUUID().toString()
+        var clientId = UUID.randomUUID().toString() // random client id connected at start for connection
         private var counterId : String? = null
         private var ticketId : String? = null
 
@@ -203,6 +190,8 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         }
                                     }
                                 }
+
+                                 // For Ticket Dispenser
                                 jsonObject.has(Constants.TICKET_TYPE) -> {
                                     if (ticketId == null){
                                         ticketId = jsonObject.get("ticketId").asString
@@ -228,6 +217,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         }
                                     }
                                 }
+                                // For All connections
                                 jsonObject.has(Constants.CONNECTION) -> {
                                     println("here is connection received")
                                     clients[clientId] = this
@@ -237,6 +227,8 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         messageListener.onMessageJsonReceived(jsonObject)
                                     }
                                 }
+                                // For Display
+
                                 jsonObject.has(Constants.DISPLAY_CONNECTION) -> {
                                     println("here is connection received")
                                     clients[clientId] = this
@@ -246,6 +238,8 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         messageListener.onMessageJsonReceived(jsonObject)
                                     }
                                 }
+
+                                // For Master Display
                                 jsonObject.has(Constants.MASTER_DISPLAY_CONNECTION) -> {
                                     println("here is connection received")
                                     val masterId = "M${generateCustomMasterId()}"
@@ -265,6 +259,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         }
                                     }
                                 }
+                                // For Login with keypad for username
                                 jsonObject.has(Constants.USERNAME) -> {
                                     var userClientId = UUID.randomUUID().toString()
                                     WebSocketManager.updateClientId(clientId, userClientId)
@@ -276,6 +271,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                                         messageListener.onMessageJsonReceived(jsonObject)
                                     }
                                 }
+                                // for various client connection
                                 else -> {
                                     clients[clientId] = this
                                     messageListener.onClientConnected(clientSocket,arrListClients)
@@ -287,13 +283,14 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
 
 
                         } catch (e: JsonSyntaxException) {
+                            // if any issues in json or message from clients connection disconnects
                             println("Invalid JSON format received from client $clientId: $message")
                             inStream?.close()
                             outStream?.close()
                             clientSocket.close()
                         }
 
-                         outStream?.flush()
+                         outStream?.flush() // to move to next client message or data
                     }
                 } else {
                     // Handle TCP communication
@@ -460,16 +457,18 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
             }
         }
 
+        // generating master display id randomly
+
         fun generateCustomMasterId(): String {
             return masterDisplay++.toString()
         }
 
-
+        // Hand shake for websocket connection with client
         @RequiresApi(Build.VERSION_CODES.O)
         private fun performHandshake(): Boolean {
             try {
                 val request = readHttpRequest()
-                val webSocketKey = extractWebSocketKey(request)
+                val webSocketKey = extractWebSocketKey(request) // only with websocket key it is possible to get client handshake
                 if (webSocketKey.isNotEmpty()) {
                     val acceptKey = generateWebSocketAcceptKey(webSocketKey)
                     val response = buildHandshakeResponse(acceptKey)
@@ -516,10 +515,6 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                 """.trimIndent() + "\r\n\r\n"
         }
 
-        fun handleMessage(clientId: String,message: String) {
-            sendMessageToClient(clientId, message)
-        }
-
         fun sendMessageToClient(clientId: String?, message: String) {
             val response = encodeWebSocketFrame(message)
             val recipient = clients[clientId]
@@ -554,20 +549,6 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
                 }
             }
 
-        }
-
-        fun sendMessageToClientNew(message: String) {
-            Thread{
-                if (isWebSocket) {
-                    try {
-                        val response = encodeWebSocketFrame(message)
-                        outStream?.write(response)
-                        outStream?.flush()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-                }
-            }.start()
         }
 
         // WebSocket frame encoding function
@@ -629,6 +610,7 @@ class TCPServer(private val port: Int, private val messageListener: MessageListe
         }
     }
 
+    // websocket manager for managing client id and updating ids
     object WebSocketManager {
         private val clientHandlers: MutableMap<String, ClientHandler> = mutableMapOf()
 
