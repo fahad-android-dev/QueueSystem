@@ -167,6 +167,10 @@ object LocalDB {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
         return db?.getRequiredTransactions() as ArrayList<TransactionDataDbModel?>?
     }
+    fun Context.getRequiredTransactionWithServiceFromDB(serviceId: List<String?>?): ArrayList<TransactionDataDbModel?>? {
+        val db = AppDatabase.getAppDatabase(this).transactionDao()
+        return db?.getRequiredTransactionsWithServiceId(serviceId) as ArrayList<TransactionDataDbModel?>?
+    }
 
     fun Context.getAllTransactionCount(serviceId: String): ArrayList<TransactionDataDbModel?>? {
         val db = AppDatabase.getAppDatabase(this).transactionDao()

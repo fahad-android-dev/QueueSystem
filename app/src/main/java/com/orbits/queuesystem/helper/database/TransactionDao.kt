@@ -65,6 +65,9 @@ interface TransactionDao {
     @Query("SELECT * FROM TransactionDataDbModel WHERE status = 1 ORDER BY startKeypadTime DESC LIMIT 5")
     fun getRequiredTransactions(): List<TransactionDataDbModel?>
 
+    @Query("SELECT * FROM TransactionDataDbModel WHERE status = 1 AND serviceId IN (:serviceIds) ORDER BY startKeypadTime DESC LIMIT 5")
+    fun getRequiredTransactionsWithServiceId(serviceIds: List<String?>?): List<TransactionDataDbModel?>
+
 
     @Query("SELECT * FROM TransactionDataDbModel WHERE status = 0 AND serviceId = :serviceId ")
     fun getAllTransactionCount(serviceId: String): List<TransactionDataDbModel?>

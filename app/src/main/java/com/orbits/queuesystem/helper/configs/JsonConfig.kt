@@ -65,6 +65,20 @@ object JsonConfig {
 
 
     fun Context.createMasterDisplayJsonData(transactions:ArrayList<TransactionDataDbModel?>?): JsonObject {
+        val itemsArray = JsonArray().apply {
+            val services = getAllServiceFromDB()
+            services?.forEach { service ->
+                add(service?.toJsonObject())
+            }
+        }
+
+        val counterArray = JsonArray().apply {
+            val counters = getAllCounterFromDB()
+            counters?.forEach { counter ->
+                add(counter?.toCounterJsonObject())
+            }
+        }
+
         val transactionArray = JsonArray().apply {
             transactions?.forEach { transaction ->
                 add(transaction?.toTransactionJsonObject())
@@ -72,6 +86,8 @@ object JsonConfig {
         }
 
         return JsonObject().apply {
+            add("items", itemsArray)
+            add("counters", counterArray)
             add("transactions", transactionArray)
         }
     }

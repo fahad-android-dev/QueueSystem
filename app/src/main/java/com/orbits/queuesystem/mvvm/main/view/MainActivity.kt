@@ -59,11 +59,11 @@ import com.orbits.queuesystem.helper.database.LocalDB.getCounterIdForService
 import com.orbits.queuesystem.helper.database.LocalDB.getCurrentServiceToken
 import com.orbits.queuesystem.helper.database.LocalDB.getLastTransactionFromDbWithStatusOne
 import com.orbits.queuesystem.helper.database.LocalDB.getRequiredTransactionFromDB
+import com.orbits.queuesystem.helper.database.LocalDB.getRequiredTransactionWithServiceFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getResetData
 import com.orbits.queuesystem.helper.database.LocalDB.getServiceById
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionByToken
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithCalledStatus
-import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithDisplayStatus
 import com.orbits.queuesystem.helper.database.LocalDB.isCounterAssigned
 import com.orbits.queuesystem.helper.database.LocalDB.isResetDoneInDb
 import com.orbits.queuesystem.helper.database.LocalDB.resetAllTransactionInDb
@@ -357,10 +357,21 @@ class MainActivity : BaseActivity(), MessageListener, TextToSpeech.OnInitListene
                     }
                     // For Master Display Connection
                     json.has(Constants.MASTER_DISPLAY_CONNECTION) || json.has(Constants.MASTER_RECONNECTION) -> {
-                        sendMessageToWebSocketClient(
-                            tcpServer.arrListMasterDisplays.lastOrNull() ?: "",
-                            createMasterDisplayJsonData(getRequiredTransactionFromDB())
-                        )
+                        if (json.has("services")){
+                            val serviceIds: List<String?>? = json.get("services")?.asString?.split(",")?.map { it.trim() }
+                            println("here is data with ${getRequiredTransactionWithServiceFromDB(serviceIds)}")
+                            println("here is serviceIds ${serviceIds}")
+
+                            sendMessageToWebSocketClient(
+                                tcpServer.arrListMasterDisplays.lastOrNull() ?: "",
+                                createMasterDisplayJsonData(
+                                    getRequiredTransactionWithServiceFromDB(serviceIds)
+                                )
+                            )
+                        }else {
+                            sendMessageToWebSocketClient(tcpServer.arrListMasterDisplays.lastOrNull() ?: "", createJsonData())
+                        }
+
                     }
                     // For Username related for soft keypad
                     json.has(Constants.USERNAME) -> {
@@ -407,14 +418,7 @@ class MainActivity : BaseActivity(), MessageListener, TextToSpeech.OnInitListene
                     status = model?.get("status")?.asString ?: ""
 
                 )
-                println("here is transactions for display ${getAllTransactionFromDB()}")
-                val dbModel =
-                    parseInTransactionDbModel(updateModel, updateModel.id ?: "")
-                println("here is dbModel 111 ${dbModel}")
-                addTransactionInDB(dbModel)
 
-                println("here is transactions 111 ${getAllTransactionFromDB()}")
-                println("here is transactions with status 4 ::  ${ getTransactionFromDbWithDisplayStatus(serviceId)}")
 
                 sendMessageToWebSocketClient(
                     model?.get("displayId")?.asString ?: "",
