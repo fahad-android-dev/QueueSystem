@@ -37,6 +37,7 @@ import com.orbits.queuesystem.helper.configs.JsonConfig.createNoTokensData
 import com.orbits.queuesystem.helper.configs.JsonConfig.createReconnectionJsonDataWithTransaction
 import com.orbits.queuesystem.helper.configs.JsonConfig.createServiceJsonDataWithModel
 import com.orbits.queuesystem.helper.configs.JsonConfig.createServiceJsonDataWithTransaction
+import com.orbits.queuesystem.helper.configs.JsonConfig.createTransactionsJsonData
 import com.orbits.queuesystem.helper.configs.JsonConfig.createUserJsonData
 import com.orbits.queuesystem.helper.interfaces.MessageListener
 import com.orbits.queuesystem.helper.server.ServerService
@@ -50,13 +51,13 @@ import com.orbits.queuesystem.helper.database.LocalDB.addServiceTokenToDB
 import com.orbits.queuesystem.helper.database.LocalDB.addTransactionInDB
 import com.orbits.queuesystem.helper.database.LocalDB.getAllResetData
 import com.orbits.queuesystem.helper.database.LocalDB.getAllServiceFromDB
+import com.orbits.queuesystem.helper.database.LocalDB.getAllTransactionCount
 import com.orbits.queuesystem.helper.database.LocalDB.getAllTransactionFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getCounterFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getTransactionFromDbWithIssuedStatus
 import com.orbits.queuesystem.helper.database.LocalDB.getCounterIdForService
 import com.orbits.queuesystem.helper.database.LocalDB.getCurrentServiceToken
 import com.orbits.queuesystem.helper.database.LocalDB.getLastTransactionFromDbWithStatusOne
-import com.orbits.queuesystem.helper.database.LocalDB.getLastTransactionFromDbWithStatusTwo
 import com.orbits.queuesystem.helper.database.LocalDB.getRequiredTransactionFromDB
 import com.orbits.queuesystem.helper.database.LocalDB.getResetData
 import com.orbits.queuesystem.helper.database.LocalDB.getServiceById
@@ -555,15 +556,11 @@ class MainActivity : BaseActivity(), MessageListener, TextToSpeech.OnInitListene
                                 isDbUpdated = true
                             }
 
-
-
                         },
                         onFailure = {}
 
                     )
 
-
-                    println("here is changed transactions 1111 ${getAllTransactionFromDB()}")
 
                 }else {
                     // no tokens with status 0 available in table
@@ -680,12 +677,23 @@ class MainActivity : BaseActivity(), MessageListener, TextToSpeech.OnInitListene
             else if (json.has("Reconnection")) {
                 println("here is service id in reconnection ${json.get("serviceId")?.asString ?: ""}")
 
-                println("here is trasanction in reconnection ${getLastTransactionFromDbWithStatusTwo(json.get("counterId")?.asString ?: "")}")
-                sendMessageToWebSocketClient(
-                    json.get("counterId")?.asString ?: "",
-                    createReconnectionJsonDataWithTransaction()
-                )
+                val counterModel = getCounterFromDB(json.get("counterId")?.asString ?: "")
 
+                sendMessageToWebSocketClientWith(
+                    json.get("counterId")?.asString ?: "",
+                    createReconnectionJsonDataWithTransaction(),
+                    onSuccess = {
+                        sendMessageToWebSocketClient(
+                            json.get("counterId")?.asString ?: "",
+                            createTransactionsJsonData(
+                                getAllTransactionCount(counterModel?.serviceId ?: "")
+                            )
+                        )
+                    },
+                    onFailure = { e ->
+                        // Handle failure, such as logging or notifying the user
+                    }
+                )
 
             }
 
@@ -699,11 +707,12 @@ class MainActivity : BaseActivity(), MessageListener, TextToSpeech.OnInitListene
                 sendMessageToWebSocketClientWith(
                     json.get("counterId")?.asString ?: "",
                     createServiceJsonDataWithTransaction(
-                        if (getTransactionFromDbWithIssuedStatus(counterModel?.serviceId) != null){
-                            getTransactionFromDbWithIssuedStatus(counterModel?.serviceId)
-                        }else {
-                            if (getLastTransactionFromDbWithStatusOne(counterModel?.serviceId) != null){
-                                getLastTransactionFromDbWithStatusOne(counterModel?.serviceId)
+                         if (getLastTransactionFromDbWithStatusOne(counterModel?.serviceId) != null){
+                            getLastTransactionFromDbWithStatusOne(counterModel?.serviceId)
+                        }
+                        else {
+                            if (getTransactionFromDbWithIssuedStatus(counterModel?.serviceId) != null){
+                                getTransactionFromDbWithIssuedStatus(counterModel?.serviceId)
                             }else {
                                 TransactionListDataModel(
                                     id = "",

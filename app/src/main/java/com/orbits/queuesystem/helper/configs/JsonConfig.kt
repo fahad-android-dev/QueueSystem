@@ -90,6 +90,16 @@ object JsonConfig {
     }
 
 
+    fun Context.createTransactionsJsonData(transactions: ArrayList<TransactionDataDbModel?>?): JsonObject {
+        val transactionCount = transactions?.size ?: 0
+
+        return JsonObject().apply {
+            addProperty("transactionCount", transactionCount) // Add the size as a property
+        }
+    }
+
+
+
 
     fun Context.createServiceJsonDataWithModel(serviceId : String,transactionModel: TransactionDataDbModel): JsonObject {
         val model = getAllServiceFromDB()?.find { it?.entityID == serviceId }

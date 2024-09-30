@@ -168,9 +168,9 @@ object LocalDB {
         return db?.getRequiredTransactions() as ArrayList<TransactionDataDbModel?>?
     }
 
-    fun Context.getTransactionIssuedStatusFromCounter(counterId: String?,serviceId: String?): TransactionDataDbModel? {
+    fun Context.getAllTransactionCount(serviceId: String): ArrayList<TransactionDataDbModel?>? {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
-        return db?.getTransactionIssuedStatusWithCounter(counterId ?: "", serviceId ?:"")
+        return db?.getAllTransactionCount(serviceId) as ArrayList<TransactionDataDbModel?>?
     }
 
     fun Context.getTransactionFromDbWithIssuedStatus(serviceId: String?): TransactionDataDbModel? {
@@ -188,17 +188,9 @@ object LocalDB {
         return db?.getTransactionByCalledStatus(serviceId ?: "")
     }
 
-    fun Context.getLastTransactionFromDbWithStatusTwo(counterId: String?): TransactionDataDbModel? {
-        val db = AppDatabase.getAppDatabase(this).transactionDao()
-        return db?.getLastTransactionByStatusTwo(counterId ?: "")
-    }
     fun Context.getLastTransactionFromDbWithStatusOne(serviceId: String?): TransactionDataDbModel? {
         val db = AppDatabase.getAppDatabase(this).transactionDao()
         return db?.getLastTransactionByStatusOne(serviceId ?: "")
-    }
-    fun Context.getLastTransactionFromDbWithStatusZero(serviceId: String?): TransactionDataDbModel? {
-        val db = AppDatabase.getAppDatabase(this).transactionDao()
-        return db?.getLastTransactionByStatusZero(serviceId ?: "")
     }
 
     fun Context.getTransactionByToken(token: String,serviceId: String): TransactionDataDbModel? {

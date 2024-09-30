@@ -41,24 +41,15 @@ interface TransactionDao {
     @Query("SELECT * FROM TransactionDataDbModel WHERE status = 0 AND serviceId = :serviceId ORDER BY issueTime LIMIT 1")
     fun getTransactionByIssuedStatus(serviceId:String): TransactionDataDbModel?
 
-    @Query("SELECT * FROM TransactionDataDbModel WHERE status = 0 AND counterId = :counterId AND serviceId = :serviceId ORDER BY issueTime LIMIT 1")
-    fun getTransactionIssuedStatusWithCounter(counterId:String,serviceId:String): TransactionDataDbModel?
-
-
     @Query("SELECT * FROM TransactionDataDbModel WHERE status = 1 AND serviceId = :serviceId ORDER BY issueTime LIMIT 1")
     fun getTransactionByCalledStatus(serviceId:String): TransactionDataDbModel?
 
     @Query("SELECT * FROM TransactionDataDbModel WHERE status = 4 AND serviceId = :serviceId ORDER BY issueTime LIMIT 1")
     fun getTransactionByDisplayStatus(serviceId:String): TransactionDataDbModel?
 
-    @Query("SELECT * FROM TransactionDataDbModel WHERE status = 2 AND counterId = :counterId ORDER BY issueTime DESC LIMIT 1")
-    fun getLastTransactionByStatusTwo(counterId: String): TransactionDataDbModel?
 
     @Query("SELECT * FROM TransactionDataDbModel WHERE status = 1 AND serviceId = :serviceId ORDER BY issueTime DESC LIMIT 1")
     fun getLastTransactionByStatusOne(serviceId: String): TransactionDataDbModel?
-
-    @Query("SELECT * FROM TransactionDataDbModel WHERE status = 0 AND serviceId = :serviceId ORDER BY issueTime DESC LIMIT 1")
-    fun getLastTransactionByStatusZero(serviceId: String): TransactionDataDbModel?
 
 
 
@@ -73,6 +64,10 @@ interface TransactionDao {
 
     @Query("SELECT * FROM TransactionDataDbModel WHERE status = 1 ORDER BY startKeypadTime DESC LIMIT 5")
     fun getRequiredTransactions(): List<TransactionDataDbModel?>
+
+
+    @Query("SELECT * FROM TransactionDataDbModel WHERE status = 0 AND serviceId = :serviceId ")
+    fun getAllTransactionCount(serviceId: String): List<TransactionDataDbModel?>
 
 
 }
